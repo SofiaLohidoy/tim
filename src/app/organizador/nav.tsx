@@ -11,6 +11,7 @@ const SECCIONES = [
   { href: "/organizador/personas", texto: "Personas" },
   { href: "/organizador/qr", texto: "QR de asistencia" },
   { href: "/organizador/devoluciones", texto: "Devoluciones" },
+  { href: "/organizador/imprimir", texto: "Rúbrica en papel" },
   { href: "/organizador/landing", texto: "Landing" },
   { href: "/organizador/exportar", texto: "Exportar" },
 ];
