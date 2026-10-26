@@ -25,6 +25,8 @@ function landing(req: NextRequest) {
 
 export async function proxy(req: NextRequest) {
   if (req.nextUrl.pathname === "/") return landing(req);
+  // Sin Supabase configurado (deploy de la landing antes de tener la base) no hay sesión que refrescar.
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return NextResponse.next();
 
   let res = NextResponse.next({ request: req });
   const supabase = createServerClient(
