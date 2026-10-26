@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import { env, SUPABASE_URL } from "@/lib/env";
+import type { Database } from "./tipos";
 
 /**
  * Cliente con la clave secreta: SALTEA la RLS.
@@ -10,7 +11,7 @@ import { env, SUPABASE_URL } from "@/lib/env";
  * componente de cliente: el `server-only` de arriba rompe el build si alguien lo importa mal.
  */
 export function clienteServicio() {
-  return createClient(SUPABASE_URL, env("SUPABASE_SECRET_KEY"), {
+  return createClient<Database>(SUPABASE_URL, env("SUPABASE_SECRET_KEY"), {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }

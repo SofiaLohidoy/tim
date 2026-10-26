@@ -15,7 +15,9 @@ export async function registrarInteres(_previo: EstadoInteres, form: FormData): 
   // Honeypot: un humano no ve este campo. Si viene lleno, se responde "ok" y no se guarda nada.
   if (form.get("sitio")) return { estado: "ok" };
 
-  const { origen: _o, sitio: _s, ...campos } = Object.fromEntries(form);
+  const campos = Object.fromEntries(form);
+  delete campos.origen;
+  delete campos.sitio;
   const valores = Object.fromEntries(Object.entries(campos).map(([k, v]) => [k, String(v)]));
   const datos = interes.safeParse(campos);
   if (!datos.success) {

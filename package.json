@@ -3,10 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "start": "next start -p 3001",
+    "lint": "eslint",
+    "tipos": "tsc --noEmit",
+    "test": "vitest run",
+    "test:rls": "vitest run --config vitest.rls.config.mts",
+    "e2e": "playwright test",
+    "verificar": "tsc --noEmit && eslint && vitest run && next build",
+    "db:tipos": "supabase gen types typescript --local > src/lib/supabase/tipos.ts",
+    "datos:prueba": "node scripts/prueba.mjs crear",
+    "datos:limpiar": "node scripts/prueba.mjs limpiar",
+    "mockup": "node scripts/mockup-landing.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

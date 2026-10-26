@@ -1,0 +1,69 @@
+# Modelo de datos
+
+Fuente de verdad: `supabase/migrations/*.sql`. Cada migración explica su porqué arriba. Esto es un mapa para leer rápido; si no coincide con las migraciones, mandan las migraciones y se corrige este archivo.
+
+Todo está en el esquema `public`, con RLS activa en todas las tablas. Abajo, "Org." es el organizador.
+
+## Helpers de RLS
+Funciones `security definer` con `search_path = ''`. Las usan las policies para no caer en recursión.
+
+| Función | Devuelve true si... |
+|---|---|
+| `es_organizador()` | la persona tiene el rol `organizador` |
+| `tiene_rol(rol)` | la persona tiene ese rol en algún evento |
+| `evalua_equipo(equipo, rol?)` | la persona está asignada a ese equipo (como mentor o jurado) |
+| `es_miembro(equipo)` | la persona integra ese equipo |
+| `puede_ver_persona(usuario)` | es ella misma, es Org., evalúa su equipo o es compañera de equipo |
+| `evaluacion_permitida(...)` | el evaluador está asignado al equipo con ese rol y el estudiante es del equipo |
+| `devoluciones_publicadas(evento)` | el evento ya publicó sus devoluciones |
+
+## Funciones que llama la app
+| Función | Quién | Qué hace |
+|---|---|---|
+| `marcar_asistencia(codigo)` | estudiante logueado | Valida el código vigente del QR (o el anterior, hasta 3 min después de rotar) y registra la asistencia. |
+| `registrar_entrega(equipo, url)` | integrante del equipo | Guarda el link de la entrega. Solo `http(s)`, máximo 500 caracteres. |
+| `marcar_devolucion_abierta(devolucion)` | estudiante | Marca `abierta_en` la primera vez que abre su devolución publicada. |
+| `resumen_landing(desde?)` | organizador | Devuelve en jsonb visitas y registros por variante, origen, sección, CTA y formulario (006). Si no es organizador, tira `solo_organizador`. |
+
+## Tablas
+
+### Personas (001, 002)
+| Tabla | Qué guarda | Lee | Escribe |
+|---|---|---|---|
+| `perfiles` | 1:1 con `auth.users`: mail, nombre, apellido. Lo crea un trigger al registrarse. | `puede_ver_persona` | La persona (solo nombre y apellido) y Org. El mail no se cambia desde la app. |
+| `roles_usuario` | Persona + rol + evento. Organizador es global (`evento_id` null). | La persona (los suyos) y Org. | Solo Org. y los triggers. |
+| `invitaciones` | Mail + rol + evento + equipo. Única por (mail, rol, evento, equipo): un jurado se puede pre-asignar a varios equipos (006). Al registrarse (o al instante si ya tenía cuenta) se convierte en rol, asignación o membresía. | Org. | Org. |
+| `estudiantes` | Onboarding: universidad, carrera, año, área buscada, intereses, "por qué estoy acá" (≤ 500), arquetipo y sus respuestas, CV, consentimiento (obligatorio). Al completar el onboarding se agrega el rol `estudiante`. | La persona y Org. Mentores y jurados **no**. | La persona (la suya). |
+| `storage.objects` bucket `cvs` | CV en PDF, ≤ 5 MB, ruta `<usuario_id>/cv.pdf`. Privado. | La persona y Org. | La persona. |
+
+### Evento (003)
+| Tabla | Qué guarda | Lee | Escribe |
+|---|---|---|---|
+| `eventos` | Nombre, fecha, lugar, estado, rúbrica, `devoluciones_publicadas_en`. | Cualquier logueado | Org. |
+| `codigos_asistencia` | Código vigente y anterior del QR. Aparte de `eventos` para que nadie lo lea y marque asistencia desde la casa. | Org. | Org. |
+| `asistencias` | Evento + persona + método (`qr` / `organizador`). Una por persona y evento. | La persona y Org. | Org., o el estudiante vía `marcar_asistencia`. |
+| `desafios` | Consigna, fechas, estado. | Logueados, si no es borrador; Org. siempre. | Org. |
+| `equipos` | Nombre, entrega (link y hora). | Integrantes, evaluadores asignados, Org. | Org.; la entrega vía `registrar_entrega`. |
+| `miembros_equipo` | Equipo + persona. Una persona, un equipo por evento (lo garantiza la base). | Integrantes, evaluadores asignados, Org. | Org. y el trigger de invitaciones. |
+| `asignaciones` | Evaluador + equipo + rol (`mentor` / `jurado`). | El evaluador (las suyas) y Org. | Org. y el trigger de invitaciones. |
+
+### Evaluación (004)
+| Tabla | Qué guarda | Lee | Escribe |
+|---|---|---|---|
+| `rubricas` | Nombre, descripción, si es plantilla. La plantilla es la del Anexo 6. | Logueados | Org. |
+| `dimensiones` | Las 5 capacidades, con qué observar e instancia (`grupal` / `individual` / `ambas`). | Logueados | Org. |
+| `niveles` | 4 niveles descriptivos. Sin valor numérico. **Los textos son una propuesta a confirmar con Sofía.** | Logueados | Org. |
+| `evaluaciones` | Evaluador, rol, objetivo (`persona` / `equipo`), respuestas en jsonb `{ "<dimension_id>": { "nivel": <id>, "obs": "" } }`, comentario (≤ 2000), estado (`borrador` / `enviada`), carga (`directa` / `diferida`). Una fila por evaluador y objetivo. | El propio evaluador y Org. **Ningún evaluador ve las de otro.** | El evaluador asignado, solo carga directa, hasta que se publican las devoluciones. Org. siempre (así carga lo diferido). |
+| `devoluciones` | Foto armada por Org. (`contenido` jsonb), `publicada_en`, `abierta_en`. | El estudiante, solo si está publicada. Org. siempre. | Org.; el estudiante solo `abierta_en` vía función. |
+| `respuestas_encuesta` | Encuesta `post_devolucion`: una respuesta por persona y evento. | La persona y Org. | La persona (la suya). |
+
+### Landing (005)
+| Tabla | Qué guarda | Lee | Escribe |
+|---|---|---|---|
+| `interesados` | Audiencia, mail, datos del formulario, variante, origen, visitante, hash de IP. Uno por audiencia y mail. | Org. | **Nadie desde el navegador.** Solo el servidor, con zod + rate limit, usando la clave secreta. |
+| `eventos_landing` | Visitante, tipo (`visita`, `seccion`, `clic_cta`, `form_inicio`, `form_fin`, `form_error`), detalle, variante, origen. | Org. | Igual que `interesados`. |
+
+La IP no se guarda: solo un hash con sal (`LANDING_SAL`) para el rate limit.
+
+## Lo que todavía no existe
+Según el plan: `actividades`, `partidas`, `senales` (fase B); credenciales (fase C); `empresas`, `intereses`, `contactos`, `propuestas_desafio` (fase D); `habilidades_duras` (fase E). Cuando se creen, se suman acá en la misma migración que los crea.
