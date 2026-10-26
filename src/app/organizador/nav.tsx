@@ -10,6 +10,7 @@ const SECCIONES = [
   { href: "/organizador/equipos", texto: "Equipos" },
   { href: "/organizador/personas", texto: "Personas" },
   { href: "/organizador/qr", texto: "QR de asistencia" },
+  { href: "/organizador/cartel", texto: "Cartel de la puerta" },
   { href: "/organizador/devoluciones", texto: "Devoluciones" },
   { href: "/organizador/imprimir", texto: "Rúbrica en papel" },
   { href: "/organizador/landing", texto: "Landing" },

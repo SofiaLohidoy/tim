@@ -21,6 +21,7 @@ El equipo de TIM no es técnico. **La persona no corre comandos: Claude levanta,
 | Probar que anda | skill `verificar` |
 | Publicar | skill `deploy` |
 | Preparar la hackatón u otro evento | skill `preparar-evento` |
+| "¿Qué hacemos el sábado?", el paso a paso del día | `docs/guia-del-dia.md` |
 | Un juego nuevo | skill `nueva-actividad` + `docs/senales.md` |
 | Números para la tesis | skill `reporte-tesis` |
 | Arrancar en una compu nueva | `docs/trabajar-en-local.md` |
