@@ -38,6 +38,10 @@ export async function crearCuenta(_p: EstadoIngreso, form: FormData): Promise<Es
   // Con la confirmación por mail apagada, signUp ya deja la sesión abierta. Si no vino sesión,
   // el proyecto de Supabase tiene la confirmación prendida: ver docs/puesta-en-marcha.md.
   if (!data.session || !data.user) return { error: "La cuenta se creó, pero falta confirmar el mail. Avisale al equipo TIM.", email };
+  if (form.get("siguiente") === "/empresa") {
+    const { error: errorEmpresa } = await db.rpc("iniciar_registro_empresa");
+    if (errorEmpresa) return { error: "Tu cuenta se creó. Entrá de nuevo desde el registro de empresas para continuar.", email };
+  }
   redirect(await destino(db, data.user.id, email, form));
 }
 

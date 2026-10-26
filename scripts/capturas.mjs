@@ -22,7 +22,7 @@ const navegador = await chromium.launch();
 for (const a of anchos) {
   const ctx = await navegador.newContext({ viewport: a.viewport, isMobile: a.isMobile, deviceScaleFactor: a.deviceScaleFactor, locale: "es-AR" });
   const page = await ctx.newPage();
-  if (rutas.some((r) => r !== "/" && r !== "/ingresar" && !r.startsWith("/v/"))) {
+  if (rutas.some((r) => !["/", "/ingresar", "/estudiantes", "/empresas", "/l/a", "/l/b"].includes(r.split("?")[0]) && !r.startsWith("/v/"))) {
     await page.goto(`${base}/ingresar`);
     await page.getByRole("tab", { name: "Ya tengo cuenta" }).click();
     await page.getByLabel("Mail").fill(`prueba-${como}@tim.test`);
@@ -35,7 +35,7 @@ for (const a of anchos) {
   for (const r of rutas) {
     await page.goto(`${base}${r}`, { waitUntil: "networkidle" });
     await page.waitForTimeout(1200);
-    const archivo = `capturas/${r.replace(/\//g, "_") || "_"}-${a.nombre}.png`;
+    const archivo = `capturas/${r.replace(/[^a-zA-Z0-9_-]/g, "_") || "_"}-${a.nombre}.png`;
     await page.screenshot({ path: archivo, fullPage: true });
     console.log(archivo);
   }

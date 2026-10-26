@@ -17,6 +17,7 @@ const VISTAS = [
   { rol: "organizador", href: "/organizador", texto: "Panel de organización" },
   { rol: "mentor", href: "/mentor", texto: "Vista de mentor" },
   { rol: "jurado", href: "/jurado", texto: "Vista de jurado" },
+  { rol: "empresa", href: "/empresa", texto: "Mi empresa" },
 ] as const;
 
 export default function Pagina() {

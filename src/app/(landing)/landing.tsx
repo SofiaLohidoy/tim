@@ -1,16 +1,14 @@
 import Link from "next/link";
-import { ArrowRight, Check, Lock, MessageSquareText, Plus, QrCode, Sprout } from "lucide-react";
+import { ArrowRight, Building2, Check, Lock, MessageSquareText, Plus, QrCode, Sprout } from "lucide-react";
 import { Logo } from "@/components/marca";
 import { NavLanding } from "./nav-landing";
 import { Revelar } from "./revelar";
 import { RubricaDemo } from "./rubrica-demo";
-import { FormInteres } from "./form-interes";
 import { Medicion } from "./medicion";
 import { TITULOS, type Variante } from "./variantes";
 
-// La landing es estática (CDN). Lo único dinámico son las islas de cliente: la nav, el fade de
-// las secciones, la demo de la rúbrica, los formularios y la medición.
-// El copy sale de docs/landing-contenido.md: cada cifra tiene su fuente al lado.
+// Páginas públicas estáticas. Arquitectura por público: docs/landing-{principal,estudiantes,empresas}.md.
+// Las cifras conservan las fuentes de docs/landing-contenido.md. El registro ocurre en /ingresar.
 
 const PREGUNTAS = [
   {
@@ -19,7 +17,7 @@ const PREGUNTAS = [
   },
   {
     p: "¿Quién ve mis datos?",
-    r: "Vos, y el equipo TIM para organizar los desafíos. Las empresas ven tu perfil sin nombre. Tu nombre y tu contacto solo se comparten si vos aceptás.",
+    r: "Vos y el equipo TIM para organizar los desafíos. El recorrido de empresas se está desarrollando: tu nombre y tu contacto solo se compartirán si vos aceptás.",
   },
   {
     p: "¿Qué es un desafío?",
@@ -47,11 +45,11 @@ const RUBRICA = [
   "Iniciativa y adaptación",
 ];
 
-export function Landing({ variante }: { variante: Variante }) {
-  const titulo = TITULOS[variante];
+export function Landing({ variante, publico = "principal" }: { variante: Variante; publico?: "principal" | "estudiante" | "empresa" }) {
+  const titulo = publico === "empresa" ? { antes: "Conocé talento, ", destacado: "con evidencia.", despues: "" } : TITULOS[variante];
   return (
-    <div className="tl">
-      <Medicion variante={variante} />
+    <div className="tl" data-publico={publico}>
+      {publico === "principal" && <Medicion variante={variante} />}
       <Revelar />
       <NavLanding />
 
@@ -74,21 +72,20 @@ export function Landing({ variante }: { variante: Variante }) {
               {titulo.despues}
             </h1>
             <p className="hero-sub">
-              Resolvé desafíos reales en equipo. Mentores observan cómo trabajás y esa evidencia queda en tu
-              perfil.
+              {publico === "empresa" ? "Conocé cómo resuelven desafíos las personas. Mentores y jurados observan el proceso y registran evidencia más allá del CV." : "Resolvé desafíos reales en equipo. Mentores observan cómo trabajás y esa evidencia queda en tu perfil."}
             </p>
             <div className="hero-cta">
-              <a href="#sumarme" className="btn btn-lila" data-cta="hero_estudiante">
-                Quiero demostrar lo que sé
+              {publico !== "empresa" && <Link href="/ingresar?tipo=estudiante" className="btn btn-lila" data-cta="hero_estudiante">
+                Quiero demostrar mi talento
                 <ArrowRight aria-hidden="true" />
-              </a>
-              <a href="#empresas" className="btn btn-linea" data-cta="hero_empresa">
-                Busco talento junior
-              </a>
+              </Link>}
+              {publico !== "estudiante" && <Link href="/ingresar?tipo=empresa" className="btn btn-linea" data-cta="hero_empresa">
+                Quiero contratar talento
+              </Link>}
             </div>
             <p className="hero-hack">
               ¿Venís a la hackatón del 31/10?{" "}
-              <Link href="/ingresar" data-cta="hero_ingresar">
+              <Link href="/ingresar?modo=entrar" data-cta="hero_ingresar">
                 Entrá con tu cuenta
               </Link>
             </p>
@@ -172,7 +169,18 @@ export function Landing({ variante }: { variante: Variante }) {
       </header>
 
       <main>
-        <section className="banda" id="problema" data-seccion="problema">
+
+        {publico === "principal" && <section className="banda" aria-label="Elegí tu recorrido">
+          <div className="wrap">
+            <p className="ojo sec-ojo">Un espacio, dos caminos</p>
+            <h2 className="sec-h">El talento se demuestra haciendo.</h2>
+            <div className="recorridos">
+              <article><Sprout aria-hidden="true" /><h3>Para estudiantes</h3><p>Resolvé desafíos, recibí devoluciones y construí un perfil con evidencia de cómo trabajás.</p><Link href="/estudiantes" className="enlace-texto">Conocé cómo funciona <ArrowRight aria-hidden="true" /></Link></article>
+              <article><Building2 aria-hidden="true" /><h3>Para empresas</h3><p>Conocé la propuesta de TIM para evaluar talento a través de desafíos y evidencia observada.</p><Link href="/empresas" className="enlace-texto">Conocé la propuesta <ArrowRight aria-hidden="true" /></Link></article>
+            </div>
+          </div>
+        </section>}
+        {publico === "estudiante" && (<section className="banda" id="problema" data-seccion="problema">
           <div className="wrap problema-in">
             <div className="revela">
               <p className="ojo sec-ojo">El problema</p>
@@ -239,9 +247,8 @@ export function Landing({ variante }: { variante: Variante }) {
               </div>
             </div>
           </div>
-        </section>
-
-        <section className="banda como" id="como-funciona" data-seccion="como_funciona">
+        </section>)}
+        {publico === "estudiante" && (<section className="banda como" id="como-funciona" data-seccion="como_funciona">
           <div className="wrap">
             <div className="revela">
               <p className="ojo sec-ojo">Cómo funciona</p>
@@ -309,9 +316,8 @@ export function Landing({ variante }: { variante: Variante }) {
               <span className="fuente">Rúbrica del piloto, sin puntajes ni ponderaciones.</span>
             </div>
           </div>
-        </section>
-
-        <section className="banda" id="que-te-llevas" data-seccion="que_te_llevas">
+        </section>)}
+        {publico === "estudiante" && (<section className="banda" id="que-te-llevas" data-seccion="que_te_llevas">
           <div className="wrap lleva">
             <div className="revela">
               <p className="ojo sec-ojo">Qué te llevás</p>
@@ -319,7 +325,7 @@ export function Landing({ variante }: { variante: Variante }) {
               <p className="sec-p">
                 No es una autoevaluación. Es lo que vieron personas que te miraron trabajar, ordenado por capacidad.
               </p>
-              <a href="#sumarme" className="btn btn-verde" data-cta="lleva_estudiante">
+              <a href="/ingresar?tipo=estudiante" className="btn btn-verde" data-cta="lleva_estudiante">
                 Quiero demostrar lo que sé
                 <ArrowRight aria-hidden="true" />
               </a>
@@ -362,16 +368,15 @@ export function Landing({ variante }: { variante: Variante }) {
               </p>
             </div>
           </div>
-        </section>
-
-        <section className="banda empresas" id="empresas" data-seccion="empresas">
+        </section>)}
+        {publico === "empresa" && (<section className="banda empresas" id="empresas" data-seccion="empresas">
           <div className="wrap empresas-in">
             <div className="revela">
               <p className="ojo sec-ojo">Para empresas</p>
               <h2 className="sec-h">Conocé cómo trabaja alguien antes de la entrevista.</h2>
               <p className="sec-p">
-                Nos contás un problema real de tu empresa. Armamos el desafío y la rúbrica. Vos ves cómo lo resolvió
-                cada persona: el proceso, no solo el resultado.
+                TIM propone conocer cómo las personas encaran un desafío: el proceso, además del resultado.
+                Hoy podés crear tu cuenta de empresa; la exploración de perfiles y el contacto se habilitarán en una próxima etapa.
               </p>
               <div className="pruebas-emp">
                 <div>
@@ -406,12 +411,11 @@ export function Landing({ variante }: { variante: Variante }) {
               </ul>
             </div>
             <div className="revela">
-              <FormInteres audiencia="empresa" />
+              <div className="tarjeta-registro"><Building2 className="size-10" aria-hidden="true" /><h3>Tu empresa empieza acá.</h3><p>Creá tu cuenta y completá el perfil de tu empresa.</p><Link href="/ingresar?tipo=empresa" className="btn btn-verde">Crear mi cuenta de empresa<ArrowRight aria-hidden="true" /></Link><Link href="/ingresar?modo=entrar&tipo=empresa" className="enlace-texto">Ya tengo cuenta</Link></div>
             </div>
           </div>
-        </section>
-
-        <section className="banda" id="hackaton" data-seccion="hackaton">
+        </section>)}
+        {publico === "estudiante" && (<section className="banda" id="hackaton" data-seccion="hackaton">
           <div className="wrap hack-in">
             <div className="fecha revela" aria-hidden="true">
               <div className="mes">OCTUBRE</div>
@@ -425,7 +429,7 @@ export function Landing({ variante }: { variante: Variante }) {
                 Equipos de estudiantes, un desafío real y un mentor por equipo. Cada participante se lleva su
                 devolución.
               </p>
-              <Link href="/ingresar" className="btn btn-verde" data-cta="hackaton_ingresar">
+              <Link href="/ingresar?modo=entrar" className="btn btn-verde" data-cta="hackaton_ingresar">
                 Entrá con tu cuenta
                 <ArrowRight aria-hidden="true" />
               </Link>
@@ -434,16 +438,15 @@ export function Landing({ variante }: { variante: Variante }) {
               </p>
             </div>
           </div>
-        </section>
-
-        <section className="banda faq" id="preguntas" data-seccion="preguntas">
+        </section>)}
+        {publico !== "principal" && (<section className="banda faq" id="preguntas" data-seccion="preguntas">
           <div className="wrap faq-in">
             <div className="revela">
               <p className="ojo sec-ojo">Preguntas frecuentes</p>
               <h2 className="sec-h">Lo que nos preguntan.</h2>
             </div>
             <div className="revela">
-              {PREGUNTAS.map((q) => (
+              {PREGUNTAS.filter((p) => publico === "empresa" ? p.p !== "¿Cuesta algo?" && p.p !== "¿Me garantiza un trabajo?" : p.p !== "Soy empresa: ¿el desafío es trabajo gratis?").map((q) => (
                 <details key={q.p}>
                   <summary>
                     {q.p}
@@ -454,27 +457,12 @@ export function Landing({ variante }: { variante: Variante }) {
               ))}
             </div>
           </div>
-        </section>
-
-        <section className="banda final" id="sumarme" data-seccion="sumarme">
-          <div className="wrap final-in">
-            <div className="revela">
-              <p className="ojo sec-ojo">Sumate</p>
-              <h2 className="sec-h">Empezá a sumar evidencia hoy.</h2>
-              <p className="sec-p">
-                Dejanos tu mail y te avisamos cuando abra el próximo desafío. Toma menos de un minuto.
-              </p>
-              <p className="alt">
-                ¿Sos empresa?{" "}
-                <a href="#empresas" data-cta="final_empresa">
-                  Busco talento junior
-                </a>
-              </p>
-            </div>
-            <div className="revela">
-              <FormInteres audiencia="estudiante" />
-            </div>
-          </div>
+        </section>)}
+        <section className="banda final" aria-label="Crear tu cuenta">
+          <div className="wrap cierre-registro"><p className="ojo sec-ojo">Sumate a TIM</p><h2 className="sec-h">Tu próximo paso empieza acá.</h2><div className="hero-cta">
+            {publico !== "empresa" && <Link href="/ingresar?tipo=estudiante" className="btn btn-lila">Quiero demostrar mi talento<ArrowRight aria-hidden="true" /></Link>}
+            {publico !== "estudiante" && <Link href="/ingresar?tipo=empresa" className="btn btn-linea">Quiero contratar talento<ArrowRight aria-hidden="true" /></Link>}
+          </div><Link href="/ingresar?modo=entrar" className="enlace-texto">Ya tengo cuenta. Entrar</Link></div>
         </section>
       </main>
 
@@ -484,7 +472,7 @@ export function Landing({ variante }: { variante: Variante }) {
           <p>Tu capacidad, en evidencia.</p>
           <nav aria-label="Pie">
             <Link href="/privacidad">Privacidad</Link>
-            <Link href="/ingresar">Entrar</Link>
+            <Link href="/ingresar?modo=entrar">Entrar</Link>
           </nav>
         </div>
       </footer>

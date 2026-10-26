@@ -25,6 +25,8 @@ const mini = (h: [string, string, string], v: [string, string, string]): { horiz
 export const ACTIVIDADES: Actividad[] = [
   {
     slug: "palabra",
+    proximamente: true,
+    tituloTentativo: "Palabras en juego",
     version: 1,
     tipo: "palabra",
     titulo: "Adivinar la palabra",
@@ -34,6 +36,8 @@ export const ACTIVIDADES: Actividad[] = [
   },
   {
     slug: "crucigrama-1",
+    proximamente: true,
+    tituloTentativo: "Conexiones",
     version: 1,
     tipo: "crucigrama",
     titulo: "Mini crucigrama: la mochila",
@@ -52,6 +56,8 @@ export const ACTIVIDADES: Actividad[] = [
   },
   {
     slug: "crucigrama-2",
+    tituloTentativo: "Nuevas perspectivas",
+    proximamente: true,
     version: 1,
     tipo: "crucigrama",
     titulo: "Mini crucigrama: la noche",
@@ -70,6 +76,8 @@ export const ACTIVIDADES: Actividad[] = [
   },
   {
     slug: "crucigrama-3",
+    tituloTentativo: "Ideas en acción",
+    proximamente: true,
     version: 1,
     tipo: "crucigrama",
     titulo: "Mini crucigrama: la lluvia",
@@ -88,6 +96,8 @@ export const ACTIVIDADES: Actividad[] = [
   },
   {
     slug: "einstein-chico",
+    tituloTentativo: "Decisiones",
+    proximamente: true,
     version: 1,
     tipo: "einstein",
     titulo: "Acertijo: tres en la mesa",
@@ -112,6 +122,8 @@ export const ACTIVIDADES: Actividad[] = [
   },
   {
     slug: "einstein-equipo",
+    tituloTentativo: "Estrategia",
+    proximamente: true,
     version: 1,
     tipo: "einstein",
     titulo: "Acertijo: el equipo de la hackatón",

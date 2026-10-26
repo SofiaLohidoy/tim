@@ -18,6 +18,40 @@ async function como(quien: string): Promise<SupabaseClient> {
   return c;
 }
 const anonimo = () => createClient(URL, PUBLICA, { auth: { persistSession: false } });
+
+describe("perfil de empresa", () => {
+  let empresa: SupabaseClient;
+  let otra: SupabaseClient;
+  beforeAll(async () => {
+    for (const quien of ["empresa-a", "empresa-b"]) {
+      const { error } = await admin.auth.admin.createUser({ email: `prueba-${quien}@tim.test`, password: CLAVE, email_confirm: true });
+      if (error) throw error;
+    }
+    empresa = await como("empresa-a");
+    otra = await como("empresa-b");
+  });
+  it("rechaza altas anónimas y datos fuera de los límites", async () => {
+    expect((await anonimo().rpc("guardar_empresa", { p_nombre: "prueba-X", p_rubro: "Servicios", p_tamano: "1-9" })).error).not.toBeNull();
+    expect((await empresa.rpc("guardar_empresa", { p_nombre: "x", p_rubro: "Servicios", p_tamano: "1-9" })).error?.message).toContain("datos_empresa_invalidos");
+  });
+  it("solo permite leer y actualizar la empresa propia", async () => {
+    for (const [cliente, nombre] of [[empresa, "prueba-Empresa A"], [otra, "prueba-Empresa B"]] as const) {
+      expect((await cliente.rpc("guardar_empresa", { p_nombre: nombre, p_rubro: "Servicios", p_tamano: "10-49" })).error).toBeNull();
+    }
+    expect((await empresa.from("empresas").select("nombre")).data).toEqual([{ nombre: "prueba-Empresa A" }]);
+    const ajena = await idDe("empresa-b");
+    expect((await empresa.from("empresas").update({ nombre: "prueba-Intrusión" }).eq("usuario_id", ajena)).error).not.toBeNull();
+    expect((await otra.from("empresas").select("nombre")).data).toEqual([{ nombre: "prueba-Empresa B" }]);
+  });
+  it("el registro no da permisos de staff ni acceso a estudiantes", async () => {
+    expect((await empresa.rpc("iniciar_registro_empresa")).error).toBeNull();
+    expect((await empresa.from("roles_usuario").select("rol")).data).toEqual([{ rol: "empresa" }]);
+    expect((await empresa.from("estudiantes").select("usuario_id,cv_path")).data).toEqual([]);
+    const estudiante = await idDe("estudiante-1");
+    expect((await empresa.from("perfiles").select("email").eq("id", estudiante)).data).toEqual([]);
+    expect((await empresa.from("roles_usuario").insert({ usuario_id: await idDe("empresa-a"), rol: "organizador" })).error?.code).toBe("42501");
+  });
+});
 const idDe = async (quien: string) =>
   (await admin.from("perfiles").select("id").eq("email", `prueba-${quien}@tim.test`).single()).data!.id as string;
 

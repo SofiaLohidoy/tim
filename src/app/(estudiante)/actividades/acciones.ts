@@ -42,6 +42,7 @@ async function partidaPropia(id: string): Promise<{ db: ReturnType<typeof client
   const db = clienteServicio();
   const { data } = await db.from("partidas").select("*").eq("id", id).eq("usuario_id", u.id).maybeSingle();
   if (!data) throw new Error("partida_inexistente");
+  if (actividad(data.actividad)?.proximamente) throw new Error("Esta actividad estará disponible próximamente.");
   return { db, p: data as unknown as Partida, usuario: u.id };
 }
 
@@ -73,6 +74,7 @@ export async function empezarPartida(slug: string): Promise<{ id?: string; error
   const u = await exigirUsuario();
   const a = actividad(slug);
   if (!a) return { error: "Esa actividad no existe." };
+  if (a.proximamente) return { error: "Esta actividad estará disponible próximamente." };
   const db = clienteServicio();
   const previas = await db.from("partidas").select("id", { count: "exact", head: true }).eq("usuario_id", u.id).eq("actividad", slug);
   // Una partida en curso de esta misma actividad se da por abandonada: se empieza de nuevo.

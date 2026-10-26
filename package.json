@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:rls": "vitest run --config vitest.rls.config.mts",
     "e2e": "playwright test",
-    "verificar": "tsc --noEmit && eslint && vitest run && next build",
+    "verificar": "next typegen && tsc --noEmit && eslint && vitest run && next build",
     "db:tipos": "supabase gen types typescript --linked > src/lib/supabase/tipos.ts",
     "datos:prueba": "node scripts/prueba.mjs crear",
     "datos:limpiar": "node scripts/prueba.mjs limpiar",

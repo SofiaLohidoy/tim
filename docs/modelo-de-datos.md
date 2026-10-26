@@ -84,4 +84,7 @@ La página pública la arma `credencial_publica(token)` (SECURITY DEFINER, la pu
 `marcar_preparadas` y `devoluciones_desactualizadas` (012) comparan "preparada" contra "evaluación cambiada" con el reloj de la base.
 
 ## Lo que todavía no existe
-Según el plan: (fase C); `empresas`, `intereses`, `contactos`, `propuestas_desafio` (fase D); `habilidades_duras` (fase E). Cuando se creen, se suman acá en la misma migración que los crea.
+Según el plan: `intereses`, `contactos`, `propuestas_desafio` (fase D); `habilidades_duras` (fase E). Cuando se creen, se suman acá en la misma migración que los crea. El perfil básico de `empresas` está implementado en desarrollo según la sección siguiente.
+
+## Perfil básico de empresa (desarrollo, migraciones 013–014)
+Tabla empresas: usuario_id, nombre, rubro, tamano, creado_en y actualizado_en. Cada usuario lee solo su empresa. guardar_empresa valida y guarda el perfil propio y asigna exclusivamente el rol empresa; iniciar_registro_empresa recuerda el recorrido antes de completar el perfil. No habilitan lectura de estudiantes ni perfiles ajenos. Las escrituras directas están revocadas. Probado solo en tim-dev; producción pendiente.

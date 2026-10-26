@@ -23,10 +23,10 @@ export type ContenidoEinstein = {
   pistas: { texto: string; regla: Restriccion }[];
 };
 
-export type Actividad =
+export type Actividad = { proximamente?: boolean; tituloTentativo?: string } & (
   | { slug: string; version: number; tipo: "palabra"; titulo: string; descripcion: string; minutos: number; contenido: ContenidoPalabra }
   | { slug: string; version: number; tipo: "crucigrama"; titulo: string; descripcion: string; minutos: number; contenido: ContenidoCrucigrama }
-  | { slug: string; version: number; tipo: "einstein"; titulo: string; descripcion: string; minutos: number; contenido: ContenidoEinstein };
+  | { slug: string; version: number; tipo: "einstein"; titulo: string; descripcion: string; minutos: number; contenido: ContenidoEinstein });
 
 /** Lo que pasa en una partida, con su momento (ms desde el inicio). Es la materia prima de las señales. */
 export type EventoPartida =

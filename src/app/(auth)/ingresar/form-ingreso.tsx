@@ -8,6 +8,8 @@ import { crearCuenta, ingresar, ingresarConGoogle, salir, type EstadoIngreso } f
 type Modo = "crear" | "entrar";
 
 export function FormIngreso(props: {
+  empresa: boolean;
+  modoInicial: Modo;
   siguiente: string;
   desdeQr: boolean;
   errorGoogle: boolean;
@@ -16,7 +18,7 @@ export function FormIngreso(props: {
   invitacion: boolean;
   aviso: "otro_mail" | "inexistente" | null;
 }) {
-  const [modo, setModo] = useState<Modo>("crear");
+  const [modo, setModo] = useState<Modo>(props.modoInicial);
   const [verClave, setVerClave] = useState(false);
   const [estadoCrear, accionCrear, creando] = useActionState<EstadoIngreso, FormData>(crearCuenta, {});
   const [estadoEntrar, accionEntrar, entrando] = useActionState<EstadoIngreso, FormData>(ingresar, {});
@@ -31,14 +33,14 @@ export function FormIngreso(props: {
           : props.desdeQr
             ? "Bienvenido a la hackatón."
             : modo === "crear"
-              ? "Creá tu cuenta."
+              ? props.empresa ? "Creá tu cuenta de empresa." : "Creá tu cuenta."
               : "Qué bueno verte de nuevo."}
       </h1>
       <p className="mt-2 text-primary-foreground/75">
         {props.invitacion
           ? `Entrá o creá tu cuenta con ${props.email || "el mail invitado"}.`
           : modo === "crear"
-            ? "Te lleva menos de un minuto."
+            ? props.empresa ? "Empezá con tu mail. Después completás tu empresa." : "Te lleva menos de un minuto."
             : "Entrá con tu mail y tu contraseña."}
       </p>
       {props.aviso && (

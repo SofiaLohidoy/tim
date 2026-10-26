@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { LogIn } from "lucide-react";
 import { Logo } from "@/components/marca";
 
 export function NavLanding() {
@@ -21,11 +22,10 @@ export function NavLanding() {
           <Logo className="logo" />
         </Link>
         <div className="nav-links">
-          <a href="#como-funciona">Cómo funciona</a>
-          <a href="#empresas">Empresas</a>
-          <a href="#hackaton">Hackatón</a>
-          <a href="#preguntas">Preguntas</a>
-          <Link href="/ingresar" className="nav-entrar" data-cta="nav_ingresar">
+          <Link href="/estudiantes">Estudiantes</Link>
+          <Link href="/empresas">Empresas</Link>
+          <Link href="/ingresar?modo=entrar" className="nav-entrar" data-cta="nav_ingresar">
+            <LogIn className="size-4" aria-hidden="true" />
             Entrar
           </Link>
         </div>
