@@ -196,6 +196,7 @@ export type Database = {
           estudiante_id: string
           evento_id: string
           id: string
+          preparada_en: string
           publicada_en: string | null
         }
         Insert: {
@@ -205,6 +206,7 @@ export type Database = {
           estudiante_id: string
           evento_id: string
           id?: string
+          preparada_en?: string
           publicada_en?: string | null
         }
         Update: {
@@ -214,6 +216,7 @@ export type Database = {
           estudiante_id?: string
           evento_id?: string
           id?: string
+          preparada_en?: string
           publicada_en?: string | null
         }
         Relationships: [
@@ -445,6 +448,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "perfiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evaluaciones_evento_del_equipo"
+            columns: ["equipo_id", "evento_id"]
+            isOneToOne: false
+            referencedRelation: "equipos"
+            referencedColumns: ["id", "evento_id"]
           },
           {
             foreignKeyName: "evaluaciones_evento_id_fkey"

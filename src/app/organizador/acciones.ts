@@ -128,12 +128,12 @@ export async function borrarEquipo(equipoId: string): Promise<Resultado> {
 export async function moverMiembro(eventoId: string, usuarioId: string, equipoId: string | null): Promise<Resultado> {
   await exigirRol("organizador");
   const db = await clienteServidor();
-  const borrar = await db.from("miembros_equipo").delete().eq("evento_id", eventoId).eq("usuario_id", usuarioId);
-  if (borrar.error) return { error: "No pudimos mover a la persona." };
-  if (equipoId) {
-    const { error } = await db.from("miembros_equipo").insert({ equipo_id: equipoId, evento_id: eventoId, usuario_id: usuarioId });
-    if (error) return { error: "No pudimos sumar a la persona al equipo." };
-  }
+  const r = equipoId
+    ? await db
+        .from("miembros_equipo")
+        .upsert({ equipo_id: equipoId, evento_id: eventoId, usuario_id: usuarioId }, { onConflict: "evento_id,usuario_id" })
+    : await db.from("miembros_equipo").delete().eq("evento_id", eventoId).eq("usuario_id", usuarioId);
+  if (r.error) return { error: "No pudimos mover a la persona." };
   refrescar();
   return { ok: true };
 }
@@ -147,8 +147,14 @@ export async function asignarEvaluador(
   await exigirRol("organizador");
   const db = await clienteServidor();
   if (rol === "mentor") {
-    // Un mentor por equipo: el nuevo reemplaza al anterior.
-    await db.from("asignaciones").delete().eq("equipo_id", equipoId).eq("rol", "mentor");
+    // Un mentor por equipo: el nuevo reemplaza al anterior en un solo update (si fallara un
+    // borrar-y-crear, el equipo quedaría sin mentor).
+    const r = await db.from("asignaciones").update({ evaluador_id: usuarioId }).eq("equipo_id", equipoId).eq("rol", "mentor").select("id");
+    if (r.error) return { error: "No pudimos asignar." };
+    if ((r.data ?? []).length > 0) {
+      refrescar();
+      return { ok: true };
+    }
   }
   const { error } = await db.from("asignaciones").insert({ evento_id: eventoId, equipo_id: equipoId, rol, evaluador_id: usuarioId });
   if (error && error.code !== "23505") return { error: "No pudimos asignar." };
@@ -250,6 +256,7 @@ export async function prepararDevoluciones(eventoId: string): Promise<Resultado>
     evento_id: eventoId,
     estudiante_id: m.usuario_id,
     publicada_en: null,
+    preparada_en: new Date().toISOString(),
     contenido: armarDevolucion({
       estudianteId: m.usuario_id,
       equipoId: m.equipo_id,
@@ -269,6 +276,16 @@ export async function prepararDevoluciones(eventoId: string): Promise<Resultado>
 export async function publicarDevoluciones(eventoId: string): Promise<Resultado> {
   await exigirRol("organizador");
   const db = await clienteServidor();
+  // Publicar cierra las evaluaciones para siempre. Antes: tiene que haber devoluciones preparadas
+  // y ninguna evaluación cambiada después de prepararlas (si no, se publicaría una foto vieja).
+  const [prep, ultima] = await Promise.all([
+    db.from("devoluciones").select("preparada_en").eq("evento_id", eventoId).order("preparada_en").limit(1).maybeSingle(),
+    db.from("evaluaciones").select("actualizado_en").eq("evento_id", eventoId).order("actualizado_en", { ascending: false }).limit(1).maybeSingle(),
+  ]);
+  if (!prep.data) return { error: "Primero prepará las devoluciones." };
+  if (ultima.data && ultima.data.actualizado_en > prep.data.preparada_en) {
+    return { error: "Hay evaluaciones nuevas o corregidas desde que preparaste. Volvé a preparar y revisá antes de publicar." };
+  }
   const ahora = new Date().toISOString();
   const pub = await db.from("devoluciones").update({ publicada_en: ahora }).eq("evento_id", eventoId).is("publicada_en", null).select("id");
   if (pub.error) return { error: "No pudimos publicar." };

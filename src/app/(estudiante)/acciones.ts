@@ -52,6 +52,7 @@ export async function guardarCv(ruta: string | null) {
 
 export async function responderEncuesta(eventoId: string, respuestas: Record<string, string>) {
   const u = await exigirUsuario();
+  if (!z.uuid().safeParse(eventoId).success) return { error: "Evento inválido." };
   const v = z
     .object({
       sirvio: z.enum(["si", "mas_o_menos", "no"]),
@@ -61,6 +62,9 @@ export async function responderEncuesta(eventoId: string, respuestas: Record<str
     .safeParse(respuestas);
   if (!v.success) return { error: "Respondé las tres preguntas." };
   const db = await clienteServidor();
+  // Solo responde quien ya ve su devolución publicada de ese evento (la RLS la oculta si no).
+  const dev = await db.from("devoluciones").select("id").eq("evento_id", eventoId).eq("estudiante_id", u.id).maybeSingle();
+  if (!dev.data) return { error: "Tu devolución todavía no está publicada." };
   const { error } = await db
     .from("respuestas_encuesta")
     .insert({ usuario_id: u.id, encuesta: "post_devolucion", evento_id: eventoId, respuestas: v.data });

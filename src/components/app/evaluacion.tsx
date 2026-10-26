@@ -8,7 +8,14 @@ import { cn } from "@/lib/utils";
 import { guardarEvaluacion, type DatosEvaluacion } from "@/app/(staff)/acciones";
 
 type Respuestas = Record<string, { nivel?: string | null; obs?: string }>;
-type Local = { respuestas: Respuestas; comentario: string; tocado: number; sincronizado: boolean };
+type Local = {
+  respuestas: Respuestas;
+  comentario: string;
+  tocado: number;
+  sincronizado: boolean;
+  /** El mentor tocó Enviar sin señal: al volver la conexión se envía solo, no queda en borrador. */
+  enviarPendiente?: boolean;
+};
 type Sync = "guardado" | "guardando" | "pendiente" | "error";
 
 const ahora = () => Date.now();
@@ -48,6 +55,13 @@ export function Evaluacion(p: PropsEvaluacion) {
   const [enviando, empezar] = useTransition();
   const temporizador = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ultimo = useRef<{ respuestas: Respuestas; comentario: string }>({ respuestas, comentario });
+  // Los guardados van en fila, uno por vez: así un autoguardado viejo nunca termina después de
+  // uno nuevo (o del envío) y lo pisa.
+  const cola = useRef<Promise<unknown>>(Promise.resolve());
+  // Cada cambio sube la versión. Un guardado solo marca "sincronizado" si al volver la versión es
+  // la misma con la que salió: si hubo cambios mientras viajaba, siguen pendientes.
+  const version = useRef(0);
+  const enviarPendiente = useRef(false);
 
   const escribirLocal = useCallback(
     (l: Local) => {
@@ -60,8 +74,9 @@ export function Evaluacion(p: PropsEvaluacion) {
     [clave],
   );
 
-  const subir = useCallback(
+  const subirAhora = useCallback(
     async (enviar: boolean) => {
+      const salio = version.current;
       const datos: DatosEvaluacion = {
         equipoId: p.equipoId,
         rol: p.rol,
@@ -79,11 +94,17 @@ export function Evaluacion(p: PropsEvaluacion) {
           return r.error;
         }
         setEstado(r.estado);
-        setSync("guardado");
-        escribirLocal({ ...ultimo.current, tocado: ahora(), sincronizado: true });
+        if (enviar) enviarPendiente.current = false;
+        if (version.current === salio) {
+          setSync("guardado");
+          escribirLocal({ ...ultimo.current, tocado: ahora(), sincronizado: true });
+        }
         return null;
       } catch {
-        // Sin conexión: el fetch de la Server Action falla. Queda pendiente.
+        // Sin conexión: el fetch de la Server Action falla. Queda pendiente, y si era un envío,
+        // queda anotado para enviarse solo cuando vuelva la señal.
+        if (enviar) enviarPendiente.current = true;
+        escribirLocal({ ...ultimo.current, tocado: ahora(), sincronizado: false, enviarPendiente: enviarPendiente.current });
         setSync("pendiente");
         return "sin_conexion";
       }
@@ -91,30 +112,41 @@ export function Evaluacion(p: PropsEvaluacion) {
     [p.equipoId, p.rol, p.estudianteId, p.diferidaPara, escribirLocal],
   );
 
-  // Al abrir: si en el dispositivo quedó algo sin sincronizar más nuevo que lo de la base, gana eso.
+  const subir = useCallback(
+    (enviar: boolean): Promise<string | null> => {
+      const turno = cola.current.then(() => subirAhora(enviar));
+      cola.current = turno.catch(() => null);
+      return turno;
+    },
+    [subirAhora],
+  );
+
+  // Al abrir: si en el dispositivo quedó algo sin sincronizar, gana eso. No se comparan relojes:
+  // el del celular puede estar atrasado respecto del servidor.
   useEffect(() => {
     try {
       const guardado = localStorage.getItem(clave);
       if (!guardado) return;
       const l = JSON.parse(guardado) as Local;
-      if (!l.sincronizado && l.tocado > p.inicial.actualizado) {
+      if (!l.sincronizado) {
         // Sincroniza desde un sistema externo (el almacenamiento del celular): es el uso legítimo
         // de un efecto. Leerlo en el render rompería la hidratación (el servidor no lo tiene).
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setRespuestas(l.respuestas);
         setComentario(l.comentario);
         ultimo.current = { respuestas: l.respuestas, comentario: l.comentario };
+        enviarPendiente.current = Boolean(l.enviarPendiente);
         setSync("pendiente");
-        void subir(false);
+        void subir(enviarPendiente.current);
       }
     } catch {
       // localStorage no disponible.
     }
-  }, [clave, p.inicial.actualizado, subir]);
+  }, [clave, subir]);
 
   useEffect(() => {
     const alVolver = () => {
-      if (sync === "pendiente" || sync === "error") void subir(false);
+      if (sync === "pendiente" || sync === "error") void subir(enviarPendiente.current);
     };
     window.addEventListener("online", alVolver);
     const reintento = setInterval(alVolver, 20_000);
@@ -128,10 +160,11 @@ export function Evaluacion(p: PropsEvaluacion) {
     setRespuestas(r);
     setComentario(c);
     ultimo.current = { respuestas: r, comentario: c };
-    escribirLocal({ respuestas: r, comentario: c, tocado: ahora(), sincronizado: false });
+    version.current += 1;
+    escribirLocal({ respuestas: r, comentario: c, tocado: ahora(), sincronizado: false, enviarPendiente: enviarPendiente.current });
     setSync("pendiente");
     if (temporizador.current) clearTimeout(temporizador.current);
-    temporizador.current = setTimeout(() => void subir(false), 900);
+    temporizador.current = setTimeout(() => void subir(enviarPendiente.current), 900);
   };
 
   const elegir = (dim: string, nivel: string) => {
@@ -148,7 +181,7 @@ export function Evaluacion(p: PropsEvaluacion) {
       if (temporizador.current) clearTimeout(temporizador.current);
       const e = await subir(true);
       if (e === "sin_conexion") {
-        setErrorEnvio("Sin conexión. Quedó guardado en tu celular; enviá de nuevo cuando vuelva la señal.");
+        setErrorEnvio("Sin conexión. Quedó guardado en tu celular y se envía solo cuando vuelva la señal.");
         return;
       }
       if (e) return setErrorEnvio(e);

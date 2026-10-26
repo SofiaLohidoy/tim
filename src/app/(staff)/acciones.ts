@@ -74,7 +74,8 @@ export async function guardarEvaluacion(datos: DatosEvaluacion): Promise<Resulta
   const existente = await consulta.maybeSingle();
 
   // Una vez enviada, sigue enviada aunque se corrija (hasta que se publiquen las devoluciones).
-  const estado = d.enviar || existente.data?.estado === "enviada" ? "enviada" : "borrador";
+  // El autoguardado nunca toca `estado` en un update: si llegara tarde, no puede bajar a borrador
+  // una evaluación que ya se envió.
   const fila = {
     evento_id: equipo.evento_id,
     equipo_id: d.equipoId,
@@ -85,14 +86,19 @@ export async function guardarEvaluacion(datos: DatosEvaluacion): Promise<Resulta
     estudiante_id: d.estudianteId,
     respuestas,
     comentario: d.comentario?.trim() || null,
-    estado,
     ...(diferida ? { carga: "diferida", cargada_por: u.id } : {}),
-    ...(d.enviar ? { enviada_en: new Date().toISOString() } : {}),
+    ...(d.enviar ? { estado: "enviada", enviada_en: new Date().toISOString() } : {}),
   };
 
-  const r = existente.data
-    ? await db.from("evaluaciones").update(fila).eq("id", existente.data.id)
-    : await db.from("evaluaciones").insert(fila);
+  let r = existente.data
+    ? await db.from("evaluaciones").update(fila).eq("id", existente.data.id).select("estado").single()
+    : await db.from("evaluaciones").insert(fila).select("estado").single();
+  // Dos dispositivos del mismo evaluador pueden crear la fila a la vez: el segundo choca con la
+  // unique y pasa a actualizar.
+  if (r.error?.code === "23505") {
+    const otra = await consulta.maybeSingle();
+    if (otra.data) r = await db.from("evaluaciones").update(fila).eq("id", otra.data.id).select("estado").single();
+  }
   if (r.error) {
     console.error("[evaluacion]", r.error.code, r.error.message);
     return {
@@ -104,5 +110,5 @@ export async function guardarEvaluacion(datos: DatosEvaluacion): Promise<Resulta
     };
   }
   if (d.enviar) revalidatePath(d.rol === "mentor" ? "/mentor" : "/jurado", "layout");
-  return { ok: true, estado };
+  return { ok: true, estado: r.data.estado as "borrador" | "enviada" };
 }

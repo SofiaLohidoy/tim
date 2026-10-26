@@ -5,11 +5,29 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { prepararDevoluciones, publicarDevoluciones } from "../acciones";
 
-export function BotonesDevoluciones({ eventoId, preparadas, publicadas }: { eventoId: string; preparadas: number; publicadas: boolean }) {
+export function BotonesDevoluciones(props: {
+  eventoId: string;
+  preparadas: number;
+  publicadas: boolean;
+  borradores: number;
+  desactualizada: boolean;
+}) {
+  const { eventoId, preparadas, publicadas, borradores, desactualizada } = props;
   const [ocupado, empezar] = useTransition();
   const [confirmar, setConfirmar] = useState(false);
   if (publicadas) return <p className="font-semibold text-primary">Publicadas. Los estudiantes ya las ven.</p>;
   return (
+    <div className="grid gap-3">
+      {borradores > 0 && (
+        <p className="rounded-2xl bg-destructive/10 px-4 py-2.5 text-sm text-destructive">
+          {borradores} {borradores === 1 ? "evaluación sigue" : "evaluaciones siguen"} en borrador: no entran en la devolución. Pediles a esos evaluadores que toquen Enviar.
+        </p>
+      )}
+      {desactualizada && (
+        <p className="rounded-2xl bg-lila-claro px-4 py-2.5 text-sm text-verde-oscuro">
+          Hubo cambios en evaluaciones después de preparar. Volvé a preparar antes de publicar.
+        </p>
+      )}
     <div className="flex flex-wrap items-center gap-2">
       <Button
         variant={preparadas ? "secondary" : "default"}
@@ -48,10 +66,11 @@ export function BotonesDevoluciones({ eventoId, preparadas, publicadas }: { even
             </Button>
           </span>
         ) : (
-          <Button disabled={ocupado} className="h-11 rounded-xl px-5" onClick={() => setConfirmar(true)}>
+          <Button disabled={ocupado || desactualizada} className="h-11 rounded-xl px-5" onClick={() => setConfirmar(true)}>
             Publicar a los estudiantes
           </Button>
         ))}
+    </div>
     </div>
   );
 }

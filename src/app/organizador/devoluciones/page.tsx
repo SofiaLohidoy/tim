@@ -26,9 +26,12 @@ async function Contenido() {
   if (!evento) return <Vacio>Primero creá el evento.</Vacio>;
   const [e, devs] = await Promise.all([
     estadoDelEvento(db, evento.id),
-    db.from("devoluciones").select("estudiante_id, contenido, publicada_en, abierta_en").eq("evento_id", evento.id),
+    db.from("devoluciones").select("estudiante_id, contenido, publicada_en, abierta_en, preparada_en").eq("evento_id", evento.id),
   ]);
   const c = completitud(e);
+  const borradores = e.evaluaciones.filter((x) => x.estado === "borrador").length;
+  const preparadaEn = (devs.data ?? []).reduce<string | null>((m, d) => (!m || d.preparada_en < m ? d.preparada_en : m), null);
+  const desactualizada = Boolean(preparadaEn && e.evaluaciones.some((x) => x.actualizado_en > preparadaEn));
   const lista = (devs.data ?? []).sort((a, b) =>
     (e.persona.get(a.estudiante_id)?.nombre ?? "").localeCompare(e.persona.get(b.estudiante_id)?.nombre ?? "", "es"),
   );
@@ -41,7 +44,13 @@ async function Contenido() {
           titulo="1. Preparar, revisar, publicar"
           descripcion={`Entran solo las evaluaciones enviadas: ${c.enviadas} de ${c.esperadas}. Nada llega a los estudiantes hasta que publicás.`}
         >
-          <BotonesDevoluciones eventoId={evento.id} preparadas={lista.length} publicadas={Boolean(evento.devoluciones_publicadas_en)} />
+          <BotonesDevoluciones
+            eventoId={evento.id}
+            preparadas={lista.length}
+            publicadas={Boolean(evento.devoluciones_publicadas_en)}
+            borradores={borradores}
+            desactualizada={desactualizada}
+          />
           {c.enviadas < c.esperadas && !evento.devoluciones_publicadas_en && (
             <p className="mt-3 text-sm text-muted-foreground">
               ¿Alguien evaluó en papel? Cargalo en{" "}

@@ -82,6 +82,15 @@ export function destinoTrasIngreso(u: Usuario, siguiente: string | null): string
 
 /** Solo acepta rutas internas como destino (evita open redirect por ?siguiente=). */
 export function destinoSeguro(siguiente: string | null | undefined): string | null {
-  if (!siguiente || !siguiente.startsWith("/") || siguiente.startsWith("//")) return null;
-  return siguiente;
+  if (!siguiente || !siguiente.startsWith("/")) return null;
+  // `/\otro.com` o `/\t/otro.com` pasan un chequeo de "empieza con /" y el navegador los resuelve
+  // como otro dominio. Se rechaza todo lo que, resuelto, no quede en el mismo origen.
+  if (/[\\\u0000-\u001f]/.test(siguiente)) return null;
+  try {
+    const url = new URL(siguiente, "http://tim.local");
+    if (url.origin !== "http://tim.local") return null;
+    return url.pathname + url.search;
+  } catch {
+    return null;
+  }
 }

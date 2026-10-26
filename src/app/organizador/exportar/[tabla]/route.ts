@@ -5,6 +5,17 @@ import { aCsv } from "@/lib/csv";
 import { nombreDe } from "@/lib/eventos";
 
 // Exportes para la tesis. Lee con el cliente del organizador: la RLS decide qué ve.
+/** Trae todas las filas de a 1000 (el tope de PostgREST): un export truncado falsearía la tesis. */
+async function todas<T>(pagina: (desde: number, hasta: number) => PromiseLike<{ data: T[] | null; error: unknown }>): Promise<T[]> {
+  const filas: T[] = [];
+  for (let desde = 0; ; desde += 1000) {
+    const { data, error } = await pagina(desde, desde + 999);
+    if (error) throw error;
+    filas.push(...(data ?? []));
+    if (!data || data.length < 1000) return filas;
+  }
+}
+
 const TABLAS = ["interesados", "eventos_landing", "estudiantes", "evaluaciones", "devoluciones"] as const;
 type Tabla = (typeof TABLAS)[number];
 
@@ -18,10 +29,10 @@ export async function GET(_req: Request, ctx: RouteContext<"/organizador/exporta
   let csv = "";
 
   if (tabla === "interesados") {
-    const { data } = await db.from("interesados").select("*").order("creado_en");
+    const data = await todas((a, b) => db.from("interesados").select("*").order("creado_en").range(a, b));
     csv = aCsv(
       ["fecha", "audiencia", "email", "datos", "variante", "origen", "utm_source", "utm_campaign", "visitante"],
-      (data ?? []).map((r) => {
+      data.map((r) => {
         const o = (r.origen ?? {}) as Record<string, string>;
         return [r.creado_en, r.audiencia, r.email, JSON.stringify(r.datos), r.variante, o.origen ?? o.referrer, o.utm_source, o.utm_campaign, r.visitante_id];
       }),
@@ -29,19 +40,19 @@ export async function GET(_req: Request, ctx: RouteContext<"/organizador/exporta
   }
 
   if (tabla === "eventos_landing") {
-    const { data } = await db.from("eventos_landing").select("*").order("creado_en").limit(100_000);
+    const data = await todas((a, b) => db.from("eventos_landing").select("*").order("id").range(a, b));
     csv = aCsv(
       ["fecha", "visitante", "tipo", "detalle", "variante", "origen"],
-      (data ?? []).map((r) => [r.creado_en, r.visitante_id, r.tipo, r.detalle, r.variante, JSON.stringify(r.origen)]),
+      data.map((r) => [r.creado_en, r.visitante_id, r.tipo, r.detalle, r.variante, JSON.stringify(r.origen)]),
     );
   }
 
   if (tabla === "estudiantes") {
     const [est, per, asis, miem, eq] = await Promise.all([
-      db.from("estudiantes").select("*"),
-      db.from("perfiles").select("id, email, nombre, apellido"),
-      db.from("asistencias").select("usuario_id, evento_id, metodo, creado_en"),
-      db.from("miembros_equipo").select("usuario_id, equipo_id"),
+      todas((a, b) => db.from("estudiantes").select("*").order("usuario_id").range(a, b)).then((data) => ({ data })),
+      todas((a, b) => db.from("perfiles").select("id, email, nombre, apellido").order("id").range(a, b)).then((data) => ({ data })),
+      todas((a, b) => db.from("asistencias").select("usuario_id, evento_id, metodo, creado_en").order("id").range(a, b)).then((data) => ({ data })),
+      todas((a, b) => db.from("miembros_equipo").select("usuario_id, equipo_id").order("usuario_id").range(a, b)).then((data) => ({ data })),
       db.from("equipos").select("id, nombre"),
     ]);
     const p = new Map((per.data ?? []).map((x) => [x.id, x]));
@@ -61,10 +72,10 @@ export async function GET(_req: Request, ctx: RouteContext<"/organizador/exporta
 
   if (tabla === "evaluaciones") {
     const [ev, dims, niv, per, eq] = await Promise.all([
-      db.from("evaluaciones").select("*"),
+      todas((a, b) => db.from("evaluaciones").select("*").order("id").range(a, b)).then((data) => ({ data })),
       db.from("dimensiones").select("id, nombre"),
       db.from("niveles").select("id, nombre, orden"),
-      db.from("perfiles").select("id, email, nombre, apellido"),
+      todas((a, b) => db.from("perfiles").select("id, email, nombre, apellido").order("id").range(a, b)).then((data) => ({ data })),
       db.from("equipos").select("id, nombre"),
     ]);
     const dim = new Map((dims.data ?? []).map((d) => [d.id, d.nombre]));
@@ -87,9 +98,9 @@ export async function GET(_req: Request, ctx: RouteContext<"/organizador/exporta
 
   if (tabla === "devoluciones") {
     const [dev, enc, per] = await Promise.all([
-      db.from("devoluciones").select("estudiante_id, evento_id, publicada_en, abierta_en"),
-      db.from("respuestas_encuesta").select("usuario_id, evento_id, respuestas, creado_en"),
-      db.from("perfiles").select("id, email"),
+      todas((a, b) => db.from("devoluciones").select("estudiante_id, evento_id, publicada_en, abierta_en").order("id").range(a, b)).then((data) => ({ data })),
+      todas((a, b) => db.from("respuestas_encuesta").select("usuario_id, evento_id, respuestas, creado_en").order("id").range(a, b)).then((data) => ({ data })),
+      todas((a, b) => db.from("perfiles").select("id, email").order("id").range(a, b)).then((data) => ({ data })),
     ]);
     const mail = new Map((per.data ?? []).map((x) => [x.id, x.email]));
     csv = aCsv(

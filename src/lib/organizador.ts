@@ -15,7 +15,7 @@ export async function estadoDelEvento(db: Db, eventoId: string) {
       db.from("miembros_equipo").select("equipo_id, usuario_id").eq("evento_id", eventoId),
       db.from("asignaciones").select("id, equipo_id, evaluador_id, rol").eq("evento_id", eventoId),
       db.from("asistencias").select("usuario_id, metodo, creado_en").eq("evento_id", eventoId),
-      db.from("evaluaciones").select("id, equipo_id, evaluador_id, rol_evaluador, objetivo, estudiante_id, estado, carga").eq("evento_id", eventoId),
+      db.from("evaluaciones").select("id, equipo_id, evaluador_id, rol_evaluador, objetivo, estudiante_id, estado, carga, actualizado_en").eq("evento_id", eventoId),
       db.from("estudiantes").select("usuario_id, universidad, carrera, onboarding_completo_en, cv_path"),
       db.from("roles_usuario").select("id, usuario_id, rol, evento_id"),
       db.from("invitaciones").select("id, email, nombre, rol, evento_id, equipo_id, usada_en, creado_en, token").order("creado_en", { ascending: false }),

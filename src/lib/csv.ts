@@ -5,7 +5,9 @@ type Valor = string | number | boolean | null | undefined | Date;
 
 function celda(v: Valor): string {
   if (v === null || v === undefined) return "";
-  const s = v instanceof Date ? v.toISOString() : String(v);
+  let s = v instanceof Date ? v.toISOString() : String(v);
+  // Un texto que escribe un estudiante y empieza con = + - @ se ejecutaría como fórmula en Excel.
+  if (typeof v === "string" && /^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   return /[";\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 

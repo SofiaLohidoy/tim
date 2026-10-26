@@ -26,7 +26,7 @@ let equipo1: string;
 let equipo2: string;
 
 beforeAll(async () => {
-  execSync("node scripts/prueba.mjs limpiar && node scripts/prueba.mjs crear --estudiantes 4 --equipos 2", { stdio: "ignore" });
+  execSync("node scripts/prueba.mjs limpiar && node scripts/prueba.mjs crear --estudiantes 4 --equipos 2", { stdio: "inherit" });
   const { data: eqs } = await admin.from("equipos").select("id, nombre, evento_id").like("nombre", "prueba-Equipo %").order("nombre");
   equipo1 = eqs![0].id;
   equipo2 = eqs![1].id;

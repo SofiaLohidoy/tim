@@ -5,13 +5,17 @@ import type { Database } from "@/lib/supabase/tipos";
 type Db = SupabaseClient<Database>;
 export type Evento = Database["public"]["Tables"]["eventos"]["Row"];
 
-/** El evento en curso o el próximo; si todos están cerrados, el último (para ver la devolución). */
+/**
+ * El evento abierto más reciente (en curso primero); si todos están cerrados, el último (para ver
+ * la devolución). Uno viejo que quedó abierto por error no le gana al del día.
+ */
 export async function eventoActual(db: Db): Promise<Evento | null> {
   const abierto = await db
     .from("eventos")
     .select("*")
     .neq("estado", "cerrado")
-    .order("fecha", { ascending: true })
+    .order("estado", { ascending: true })
+    .order("fecha", { ascending: false })
     .limit(1)
     .maybeSingle();
   if (abierto.data) return abierto.data;
