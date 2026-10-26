@@ -18,7 +18,7 @@ SUPABASE_ACCESS_TOKEN=sbp_... SUPABASE_DB_PASSWORD=... node scripts/conectar-pro
 - Aplica las migraciones, apaga la confirmación de mail, pone las URLs del sitio y **sube los límites de tasa de Auth**. Ese último punto no es opcional: el registro corre en el servidor (todas las personas comparten la IP de Vercel) y en la hackatón todos salen por el mismo wifi. Con los 30 registros cada 5 minutos que trae Supabase de fábrica, 40 personas se traban en la puerta.
 - Carga las claves en Vercel, redeploya y espera `READY`.
 - Imprime el link de invitación de cada organizadora.
-- Después, probar la carga en prod: `ENV_ARCHIVO=.env.prod node scripts/carga-registro.mjs 45` (45 altas e ingresos simultáneos) y borrar con `ENV_ARCHIVO=.env.prod pnpm datos:limpiar`.
+- Después, probar la carga en prod: `ENV_ARCHIVO=<ruta fuera del repo>/.env.prod node scripts/carga-registro.mjs 45` (45 altas e ingresos en ~30 s) y borrar con `ENV_ARCHIVO=... pnpm datos:limpiar`. Supabase deja un **pico fijo de 30 pedidos juntos por IP** que no se puede subir: 45 en el mismo segundo se traban, repartidos pasan. Verificado el 26/10/2026 en `tim-prod`: 45 de 45.
 
 Los pasos de abajo explican lo mismo a mano.
 
