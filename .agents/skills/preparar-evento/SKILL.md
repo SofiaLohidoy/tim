@@ -5,7 +5,7 @@ description: Para dejar lista una hackatón u otro evento presencial de TIM. Se 
 
 # Preparar un evento
 
-Todo se hace desde `/organizador` con una cuenta de organizador. Claude lo puede hacer por la persona en el navegador del panel, o guiarla pantalla por pantalla. Nada de SQL a mano salvo el primer organizador (`docs/puesta-en-marcha.md`, paso 7).
+Todo se hace desde `/organizador` con una cuenta de organizador. El agente lo puede hacer por la persona en el navegador, o guiarla pantalla por pantalla. Nada de SQL a mano salvo el primer organizador (`docs/puesta-en-marcha.md`, paso 7).
 
 Fechas de la primera hackatón: datos de Sofía antes del mié 28/10, todo listo el jue 29/10, ensayo el vie 30/10, evento el sáb 31/10. 40 participantes, 8 equipos de 5, un mentor por equipo, unos 4 jurados.
 

@@ -1,6 +1,6 @@
 ---
 name: grow
-description: Para que Claude aprenda a hacer algo nuevo en TIM. Se dispara con "convertí esto en skill", "guardá cómo hicimos esto", "quiero que la próxima vez lo hagas igual", "esto lo hacemos siempre", "necesito un agente para X", "enseñale a Claude a...", o cuando Claude nota que repitió el mismo proceso 2 o más veces en la sesión.
+description: Para que el agente aprenda a hacer algo nuevo en TIM. Se dispara con "convertí esto en skill", "guardá cómo hicimos esto", "quiero que la próxima vez lo hagas igual", "esto lo hacemos siempre", "necesito un agente para X", "enseñale a Claude a...", o cuando Claude nota que repitió el mismo proceso 2 o más veces en la sesión.
 user-invocable: true
 allowed-tools:
   - Read
@@ -21,18 +21,18 @@ El harness de TIM crece con el uso. Esta skill crea skills y agentes nuevos con 
 
 ## Principio: buscar antes de crear
 Nunca crear algo sin verificar que no existe.
-1. `.claude/skills/`: ¿hay una skill parecida? Si existe, **se amplía, no se duplica**.
+1. `.agents/skills/`: ¿hay una skill parecida? Si existe, **se amplía, no se duplica**.
 2. `.claude/rules/`: ¿es una regla y no un procedimiento? Una regla va a `rules/`, no a una skill.
-3. `CLAUDE.md`, tabla de ruteo: ¿ya hay un camino para esto?
+3. `AGENTS.md`, tabla de ruteo: ¿ya hay un camino para esto?
 
 ```bash
-ls .claude/skills/ .claude/rules/ .claude/agents/
-grep -ril "palabra clave" .claude/ CLAUDE.md docs/
+ls .agents/skills/ .claude/rules/ .claude/agents/
+grep -ril "palabra clave" .agents/ .claude/ AGENTS.md docs/
 ```
 
 ## Skill, agente o regla
 - **Regla** (`.claude/rules/*.md`): algo que siempre vale ("los botones llevan verbo"). Corta.
-- **Skill** (`.claude/skills/<nombre>/SKILL.md`): un procedimiento con pasos, que se dispara por un pedido ("preparar un evento").
+- **Skill** (`.agents/skills/<nombre>/SKILL.md`): un procedimiento con pasos, que se dispara por un pedido ("preparar un evento").
 - **Agente** (`.claude/agents/<nombre>.md`): un especialista que trabaja muchos turnos con herramientas restringidas y devuelve un resultado (revisar código, depurar). Raro: casi siempre alcanza una skill.
 
 ## Cómo se escribe una skill
@@ -52,13 +52,13 @@ grep -ril "palabra clave" .claude/ CLAUDE.md docs/
 1. Entender qué se quiere: disparador, pasos, qué se entrega.
 2. Buscar lo existente (arriba).
 3. Escribir el archivo.
-4. Sumarlo a la tabla de ruteo de `CLAUDE.md` ("Te piden X → leé Y").
+4. Sumarlo a la tabla de ruteo de `AGENTS.md` ("Te piden X → leé Y").
 5. Registrar en el log:
    ```bash
    mkdir -p .claude/logs
    echo "[$(date +%Y-%m-%d)] <nombre> | skill/agente/regla | disparador: \"...\"" >> .claude/logs/skills-creadas.md
    ```
-6. Contarle a la persona, en una línea, qué aprendió Claude y con qué frase se dispara.
+6. Contarle a la persona, en una línea, qué aprendió el agente y con qué frase se dispara.
 
 ## Cuándo proponerlo sin que lo pidan
 Si en la sesión se repitió el mismo proceso 2 o más veces, al final de la respuesta, en una línea:

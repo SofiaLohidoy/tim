@@ -36,4 +36,4 @@ En la hackatón todo pasa en el celular. Se diseña a 375 px y después se agran
 - Lo que se ve cien veces por día no se anima.
 
 ## Antes de dar una pantalla por terminada
-Mirarla en el navegador del panel a **375 px y 1280 px**, con datos realistas (`prueba-`), y recorrer el flujo de punta a punta. Contraste AA.
+Mirarla a **375 px y 1280 px**, con datos realistas (`prueba-`), y recorrer el flujo de punta a punta. Contraste AA.

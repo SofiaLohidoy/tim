@@ -24,5 +24,5 @@ Lo ejecuta Claude. Lo único que hace Sofía es crear sus cuentas y aceptar las 
 9. [ ] Actualizar este archivo con la fecha y la URL nueva, y la línea de `tim` en `~/Projects/CLAUDE.md`.
 
 ## Después
-- El equipo sigue trabajando con su propio Claude sobre el repo. El harness (`CLAUDE.md`, `.claude/`) viaja con el repo.
+- El equipo sigue trabajando con su propio agente (Sofía usa Codex) sobre el repo. El harness (`AGENTS.md`, `.agents/skills/`, `.claude/rules/`) viaja con el repo.
 - Si Sofía quiere dominio y mails propios: dominio + Resend + prender confirmación de mail (revisar `docs/decisiones/002-login.md`).

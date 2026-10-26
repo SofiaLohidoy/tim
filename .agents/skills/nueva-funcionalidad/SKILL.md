@@ -5,7 +5,7 @@ description: Para agregar algo nuevo a TIM de punta a punta (pantalla + datos + 
 
 # Nueva funcionalidad
 
-Orden fijo: spec corta → migración → UI → tests → verificar → deploy. No se saltea ningún paso. La persona no corre nada: todo lo hace Claude.
+Orden fijo: spec corta → migración → UI → tests → verificar → deploy. No se saltea ningún paso. La persona no corre nada: todo lo hace el agente.
 
 ## 1. Spec corta (antes de tocar código)
 Escribila en el chat, en 5 a 10 líneas:
@@ -13,7 +13,7 @@ Escribila en el chat, en 5 a 10 líneas:
 - **En qué fase** del roadmap cae (`docs/roadmap.md`). Si es de una fase futura y la hackatón todavía no pasó, decilo: se recorta todo lo que no se usa el sábado.
 - **Qué ve y qué toca** cada rol. Quién **no** tiene que ver esto.
 - **Datos**: qué tabla o columna nueva, con términos de `CONTEXT.md`.
-- **Chequeos contra las reglas duras** de `CLAUDE.md`: ¿toca anonimato, señales, monetización, desafíos como trabajo gratis? Si sí, frená y preguntá.
+- **Chequeos contra las reglas duras** de `AGENTS.md`: ¿toca anonimato, señales, monetización, desafíos como trabajo gratis? Si sí, frená y preguntá.
 
 Si falta una regla de negocio que queda en los datos (qué se mide, cómo se evalúa), preguntala una vez, con tu recomendación. Lo demás, decidilo y anotalo en una línea.
 

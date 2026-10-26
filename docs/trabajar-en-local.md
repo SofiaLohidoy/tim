@@ -4,7 +4,7 @@
 
 Todo lo que hace falta está en el repo: las migraciones y la configuración que levanta Supabase con el CLI. Necesitás Docker andando.
 
-Esto lo corre Claude, no la persona del equipo.
+Esto lo corre el agente, no la persona del equipo.
 
 ## Levantar todo
 

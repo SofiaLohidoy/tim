@@ -5,7 +5,7 @@ description: Para sacar los números de TIM para la tesis o para una reunión. S
 
 # Reporte para la tesis
 
-Dos fuentes: el export CSV desde `/organizador` (lo que Sofía puede bajar sola) y consultas de lectura que hace Claude. Siempre sobre `tim-prod`, **excluyendo todo lo `prueba-`**. Nunca se presentan datos de prueba como reales.
+Dos fuentes: el export CSV desde `/organizador` (lo que Sofía puede bajar sola) y consultas de lectura que hace el agente. Siempre sobre `tim-prod`, **excluyendo todo lo `prueba-`**. Nunca se presentan datos de prueba como reales.
 
 ## 1. Interés (landing)
 Desde `interesados` y `eventos_landing`. La función `resumen_landing(desde)` ya devuelve casi todo agregado (es lo que usa el panel del organizador):

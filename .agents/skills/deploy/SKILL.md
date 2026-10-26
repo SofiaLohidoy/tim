@@ -5,7 +5,7 @@ description: Para publicar TIM en producción. Se dispara con "subilo", "publica
 
 # Deploy
 
-Publicar = push a `main`. Vercel deploya solo por la integración con GitHub. Lo hace Claude, nunca la persona. En este proyecto se pushea directo a `main`.
+Publicar = push a `main`. Vercel deploya solo por la integración con GitHub. Lo hace el agente, nunca la persona. En este proyecto se pushea directo a `main`.
 
 ## Antes
 1. Skill `verificar` completa y en verde.
@@ -31,7 +31,7 @@ vercel inspect <url-del-deploy> --wait --timeout 5m   # espera hasta READY o ERR
 - `ERROR`: `vercel inspect <url> --logs`, encontrar la causa, arreglar, verificar, pushear de nuevo. No reportar nada como publicado.
 
 ## Recorrer en la URL live
-En el navegador del panel, sobre la URL de producción:
+Sobre la URL de producción (navegador, o `pnpm capturas` con `CAPTURAS_URL`):
 - El flujo que cambió, de punta a punta, a 375 px.
 - La landing carga y registra un evento (si se tocó la landing).
 - Con datos `prueba-`, que se borran al terminar (`pnpm datos:limpiar` contra prod).

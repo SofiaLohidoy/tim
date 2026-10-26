@@ -1,6 +1,6 @@
 # Puesta en marcha
 
-Cómo se crean los entornos remotos de TIM desde cero. Lo hace Claude con el CLI y el navegador del panel. La única parte humana es la de las cuentas: Sofía crea su cuenta de Supabase e invita a joaquinberardi@programon.co como owner.
+Cómo se crean los entornos remotos de TIM desde cero. Lo hace el agente con el CLI. La única parte humana es la de las cuentas: Sofía crea su cuenta de Supabase e invita a joaquinberardi@programon.co como owner.
 
 Hay dos entornos remotos:
 - **`tim-dev`**: para probar migraciones y flujos antes de prod. Playwright corre contra este.

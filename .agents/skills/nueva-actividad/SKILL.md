@@ -30,7 +30,7 @@ Por cada señal (ej. persistencia: reintenta después de un error; uso de inform
 2. Implementá el cálculo como función pura (sin base, sin red), fácil de testear.
 3. Test en Vitest con partidas de ejemplo: una que la muestra, una que no, un borde.
 
-Una señal es una hipótesis. En la UI se llama **señal**, nunca "medición", "puntaje" ni "nivel". Nunca se promedia con la rúbrica de un evento. Si alguien pide presentarla como validada, frená y explicá por qué no (regla dura 5 de `CLAUDE.md`).
+Una señal es una hipótesis. En la UI se llama **señal**, nunca "medición", "puntaje" ni "nivel". Nunca se promedia con la rúbrica de un evento. Si alguien pide presentarla como validada, frená y explicá por qué no (regla dura 5 de `AGENTS.md`).
 
 ## 4. Datos
 Skill `migracion`. RLS: la persona ve sus partidas y señales; el organizador todas; mentores, jurados y empresas no (la empresa, recién en fase D y por la vista anónima).

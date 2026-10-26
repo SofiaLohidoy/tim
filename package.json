@@ -15,7 +15,8 @@
     "db:tipos": "supabase gen types typescript --local > src/lib/supabase/tipos.ts",
     "datos:prueba": "node scripts/prueba.mjs crear",
     "datos:limpiar": "node scripts/prueba.mjs limpiar",
-    "mockup": "node scripts/mockup-landing.mjs"
+    "mockup": "node scripts/mockup-landing.mjs",
+    "capturas": "node scripts/capturas.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

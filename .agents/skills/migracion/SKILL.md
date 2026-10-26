@@ -5,7 +5,7 @@ description: Para cambiar la base de datos de TIM (tabla, columna, permiso, func
 
 # Migración
 
-Reglas de formato y de funciones: `.claude/rules/datos-y-migraciones.md`. Esto es el procedimiento. Lo corre Claude.
+Reglas de formato y de funciones: `.claude/rules/datos-y-migraciones.md`. Esto es el procedimiento. Lo corre el agente.
 
 Camino: **local con `supabase db reset` → `tim-dev` → `tim-prod`.** Nunca directo a prod.
 

@@ -385,10 +385,10 @@ s3_access_key = "env(S3_ACCESS_KEY)"
 # Configures AWS_SECRET_ACCESS_KEY for S3 bucket
 s3_secret_key = "env(S3_SECRET_KEY)"
 
-# Google: el client id y el secret salen de Google Cloud (ver docs/puesta-en-marcha.md).
-# Sin las variables, el boton de Google queda oculto (NEXT_PUBLIC_GOOGLE_HABILITADO).
+# Google: apagado hasta tener el cliente OAuth de Google Cloud (docs/puesta-en-marcha.md).
+# Queda apagado aca para que `supabase config push` a tim-dev no lo prenda sin credenciales.
 [auth.external.google]
-enabled = true
+enabled = false
 client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
 secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
 redirect_uri = ""

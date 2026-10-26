@@ -67,7 +67,7 @@ Reglas cortas que no se negocian: `.claude/rules/diseno.md` (marca, mobile, moti
 - LCP < 2,5 s en celular. Lighthouse ≥ 90 en performance y accesibilidad.
 
 ## Antes de dar una pantalla por terminada
-1. Mirarla en el navegador del panel a 375 px y a 1280 px, con datos realistas (`prueba-`).
+1. Mirarla a 375 px y a 1280 px, con datos realistas (`prueba-`).
 2. Chequear: rótulos en una línea, nada que desborde, nada de relleno, ceros ocultos, filas sin acciones destructivas, contraste AA (violeta chico en `#6A4AD9`).
 3. Recorrer el flujo de punta a punta (tipear, elegir, guardar, cancelar con cambios, sin señal si aplica).
 4. Con el navegador del panel oculto, las animaciones no corren: verificar duraciones con `getComputedStyle` y avisar que el movimiento real se mira en el teléfono.
