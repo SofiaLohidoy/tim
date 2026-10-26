@@ -22,15 +22,18 @@ async function Contenido({ params }: { params: PageProps<"/mentor/[equipo]">["pa
   const { equipo: id } = await params;
   const u = await exigirRol("mentor", `/mentor/${id}`);
   const db = await clienteServidor();
-  const equipo = (await equiposAsignados(db, u.id, "mentor")).find((e) => e.id === id);
+  const todos = await equiposAsignados(db, u.id, "mentor");
+  const equipo = todos.find((e) => e.id === id);
   if (!equipo) notFound();
   const evals = await misEvaluaciones(db, u.id, [equipo.id]);
 
   return (
     <div className="grid gap-4">
-      <Link href="/mentor" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
-        <ArrowLeft className="size-4" /> Mis equipos
-      </Link>
+      {todos.length > 1 && (
+        <Link href="/mentor" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+          <ArrowLeft className="size-4" /> Mis equipos
+        </Link>
+      )}
       <header>
         <h1 className="text-[1.7rem] leading-tight font-extrabold">{equipo.nombre}</h1>
         <p className="mt-1 text-muted-foreground">Tocá una persona para evaluarla.</p>
