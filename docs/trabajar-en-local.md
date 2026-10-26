@@ -59,11 +59,12 @@ En local la confirmación de mail está apagada, igual que en prod: te registrá
 
 Si algún flujo manda mail, no sale a internet: queda en Inbucket (http://127.0.0.1:54424).
 
-**Para ser organizador en local**, invitate por SQL (Studio → SQL editor, o `psql`):
+**Para ser organizador en local**, lo más rápido es `pnpm datos:prueba` y entrar como `prueba-organizador@tim.test` (clave: `PRUEBA_CLAVE` de `.env.local`). Para usar tu propio mail, creá la invitación y abrí su link:
 
 ```bash
-docker exec -i supabase_db_tim psql -U postgres -d postgres -c \
-  "insert into public.invitaciones (email, rol) values ('vos@programon.co', 'organizador') on conflict do nothing"
+docker exec -i supabase_db_tim psql -U postgres -d postgres -tA -c \
+  "insert into public.invitaciones (email, rol) values ('vos@programon.co', 'organizador') on conflict do nothing returning token"
+# → abrí http://localhost:3001/invitacion/<token> y entrá con ese mail
 ```
 
 ## Datos de prueba

@@ -21,7 +21,7 @@ A Sofía, por el canal del proyecto:
 1. **Evento**: nombre, fecha, lugar. La rúbrica por defecto es la plantilla del Anexo 6.
 2. **Desafío**: consigna, en borrador. Se publica al arrancar el evento.
 3. **Equipos**: los 8, con nombre.
-4. **Staff**: invitar a cada mentor y jurado por mail, con su rol y su equipo. El rol aparece solo cuando esa persona entra con ese mail. Pedirles que entren **antes** del evento (con Google) y verificar en el tablero que figuran.
+4. **Staff**: en `/organizador/personas`, crear una invitación por mentor y jurado (rol y equipo). Copiar el **link personal** de cada una y mandárselo (WhatsApp). Al abrirlo y entrar con ese mail, queda con el rol; con Google alcanza con entrar. Pedirles que lo hagan **antes** del evento y verificar en "Staff con rol" que figuran.
 5. **Estudiantes**: si hay equipos armados, invitarlos por mail con su equipo; al registrarse caen directo ahí. Si no, se asignan el mismo día.
 
 ## 3. QR de asistencia

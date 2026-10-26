@@ -32,7 +32,7 @@ Funciones `security definer` con `search_path = ''`. Las usan las policies para 
 |---|---|---|---|
 | `perfiles` | 1:1 con `auth.users`: mail, nombre, apellido. Lo crea un trigger al registrarse. | `puede_ver_persona` | La persona (solo nombre y apellido) y Org. El mail no se cambia desde la app. |
 | `roles_usuario` | Persona + rol + evento. Organizador es global (`evento_id` null). | La persona (los suyos) y Org. | Solo Org. y los triggers. |
-| `invitaciones` | Mail + rol + evento + equipo. Única por (mail, rol, evento, equipo): un jurado se puede pre-asignar a varios equipos (006). Al registrarse (o al instante si ya tenía cuenta) se convierte en rol, asignación o membresía. | Org. | Org. |
+| `invitaciones` | Mail + rol + evento + equipo. Única por (mail, rol, evento, equipo): un jurado se puede pre-asignar a varios equipos (006). Tiene un `token` para el link personal `/invitacion/<token>` (007). Con Google se aplica sola al entrar; con mail y contraseña, solo abriendo el link con ese mail (`reclamar_invitacion`). La de estudiante (equipo) se aplica por mail al registrarse. | Org. | Org. |
 | `estudiantes` | Onboarding: universidad, carrera, año, área buscada, intereses, "por qué estoy acá" (≤ 500), arquetipo y sus respuestas, CV, consentimiento (obligatorio). Al completar el onboarding se agrega el rol `estudiante`. | La persona y Org. Mentores y jurados **no**. | La persona (la suya). |
 | `storage.objects` bucket `cvs` | CV en PDF, ≤ 5 MB, ruta `<usuario_id>/cv.pdf`. Privado. | La persona y Org. | La persona. |
 

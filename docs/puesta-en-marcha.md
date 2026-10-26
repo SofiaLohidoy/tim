@@ -81,10 +81,10 @@ Vercel manda `Authorization: Bearer <CRON_SECRET>`. Sin ese header, la ruta devu
 Nadie se autoasigna roles. El primer organizador se carga a mano, una sola vez, por SQL (Studio de Supabase → SQL editor):
 
 ```sql
-insert into public.invitaciones (email, rol) values ('mail@de.sofia', 'organizador');
+insert into public.invitaciones (email, rol) values ('mail@de.sofia', 'organizador') returning token;
 ```
 
-Si la persona ya tiene cuenta, el rol aparece al instante. Si no, aparece cuando se registra. Desde ahí, el resto del staff se invita desde `/organizador`.
+Con el `token` que devuelve, el link es `https://<sitio>/invitacion/<token>`. La persona lo abre, entra o crea su cuenta con ese mail, y queda como organizadora. (Si entra con Google, alcanza con entrar.) Desde ahí, el resto del staff se invita desde `/organizador/personas`, que muestra el link de cada invitación para copiar.
 
 ## 8. Verificar
 Skill `deploy`: push a `main`, `vercel inspect` hasta `READY`, y recorrer en la URL live el registro, `/bienvenida` y `/organizador`. Lo de prueba, con prefijo `prueba-` y borrado después.
