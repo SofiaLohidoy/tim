@@ -30,8 +30,7 @@ async function Contenido() {
   ]);
   const c = completitud(e);
   const borradores = e.evaluaciones.filter((x) => x.estado === "borrador").length;
-  const preparadaEn = (devs.data ?? []).reduce<string | null>((m, d) => (!m || d.preparada_en < m ? d.preparada_en : m), null);
-  const desactualizada = Boolean(preparadaEn && e.evaluaciones.some((x) => x.actualizado_en > preparadaEn));
+  const desactualizada = (devs.data ?? []).length > 0 && Boolean((await db.rpc("devoluciones_desactualizadas", { p_evento: evento.id })).data);
   const lista = (devs.data ?? []).sort((a, b) =>
     (e.persona.get(a.estudiante_id)?.nombre ?? "").localeCompare(e.persona.get(b.estudiante_id)?.nombre ?? "", "es"),
   );

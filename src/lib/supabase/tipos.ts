@@ -144,6 +144,38 @@ export type Database = {
           },
         ]
       }
+      credenciales: {
+        Row: {
+          creado_en: string
+          id: string
+          revocada_en: string | null
+          token: string
+          usuario_id: string
+        }
+        Insert: {
+          creado_en?: string
+          id?: string
+          revocada_en?: string | null
+          token?: string
+          usuario_id: string
+        }
+        Update: {
+          creado_en?: string
+          id?: string
+          revocada_en?: string | null
+          token?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credenciales_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       desafios: {
         Row: {
           actualizado_en: string
@@ -974,6 +1006,11 @@ export type Database = {
         Args: { p_email: string; p_token?: string; p_usuario: string }
         Returns: undefined
       }
+      credencial_publica: { Args: { p_token: string }; Returns: Json }
+      devoluciones_desactualizadas: {
+        Args: { p_evento: string }
+        Returns: boolean
+      }
       devoluciones_publicadas: { Args: { p_evento: string }; Returns: boolean }
       es_miembro: { Args: { p_equipo: string }; Returns: boolean }
       es_organizador: { Args: never; Returns: boolean }
@@ -997,6 +1034,7 @@ export type Database = {
         Args: { p_devolucion: string }
         Returns: undefined
       }
+      marcar_preparadas: { Args: { p_evento: string }; Returns: undefined }
       puede_ver_persona: { Args: { p_usuario: string }; Returns: boolean }
       reclamar_invitacion: { Args: { p_token: string }; Returns: string }
       registrar_entrega: {

@@ -51,6 +51,6 @@ export const config = {
   matcher: [
     // Todo menos assets, la API de la landing (beacons anónimos), el cron y las páginas
     // estáticas de la landing ya reescritas.
-    "/((?!_next/static|_next/image|api/landing|api/cron|l/|icon|apple-icon|opengraph-image|favicon|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|api/landing|api/cron|l/|icon|iconos|apple-icon|opengraph-image|manifest.webmanifest|favicon|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|webp|ico)$).*)",
   ],
 };

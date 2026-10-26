@@ -256,7 +256,6 @@ export async function prepararDevoluciones(eventoId: string): Promise<Resultado>
     evento_id: eventoId,
     estudiante_id: m.usuario_id,
     publicada_en: null,
-    preparada_en: new Date().toISOString(),
     contenido: armarDevolucion({
       estudianteId: m.usuario_id,
       equipoId: m.equipo_id,
@@ -269,6 +268,7 @@ export async function prepararDevoluciones(eventoId: string): Promise<Resultado>
   if (filas.length === 0) return { error: "No hay estudiantes en equipos todavía." };
   const { error } = await db.from("devoluciones").upsert(filas, { onConflict: "evento_id,estudiante_id" });
   if (error) return { error: "No pudimos preparar las devoluciones." };
+  await db.rpc("marcar_preparadas", { p_evento: eventoId });
   refrescar();
   return { ok: true, mensaje: `${filas.length} devoluciones preparadas. Revisalas antes de publicar.` };
 }
@@ -278,12 +278,12 @@ export async function publicarDevoluciones(eventoId: string): Promise<Resultado>
   const db = await clienteServidor();
   // Publicar cierra las evaluaciones para siempre. Antes: tiene que haber devoluciones preparadas
   // y ninguna evaluación cambiada después de prepararlas (si no, se publicaría una foto vieja).
-  const [prep, ultima] = await Promise.all([
-    db.from("devoluciones").select("preparada_en").eq("evento_id", eventoId).order("preparada_en").limit(1).maybeSingle(),
-    db.from("evaluaciones").select("actualizado_en").eq("evento_id", eventoId).order("actualizado_en", { ascending: false }).limit(1).maybeSingle(),
+  const [prep, desactualizadas] = await Promise.all([
+    db.from("devoluciones").select("id").eq("evento_id", eventoId).limit(1).maybeSingle(),
+    db.rpc("devoluciones_desactualizadas", { p_evento: eventoId }),
   ]);
   if (!prep.data) return { error: "Primero prepará las devoluciones." };
-  if (ultima.data && ultima.data.actualizado_en > prep.data.preparada_en) {
+  if (desactualizadas.data) {
     return { error: "Hay evaluaciones nuevas o corregidas desde que preparaste. Volvé a preparar y revisá antes de publicar." };
   }
   const ahora = new Date().toISOString();

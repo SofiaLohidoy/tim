@@ -8,6 +8,8 @@ import { exigirUsuario, nombreVisible } from "@/lib/sesion";
 import { PUNTO_DE_PARTIDA, type Arquetipo } from "@/lib/arquetipo";
 import { salir } from "@/app/(auth)/acciones";
 import { SubirCv } from "../inicio/piezas";
+import { perfilTim } from "@/lib/perfil";
+import { SeccionesPerfil } from "./perfil-tim";
 
 export const metadata: Metadata = { title: "Perfil" };
 
@@ -36,6 +38,7 @@ async function Contenido() {
     .eq("usuario_id", u.id)
     .maybeSingle();
   const partida = e?.arquetipo ? PUNTO_DE_PARTIDA[e.arquetipo as Arquetipo] : null;
+  const perfil = e ? await perfilTim(db, u.id) : null;
 
   return (
     <div className="grid gap-4">
@@ -43,6 +46,8 @@ async function Contenido() {
         <h1 className="text-[1.7rem] leading-tight font-extrabold">{nombreVisible(u)}</h1>
         <p className="text-muted-foreground">{u.email}</p>
       </header>
+
+      {perfil && <SeccionesPerfil perfil={perfil} />}
 
       {e && (
         <section className="rounded-3xl bg-card p-5 ring-1 ring-border">

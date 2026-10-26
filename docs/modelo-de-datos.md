@@ -74,5 +74,14 @@ El contenido de los juegos no está en la base: vive versionado en `src/lib/acti
 | `senales` | Partida, clave (`persistencia`, `uso_de_informacion`, `autocorreccion`), valor 0–1, detalle y versión de la regla. | La persona y Org. | Solo el servidor, al terminar la partida. Reglas en `docs/senales.md`. |
 | `respuestas_encuesta` (ampliada) | Suma `post_partida` (una pregunta al terminar cada partida) con `partida_id`. | La persona y Org. | La persona / el servidor. |
 
+### Credencial verificable (011, 012)
+| Tabla | Qué guarda | Lee | Escribe |
+|---|---|---|---|
+| `credenciales` | Persona, `token` del link público `/v/<token>`, `revocada_en`. | La persona y Org. | La persona: crear y revocar (solo `revocada_en`). |
+
+La página pública la arma `credencial_publica(token)` (SECURITY DEFINER, la puede llamar cualquiera con el token): nombre, carrera, universidad, niveles observados en devoluciones publicadas, cantidad de eventos y partidas. **No** muestra observaciones textuales ni señales de juegos. Un link revocado no devuelve nada.
+
+`marcar_preparadas` y `devoluciones_desactualizadas` (012) comparan "preparada" contra "evaluación cambiada" con el reloj de la base.
+
 ## Lo que todavía no existe
-Según el plan: credenciales (fase C); `empresas`, `intereses`, `contactos`, `propuestas_desafio` (fase D); `habilidades_duras` (fase E). Cuando se creen, se suman acá en la misma migración que los crea.
+Según el plan: (fase C); `empresas`, `intereses`, `contactos`, `propuestas_desafio` (fase D); `habilidades_duras` (fase E). Cuando se creen, se suman acá en la misma migración que los crea.
