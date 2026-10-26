@@ -95,7 +95,6 @@ escribirEnv(
     SUPABASE_SECRET_KEY: kDev.secreta,
     NEXT_PUBLIC_SITIO_URL: "http://localhost:3001",
     NEXT_PUBLIC_GOOGLE_HABILITADO: "0",
-    NEXT_PUBLIC_ACTIVIDADES: "1",
     LANDING_SAL: previo.LANDING_SAL || azar(),
     CRON_SECRET: previo.CRON_SECRET || azar(),
     PRUEBA_CLAVE: previo.PRUEBA_CLAVE || "prueba-tim-2026",

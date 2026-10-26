@@ -9,7 +9,10 @@ const slugs = ["palabra", "crucigrama-1", "crucigrama-2", "crucigrama-3", "einst
 
 test("todas las tarjetas tienen solo un título tentativo y Próximamente, sin controles", async ({ page }) => {
   await entrar(page, "estudiante-1");
-  await page.goto("/actividades");
+  const acceso = page.getByRole("navigation", { name: "Principal", exact: true }).getByRole("link", { name: "Actividades", exact: true });
+  await expect(acceso).toBeVisible();
+  await acceso.click();
+  await expect(page).toHaveURL(/\/actividades$/);
   await expect(page.getByText("Títulos tentativos de actividades en preparación.")).toBeVisible();
   const lista = page.getByRole("list", { name: "Actividades próximamente" });
   await expect(lista.getByRole("listitem")).toHaveCount(6);

@@ -5,13 +5,11 @@ import { usePathname } from "next/navigation";
 import { House, MessageSquareText, Puzzle, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Las actividades (fase B) se muestran recién después de la hackatón, para no distraer el día del
-// evento. Se prenden con NEXT_PUBLIC_ACTIVIDADES=1 en Vercel.
-const ACTIVIDADES = process.env.NEXT_PUBLIC_ACTIVIDADES === "1";
+// El catálogo muestra propuestas no jugables con «Próximamente». Su acceso es siempre visible.
 
 const ITEMS = [
   { href: "/inicio", etiqueta: "Inicio", Icono: House },
-  ...(ACTIVIDADES ? [{ href: "/actividades", etiqueta: "Actividades", Icono: Puzzle }] : []),
+  { href: "/actividades", etiqueta: "Actividades", Icono: Puzzle },
   { href: "/devolucion", etiqueta: "Devolución", Icono: MessageSquareText },
   { href: "/perfil", etiqueta: "Perfil", Icono: UserRound },
 ];
@@ -24,7 +22,7 @@ export function BarraEstudiante() {
       aria-label="Principal"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/92 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg"
     >
-      <ul className={cn("mx-auto grid max-w-md", ACTIVIDADES ? "grid-cols-4" : "grid-cols-3")}>
+      <ul className="mx-auto grid max-w-md grid-cols-4">
         {ITEMS.map(({ href, etiqueta, Icono }) => {
           const activo = ruta.startsWith(href);
           return (
