@@ -1,0 +1,117 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --color-violeta: var(--violeta);
+  --color-violeta-texto: var(--violeta-texto);
+  --color-lila: var(--lila);
+  --color-lila-claro: var(--lila-claro);
+  --color-verde-oscuro: var(--verde-oscuro);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Tokens de la app con la paleta del manual de marca (sep-2026).
+   Verde TIM #17483F · Violeta #8061EB · Lila #AA8CFA · Lila claro #E8DFFF · Crema #FAF8F4 · Verde oscuro #102E28.
+   El violeta de marca no llega a 4.5:1 sobre crema en texto chico: para texto y botones se usa #6A4AD9. */
+:root {
+  --background: #faf8f4;
+  --foreground: #102e28;
+  --card: #ffffff;
+  --card-foreground: #102e28;
+  --popover: #ffffff;
+  --popover-foreground: #102e28;
+  --primary: #17483f;
+  --primary-foreground: #faf8f4;
+  --secondary: #f2eee6;
+  --secondary-foreground: #102e28;
+  --muted: #f2eee6;
+  --muted-foreground: #4f6560;
+  --accent: #e8dfff;
+  --accent-foreground: #102e28;
+  --destructive: #b42318;
+  --border: #e3ded3;
+  --input: #ddd7cb;
+  --ring: #8061eb;
+  --violeta: #8061eb;
+  --violeta-texto: #6a4ad9;
+  --lila: #aa8cfa;
+  --lila-claro: #e8dfff;
+  --verde-oscuro: #102e28;
+  --chart-1: #17483f;
+  --chart-2: #8061eb;
+  --chart-3: #aa8cfa;
+  --chart-4: #4f6560;
+  --chart-5: #e8dfff;
+  --radius: 0.875rem;
+  --sidebar: #102e28;
+  --sidebar-foreground: #faf8f4;
+  --sidebar-primary: #aa8cfa;
+  --sidebar-primary-foreground: #102e28;
+  --sidebar-accent: #17483f;
+  --sidebar-accent-foreground: #faf8f4;
+  --sidebar-border: rgb(250 248 244 / 0.12);
+  --sidebar-ring: #aa8cfa;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+}

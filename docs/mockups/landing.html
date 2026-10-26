@@ -1,0 +1,386 @@
+<title>Landing TIM</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap">
+<style>
+:root{--font-manrope:"Manrope";--font-inter:"Inter"}
+body{margin:0;background:#FAF8F4}
+.revision{position:fixed;z-index:99;left:50%;bottom:max(16px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:6px;align-items:center;padding:6px;border-radius:14px;background:#102E28;color:#FAF8F4;font:600 13px/1 Inter,system-ui,sans-serif;box-shadow:0 12px 30px -10px rgb(0 0 0 / .5)}
+.revision span{padding:0 8px;opacity:.7}
+.revision button{border:0;border-radius:10px;padding:9px 12px;background:transparent;color:inherit;font:inherit;cursor:pointer}
+.revision button[aria-pressed=true]{background:#AA8CFA;color:#102E28}
+/* Landing pública de TIM. Estilos scopeados bajo .tl para no chocar con la app.
+   La misma hoja alimenta el mockup de docs/mockups/landing.html (se genera con scripts/mockup-landing.mjs).
+
+   Layout: bandas de color a todo el ancho (verde → crema → verde oscuro), contenido en una columna de 1180 px.
+   Marca: manual esencial v1.0 (sep-2026). El violeta #8061EB no llega a 4.5:1 sobre crema para texto chico:
+   para texto se usa --violeta-texto, y el violeta de marca queda para formas y titulares grandes. */
+
+.tl {
+  --verde: #17483f;
+  --verde-osc: #102e28;
+  --violeta: #8061eb;
+  --violeta-texto: #6a4ad9;
+  --lila: #aa8cfa;
+  --lila-cl: #e8dfff;
+  --crema: #faf8f4;
+  --crema-2: #f2eee6;
+  --tinta: #102e28;
+  --tinta-2: rgb(16 46 40 / 0.74);
+  --tinta-3: rgb(16 46 40 / 0.58);
+  --linea: rgb(16 46 40 / 0.12);
+  --sobre-verde: #faf8f4;
+  --sobre-verde-2: rgb(250 248 244 / 0.78);
+  --sobre-verde-3: rgb(250 248 244 / 0.6);
+  --linea-verde: rgb(250 248 244 / 0.14);
+  --f-titulo: var(--font-manrope), "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --f-texto: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --gutter: max(20px, env(safe-area-inset-left, 0px));
+  --maxw: 1180px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  font-family: var(--f-texto);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--tinta);
+  background: var(--crema);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+.tl *,
+.tl *::before,
+.tl *::after { box-sizing: border-box; }
+.tl a { color: inherit; text-decoration: none; }
+.tl h1, .tl h2, .tl h3 {
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  text-wrap: balance;
+  margin: 0;
+}
+.tl p { margin: 0; text-wrap: pretty; }
+.tl ul { margin: 0; padding: 0; list-style: none; }
+.tl :focus-visible { outline: 2px solid var(--violeta); outline-offset: 3px; border-radius: 6px; }
+.tl .wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+.tl .ojo {
+  font-family: var(--f-texto);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.tl .num { white-space: nowrap; font-family: var(--f-titulo); font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.04em; }
+.tl .fuente { font-size: 12.5px; color: var(--tinta-3); }
+
+/* ---------- botones ---------- */
+.tl .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 14px 22px; border-radius: 14px; border: 0;
+  font-family: var(--f-titulo); font-weight: 700; font-size: 16px; letter-spacing: -0.01em;
+  cursor: pointer; white-space: nowrap;
+  transition: transform 160ms var(--ease), background-color 160ms ease, box-shadow 160ms ease;
+}
+.tl .btn:active { transform: scale(0.97); }
+.tl .btn svg { width: 18px; height: 18px; flex: none; transition: transform 200ms var(--ease); }
+.tl .btn:hover svg { transform: translateX(3px); }
+.tl .btn-lila { background: var(--lila); color: var(--verde-osc); box-shadow: 0 1px 0 rgb(255 255 255 / 0.4) inset; }
+.tl .btn-lila:hover { background: #b9a0fb; }
+.tl .btn-linea { background: transparent; color: var(--sobre-verde); box-shadow: 0 0 0 1.5px var(--linea-verde) inset; }
+.tl .btn-linea:hover { background: rgb(250 248 244 / 0.06); box-shadow: 0 0 0 1.5px rgb(250 248 244 / 0.32) inset; }
+.tl .btn-verde { background: var(--verde); color: var(--crema); }
+.tl .btn-verde:hover { background: var(--verde-osc); }
+.tl .btn-violeta { background: var(--violeta-texto); color: #fff; }
+.tl .btn-violeta:hover { background: #5b3dc9; }
+.tl .btn[disabled] { opacity: 0.6; cursor: progress; }
+
+/* ---------- nav ---------- */
+.tl .nav {
+  position: fixed; inset: 0 0 auto 0; z-index: 50;
+  padding-top: env(safe-area-inset-top, 0px);
+  background: rgb(23 72 63 / 0);
+  transition: background-color 240ms ease, box-shadow 240ms ease;
+}
+.tl .nav.solida { background: rgb(16 46 40 / 0.86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 1px 0 var(--linea-verde); }
+.tl .nav-in { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.tl .nav .logo { display: block; height: 26px; width: auto; color: var(--crema); }
+.tl .nav-links { display: flex; align-items: center; gap: 28px; color: var(--sobre-verde-2); font-size: 14.5px; font-weight: 500; }
+.tl .nav-links a:not(.nav-entrar):hover { color: var(--sobre-verde); }
+.tl .nav-entrar { color: var(--sobre-verde); font-family: var(--f-titulo); font-weight: 700; padding: 9px 16px; border-radius: 11px; box-shadow: 0 0 0 1.5px var(--linea-verde) inset; }
+.tl .nav-entrar:hover { background: rgb(250 248 244 / 0.08); }
+@media (max-width: 820px) { .tl .nav-links a:not(.nav-entrar) { display: none; } }
+
+/* ---------- hero ---------- */
+.tl .hero { background: var(--verde); color: var(--sobre-verde); position: relative; overflow: hidden; padding-block: calc(env(safe-area-inset-top, 0px) + 112px) 0; }
+.tl .hero::before {
+  content: ""; position: absolute; inset: -20% -10% auto auto; width: 70vmax; height: 70vmax; pointer-events: none;
+  background: radial-gradient(closest-side, rgb(170 140 250 / 0.16), transparent 70%);
+}
+.tl .hero-in { position: relative; display: grid; gap: 48px; grid-template-columns: minmax(0, 1fr); align-items: center; padding-bottom: 56px; }
+@media (min-width: 980px) { .tl .hero-in { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); gap: 56px; padding-bottom: 88px; } }
+.tl .hero .ojo { color: var(--lila); display: inline-flex; gap: 10px; flex-wrap: wrap; }
+.tl .hero .ojo i { font-style: normal; opacity: 0.5; }
+.tl .hero h1 { margin-top: 20px; font-size: clamp(44px, 9.6vw, 84px); }
+.tl .hero h1 em { font-style: normal; color: var(--lila); }
+.tl .hero-sub { margin-top: 22px; max-width: 34em; font-size: clamp(17px, 1.5vw, 19.5px); color: var(--sobre-verde-2); }
+.tl .hero-cta { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+@media (min-width: 560px) { .tl .hero-cta { flex-direction: row; flex-wrap: wrap; } }
+.tl .hero-hack { margin-top: 22px; font-size: 14.5px; color: var(--sobre-verde-3); }
+.tl .hero-hack a { color: var(--sobre-verde); font-weight: 600; text-decoration: underline; text-decoration-color: var(--lila); text-underline-offset: 4px; text-decoration-thickness: 2px; }
+.tl .hero[data-origen="qr"] .hero-hack { display: none; }
+.tl .aviso-qr { display: none; }
+.tl .hero[data-origen="qr"] .aviso-qr {
+  display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  margin-bottom: 26px; padding: 14px 16px; border-radius: 16px; background: var(--lila-cl); color: var(--verde-osc);
+}
+.tl .aviso-qr p { font-weight: 600; }
+
+/* La pila: el isotipo que se arma, con la evidencia que se va sumando. */
+.tl .pila { position: relative; width: 100%; max-width: 440px; margin-inline: auto; aspect-ratio: 1 / 1.02; }
+.tl .pila .iso { position: absolute; left: 4%; top: 6%; width: 23%; display: flex; flex-direction: column; gap: clamp(6px, 1.6vw, 9px); }
+.tl .iso i { display: block; width: 100%; }
+.tl .iso .m1 { aspect-ratio: 1; border-radius: 50%; background: var(--lila); }
+.tl .iso .m2 { aspect-ratio: 1.15; border-radius: 14%; background: var(--violeta); }
+.tl .iso .m3 { aspect-ratio: 0.7; border-radius: 14%; background: var(--crema); }
+.tl .tarjeta {
+  position: absolute; width: min(66%, 290px); padding: 14px 16px; border-radius: 16px;
+  background: var(--crema); color: var(--tinta);
+  box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(16 46 40 / 0.06);
+}
+.tl .tarjeta .t-cab { display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; font-weight: 600; color: var(--tinta-3); letter-spacing: 0.02em; }
+.tl .tarjeta .t-dim { margin-top: 6px; font-family: var(--f-titulo); font-weight: 800; font-size: 16px; letter-spacing: -0.02em; }
+.tl .tarjeta .t-niv { margin-top: 10px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--tinta-2); }
+.tl .puntos { display: inline-flex; gap: 4px; }
+.tl .puntos i { width: 9px; height: 9px; border-radius: 50%; background: var(--linea); }
+.tl .puntos i.on { background: var(--violeta); }
+.tl .tarjeta.a { right: 4%; top: 4%; transform: rotate(-2deg); }
+.tl .tarjeta.b { right: 0; top: 36%; transform: rotate(1.5deg); }
+.tl .tarjeta.c { right: 8%; top: 68%; transform: rotate(-1deg); }
+@media (max-width: 979px) { .tl .pila { max-width: 380px; } }
+
+.tl .prueba-hero { position: relative; border-top: 1px solid var(--linea-verde); background: rgb(16 46 40 / 0.35); }
+.tl .prueba-hero ul { display: grid; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) { .tl .prueba-hero ul { grid-template-columns: 1fr 1fr; } }
+.tl .prueba-hero li { display: flex; gap: 18px; align-items: baseline; padding-block: 22px; }
+@media (min-width: 760px) { .tl .prueba-hero li + li { padding-left: 32px; border-left: 1px solid var(--linea-verde); } }
+@media (max-width: 759px) { .tl .prueba-hero li + li { border-top: 1px solid var(--linea-verde); } }
+.tl .prueba-hero .num { font-size: 40px; color: var(--lila); flex: none; }
+.tl .prueba-hero p { font-size: 15px; color: var(--sobre-verde-2); }
+.tl .prueba-hero .fuente { display: block; margin-top: 4px; color: var(--sobre-verde-3); }
+
+/* ---------- secciones ---------- */
+.tl section.banda { padding-block: clamp(72px, 11vw, 128px); scroll-margin-top: 48px; }
+.tl .sec-ojo { color: var(--violeta-texto); }
+.tl .sec-h { margin-top: 14px; font-size: clamp(34px, 5.4vw, 58px); max-width: 16ch; }
+.tl .sec-p { margin-top: 20px; font-size: clamp(16.5px, 1.4vw, 18.5px); color: var(--tinta-2); max-width: 54ch; }
+
+/* problema: CV vs evidencia */
+.tl .problema-in { display: grid; gap: 48px; grid-template-columns: minmax(0, 1fr); align-items: center; }
+@media (min-width: 960px) { .tl .problema-in { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 72px; } }
+.tl .dato { margin-top: 36px; display: flex; gap: 18px; align-items: baseline; padding-top: 24px; border-top: 1px solid var(--linea); }
+.tl .dato .num { font-size: clamp(48px, 6vw, 64px); color: var(--violeta); line-height: 1; flex: none; }
+.tl .dato p { color: var(--tinta-2); }
+.tl .versus { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.tl .hoja { border-radius: 18px; padding: 18px; min-height: 300px; display: flex; flex-direction: column; gap: 10px; }
+.tl .hoja .ojo { font-size: 11px; }
+.tl .hoja.cv { background: var(--crema-2); color: var(--tinta-3); }
+.tl .hoja.cv i { display: block; height: 9px; border-radius: 5px; background: rgb(16 46 40 / 0.1); }
+.tl .hoja.cv i.c { width: 62%; } .tl .hoja.cv i.m { width: 84%; } .tl .hoja.cv i.l { width: 96%; }
+.tl .hoja.cv .sep { height: 8px; }
+.tl .hoja.ev { background: var(--verde); color: var(--sobre-verde); }
+.tl .hoja.ev .ojo { color: var(--lila); }
+.tl .hoja.ev .fila { display: flex; flex-direction: column; gap: 6px; padding-block: 7px; border-top: 1px solid var(--linea-verde); }
+.tl .hoja.ev .fila b { font-family: var(--f-titulo); font-weight: 700; font-size: 13.5px; letter-spacing: -0.01em; }
+.tl .hoja.ev .puntos i { background: rgb(250 248 244 / 0.16); }
+.tl .hoja.ev .puntos i.on { background: var(--lila); }
+.tl .hoja.ev q { font-size: 12.5px; color: var(--sobre-verde-2); quotes: "“" "”"; }
+
+/* cómo funciona */
+.tl .como { background: var(--crema-2); }
+.tl .pasos { margin-top: 56px; display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); counter-reset: paso; }
+@media (min-width: 900px) { .tl .pasos { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.tl .paso { background: var(--crema); border-radius: 22px; padding: 26px 24px 24px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 0 0 1px var(--linea); }
+.tl .paso .n { font-family: var(--f-titulo); font-weight: 800; font-size: 14px; color: var(--violeta-texto); }
+.tl .paso h3 { font-size: 24px; letter-spacing: -0.025em; }
+.tl .paso > p { color: var(--tinta-2); font-size: 15.5px; }
+.tl .demo { margin-top: auto; padding-top: 10px; }
+.tl .demo-caja { border-radius: 16px; background: var(--crema-2); padding: 16px; min-height: 172px; display: flex; flex-direction: column; gap: 10px; }
+.tl .consigna b { font-family: var(--f-titulo); font-size: 15px; font-weight: 800; letter-spacing: -0.015em; display: block; }
+.tl .consigna p { margin-top: 6px; font-size: 13px; color: var(--tinta-2); }
+.tl .reloj { margin-top: auto; display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: var(--tinta-3); }
+.tl .reloj .barra { flex: 1; height: 6px; margin-left: 12px; border-radius: 3px; background: var(--linea); overflow: hidden; }
+.tl .reloj .barra i { display: block; height: 100%; width: 62%; border-radius: 3px; background: var(--violeta); transform-origin: left; }
+.tl .rubrica-demo .dim { font-family: var(--f-titulo); font-weight: 800; font-size: 15px; letter-spacing: -0.015em; }
+.tl .niveles { display: grid; gap: 6px; }
+.tl .niveles span {
+  display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 10px; font-size: 13px; color: var(--tinta-2);
+  background: var(--crema); box-shadow: 0 0 0 1px var(--linea);
+  transition: background-color 220ms ease, color 220ms ease, box-shadow 220ms ease;
+}
+.tl .niveles span::before { content: ""; width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 1.5px rgb(16 46 40 / 0.3) inset; flex: none; transition: box-shadow 220ms ease, background-color 220ms ease; }
+.tl .niveles span.on { background: var(--lila-cl); color: var(--verde-osc); box-shadow: 0 0 0 1.5px var(--violeta); }
+.tl .niveles span.on::before { background: var(--violeta); box-shadow: 0 0 0 3px var(--lila-cl) inset; }
+.tl .perfil-demo .fila { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: 13px; color: var(--tinta-2); }
+.tl .perfil-demo .fila b { font-weight: 600; color: var(--tinta); }
+.tl .perfil-demo .chips { display: flex; gap: 4px; }
+.tl .perfil-demo .chips i { width: 18px; height: 8px; border-radius: 4px; background: var(--linea); }
+.tl .perfil-demo .chips i.on { background: var(--violeta); }
+.tl .perfil-demo .chips i.nuevo { background: var(--lila); animation: tl-latido 2.4s var(--ease) infinite; }
+@keyframes tl-latido { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+.tl .rubrica-chips { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 8px; }
+.tl .rubrica-chips span { padding: 8px 14px; border-radius: 99px; background: var(--crema); box-shadow: 0 0 0 1px var(--linea); font-size: 14px; font-weight: 500; }
+.tl .rubrica-chips .fuente { align-self: center; margin-left: 4px; }
+
+/* qué te llevás */
+.tl .lleva { display: grid; gap: 48px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 960px) { .tl .lleva { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 72px; } }
+.tl .lleva-lista { display: grid; gap: 0; }
+.tl .lleva-lista li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; padding-block: 22px; border-top: 1px solid var(--linea); }
+.tl .lleva-lista li:last-child { border-bottom: 1px solid var(--linea); }
+.tl .lleva-lista .ico { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--lila-cl); color: var(--violeta-texto); }
+.tl .lleva-lista .ico svg { width: 22px; height: 22px; }
+.tl .lleva-lista h3 { font-size: 20px; letter-spacing: -0.02em; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.tl .lleva-lista p { margin-top: 6px; color: var(--tinta-2); font-size: 15.5px; }
+.tl .pronto { font-family: var(--f-texto); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 99px; background: var(--crema-2); color: var(--tinta-3); }
+.tl .privacidad { margin-top: 28px; display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; background: var(--crema-2); font-size: 15px; color: var(--tinta-2); }
+.tl .privacidad svg { width: 20px; height: 20px; flex: none; margin-top: 2px; color: var(--verde); }
+.tl .lleva .btn { margin-top: 32px; }
+
+/* empresas */
+.tl .empresas { background: var(--verde-osc); color: var(--sobre-verde); }
+.tl .empresas .sec-ojo { color: var(--lila); }
+.tl .empresas .sec-p { color: var(--sobre-verde-2); }
+.tl .empresas-in { display: grid; gap: 48px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 960px) { .tl .empresas-in { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 72px; align-items: start; } }
+.tl .pruebas-emp { margin-top: 36px; display: grid; gap: 1px; background: var(--linea-verde); border-radius: 18px; overflow: hidden; }
+.tl .pruebas-emp > div { background: var(--verde-osc); padding: 18px 20px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: baseline; }
+.tl .pruebas-emp .num { font-size: 32px; color: var(--lila); min-width: 3.4ch; flex: none; }
+.tl .pruebas-emp p { font-size: 15px; color: var(--sobre-verde-2); }
+.tl .pruebas-emp .fuente { display: block; margin-top: 3px; color: var(--sobre-verde-3); }
+.tl .puntos-emp { margin-top: 28px; display: grid; gap: 12px; }
+.tl .puntos-emp li { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; }
+.tl .puntos-emp svg { width: 20px; height: 20px; flex: none; margin-top: 2px; color: var(--lila); }
+
+/* formularios */
+.tl .form { border-radius: 24px; padding: clamp(22px, 3vw, 32px); display: grid; gap: 18px; }
+.tl .form.claro { background: var(--crema); color: var(--tinta); box-shadow: 0 0 0 1px var(--linea); }
+.tl .form h3 { font-size: 24px; letter-spacing: -0.025em; }
+.tl .form .ayuda { margin-top: -10px; font-size: 14.5px; color: var(--tinta-2); }
+.tl .campo { display: grid; gap: 8px; border: 0; padding: 0; margin: 0; min-width: 0; }
+.tl .campo > label, .tl .campo > legend { font-size: 14px; font-weight: 600; color: var(--tinta); padding: 0; }
+.tl .campo input[type="email"], .tl .campo input[type="text"], .tl .campo select {
+  width: 100%; min-height: 50px; padding: 12px 14px; border-radius: 12px; border: 0;
+  background: var(--crema-2); color: var(--tinta); font: 16px/1.3 var(--f-texto);
+  box-shadow: 0 0 0 1px var(--linea) inset; transition: box-shadow 160ms ease;
+}
+.tl .campo input:focus, .tl .campo select:focus { outline: none; box-shadow: 0 0 0 2px var(--violeta) inset; }
+.tl .opciones { display: flex; flex-wrap: wrap; gap: 8px; }
+.tl .opciones label {
+  position: relative; display: inline-flex; align-items: center; min-height: 42px; padding: 9px 14px; border-radius: 12px; cursor: pointer;
+  background: var(--crema-2); box-shadow: 0 0 0 1px var(--linea) inset; font-size: 14.5px; color: var(--tinta-2);
+  transition: background-color 160ms ease, box-shadow 160ms ease, color 160ms ease, transform 160ms var(--ease);
+}
+.tl .opciones label:active { transform: scale(0.97); }
+.tl .opciones input { position: absolute; opacity: 0; pointer-events: none; }
+.tl .opciones label:has(input:checked) { background: var(--lila-cl); color: var(--verde-osc); box-shadow: 0 0 0 1.5px var(--violeta) inset; font-weight: 600; }
+.tl .opciones label:has(input:focus-visible) { outline: 2px solid var(--violeta); outline-offset: 2px; }
+.tl .opciones.columna { flex-direction: column; }
+.tl .opciones.columna label { width: 100%; }
+.tl .form .btn { width: 100%; margin-top: 4px; }
+.tl .form .legal { font-size: 12.5px; color: var(--tinta-3); }
+.tl .form .error { font-size: 14px; color: #b42318; font-weight: 500; }
+.tl .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.tl .listo { display: grid; gap: 10px; place-items: start; padding: 8px 0; }
+.tl .listo .ok { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--lila-cl); color: var(--violeta-texto); animation: tl-entra 420ms var(--ease) both; }
+.tl .listo .ok svg { width: 24px; height: 24px; }
+.tl .listo h3 { animation: tl-entra 420ms 60ms var(--ease) both; }
+.tl .listo p { color: var(--tinta-2); animation: tl-entra 420ms 120ms var(--ease) both; }
+@keyframes tl-entra { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+/* hackatón */
+.tl .hack-in { display: grid; gap: 36px; grid-template-columns: minmax(0, 1fr); align-items: center; }
+@media (min-width: 900px) { .tl .hack-in { grid-template-columns: auto minmax(0, 1fr); gap: 64px; } }
+.tl .fecha { width: 200px; border-radius: 24px; overflow: hidden; background: var(--crema); box-shadow: 0 0 0 1px var(--linea), 0 24px 48px -28px rgb(16 46 40 / 0.4); text-align: center; }
+.tl .fecha .mes { background: var(--violeta); color: #fff; padding: 10px; font-family: var(--f-titulo); font-weight: 800; letter-spacing: 0.16em; font-size: 14px; }
+.tl .fecha .dia { font-family: var(--f-titulo); font-weight: 800; font-size: 96px; letter-spacing: -0.06em; line-height: 1; padding: 18px 0 4px; color: var(--verde); }
+.tl .fecha .sem { padding-bottom: 18px; font-weight: 600; color: var(--tinta-3); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
+.tl .hack-in .btn { margin-top: 28px; }
+.tl .hack-datos { margin-top: 18px; font-size: 14px; color: var(--tinta-3); }
+
+/* preguntas */
+.tl .faq { background: var(--crema-2); }
+.tl .faq-in { display: grid; gap: 40px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 960px) { .tl .faq-in { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 72px; } }
+.tl .faq details { border-top: 1px solid var(--linea); }
+.tl .faq details:last-child { border-bottom: 1px solid var(--linea); }
+.tl .faq summary {
+  list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 18px; align-items: center;
+  padding-block: 20px; font-family: var(--f-titulo); font-weight: 700; font-size: 18px; letter-spacing: -0.015em;
+}
+.tl .faq summary::-webkit-details-marker { display: none; }
+.tl .faq summary svg { width: 18px; height: 18px; flex: none; color: var(--violeta-texto); transition: transform 220ms var(--ease); }
+.tl .faq details[open] summary svg { transform: rotate(45deg); }
+.tl .faq details p { padding-bottom: 22px; color: var(--tinta-2); max-width: 62ch; }
+
+/* cta final */
+.tl .final { background: var(--verde); color: var(--sobre-verde); }
+.tl .final .sec-ojo { color: var(--lila); }
+.tl .final-in { display: grid; gap: 48px; grid-template-columns: minmax(0, 1fr); align-items: center; }
+@media (min-width: 960px) { .tl .final-in { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: 72px; } }
+.tl .final .sec-p { color: var(--sobre-verde-2); }
+.tl .final .alt { margin-top: 26px; font-size: 15px; color: var(--sobre-verde-3); }
+.tl .final .alt a { color: var(--sobre-verde); font-weight: 600; text-decoration: underline; text-decoration-color: var(--lila); text-underline-offset: 4px; text-decoration-thickness: 2px; }
+
+/* pie */
+.tl footer { background: var(--verde-osc); color: var(--sobre-verde-3); padding-block: 40px calc(40px + env(safe-area-inset-bottom, 0px)); font-size: 14px; }
+.tl .pie { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: center; justify-content: space-between; }
+.tl .pie .logo { height: 22px; width: auto; color: var(--crema); }
+.tl .pie nav { display: flex; gap: 22px; flex-wrap: wrap; }
+.tl .pie a:hover { color: var(--sobre-verde); }
+
+/* ---------- motion ----------
+   Solo transform y opacity. La pila del hero se arma una vez al cargar (es la metáfora de la marca:
+   el perfil que se construye). Las secciones entran con un fade corto, solo si hay JS (html.js). */
+@media (prefers-reduced-motion: no-preference) {
+  .tl .iso .m3 { animation: tl-cae 640ms 80ms var(--ease) both; }
+  .tl .iso .m2 { animation: tl-cae 640ms 260ms var(--ease) both; }
+  .tl .iso .m1 { animation: tl-cae 700ms 440ms var(--ease) both; }
+  .tl .tarjeta.a { animation: tl-tarjeta-a 700ms 760ms var(--ease) both; }
+  .tl .tarjeta.b { animation: tl-tarjeta-b 700ms 900ms var(--ease) both; }
+  .tl .tarjeta.c { animation: tl-tarjeta-c 700ms 1040ms var(--ease) both; }
+  .tl .reloj .barra i { animation: tl-reloj 9s linear infinite; }
+  html.js .tl .revela { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
+  html.js .tl .revela.in { opacity: 1; transform: none; }
+}
+@keyframes tl-cae { from { opacity: 0; transform: translateY(-36px); } to { opacity: 1; transform: none; } }
+@keyframes tl-tarjeta-a { from { opacity: 0; transform: translateY(16px) rotate(-2deg); } to { opacity: 1; transform: rotate(-2deg); } }
+@keyframes tl-tarjeta-b { from { opacity: 0; transform: translateY(16px) rotate(1.5deg); } to { opacity: 1; transform: rotate(1.5deg); } }
+@keyframes tl-tarjeta-c { from { opacity: 0; transform: translateY(16px) rotate(-1deg); } to { opacity: 1; transform: rotate(-1deg); } }
+@keyframes tl-reloj { from { transform: scaleX(0.15); } to { transform: scaleX(1); } }
+
+/* En el celular los datos van con la cifra arriba: la columna de texto al lado queda muy angosta. */
+@media (max-width: 559px) {
+  .tl .prueba-hero li, .tl .dato { flex-direction: column; gap: 6px; }
+}
+
+</style>
+<div class="tl"><nav class="nav" aria-label="Principal"><div class="wrap nav-in"><a aria-label="TIM, inicio" href="#"><svg viewBox="0 0 236 100" class="logo" role="img" aria-label="TIM" fill="currentColor"><path d="M0 0H84V26H56V100H28V26H0Z"></path><circle cx="110" cy="13" r="13" fill="#AA8CFA"></circle><rect x="97" y="32" width="26" height="24" rx="4" fill="#8061EB"></rect><rect x="97" y="62" width="26" height="38" rx="4"></rect><path d="M134 100V0H164L185 52L206 0H236V100H210V46L194 86H176L160 46V100Z"></path></svg></a><div class="nav-links"><a href="#como-funciona">Cómo funciona</a><a href="#empresas">Empresas</a><a href="#hackaton">Hackatón</a><a href="#preguntas">Preguntas</a><a class="nav-entrar" data-cta="nav_ingresar" href="#ingresar">Entrar</a></div></div></nav><header class="hero" data-seccion="hero"><div class="wrap hero-in"><div><div class="aviso-qr"><p>¿Llegaste desde la hackatón? Creá tu cuenta en un minuto.</p><a class="btn btn-verde" data-cta="qr_hackaton" href="#ingresar?origen=qr">Entrar a la hackatón<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div><p class="ojo">Habilidades blandas <i>·</i> Desafíos reales</p><h1>Tu capacidad, <em>en evidencia.</em></h1><p class="hero-sub">Resolvé desafíos reales en equipo. Mentores observan cómo trabajás y esa evidencia queda en tu perfil.</p><div class="hero-cta"><a href="#sumarme" class="btn btn-lila" data-cta="hero_estudiante">Quiero demostrar lo que sé<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a><a href="#empresas" class="btn btn-linea" data-cta="hero_empresa">Busco talento junior</a></div><p class="hero-hack">¿Venís a la hackatón del 31/10? <a data-cta="hero_ingresar" href="#ingresar">Entrá con tu cuenta</a></p></div><div class="pila" aria-hidden="true"><div class="iso"><i class="m1"></i><i class="m2"></i><i class="m3"></i></div><div class="tarjeta a"><div class="t-cab"><span>Mentora · Equipo 3</span><span>Individual</span></div><div class="t-dim">Comprensión del problema</div><div class="t-niv"><span class="puntos"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>Se observa con claridad</div></div><div class="tarjeta b"><div class="t-cab"><span>Jurado</span><span>Equipo</span></div><div class="t-dim">Comunicación y colaboración</div><div class="t-niv"><span class="puntos"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>Se destaca</div></div><div class="tarjeta c"><div class="t-cab"><span>Mentora · Equipo 3</span><span>Individual</span></div><div class="t-dim">Iniciativa y adaptación</div><div class="t-niv"><span class="puntos"><i class="on"></i><i class="on"></i><i></i><i></i></span>Se observa a veces</div></div></div></div><div class="prueba-hero"><ul class="wrap"><li><span class="num">72 %</span><p>de los jóvenes dice que la falta de experiencia es su principal obstáculo para conseguir trabajo.<span class="fuente">UCEMA, 2025 · 13.000 jóvenes de 18 a 29 años</span></p></li><li><span class="num">87,7 %</span><p>se mostró interesado en resolver un desafío real, parecido a lo que haría en un puesto.<span class="fuente">Relevamiento TIM, sep-2026 · 50 de 57 personas</span></p></li></ul></div></header><main><section class="banda" id="problema" data-seccion="problema"><div class="wrap problema-in"><div class="revela"><p class="ojo sec-ojo">El problema</p><h2 class="sec-h">Tu CV no muestra cómo pensás.</h2><p class="sec-p">Un CV dice dónde estudiaste. No dice cómo encarás un problema, cómo trabajás en equipo ni qué hacés cuando algo cambia. Y con IA, todos los CV se parecen.</p><div class="dato"><span class="num">71 %</span><p>sintió que no logró mostrar su potencial en al menos una entrevista.<span class="fuente" style="display:block;margin-top:4px">Relevamiento TIM, sep-2026 · 93 personas con entrevistas en el último año</span></p></div></div><div class="versus revela" aria-label="Comparación entre un CV y un perfil con evidencia"><div class="hoja cv"><span class="ojo">CV</span><i class="m"></i><i class="c"></i><span class="sep"></span><i class="l"></i><i class="m"></i><i class="c"></i><span class="sep"></span><i class="l"></i><i class="m"></i><i class="l"></i><i class="c"></i></div><div class="hoja ev"><span class="ojo">Evidencia</span><div class="fila"><b>Comprensión del problema</b><span class="puntos"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div><div class="fila"><b>Resolución</b><span class="puntos"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div><div class="fila"><b>Iniciativa y adaptación</b><span class="puntos"><i class="on"></i><i class="on"></i><i></i><i></i></span></div><q>Ordenó al equipo cuando cambió la consigna.</q></div></div></div></section><section class="banda como" id="como-funciona" data-seccion="como_funciona"><div class="wrap"><div class="revela"><p class="ojo sec-ojo">Cómo funciona</p><h2 class="sec-h">Tres pasos, un perfil real.</h2></div><ol class="pasos"><li class="paso revela"><span class="n">Paso 1</span><h3>Resolvé un desafío.</h3><p>Un problema real, en equipo, presencial o virtual.</p><div class="demo"><div class="demo-caja consigna"><b>Una PyME de logística pierde pedidos los viernes.</b><p>¿Qué cambiarías primero y cómo lo medirías?</p><div class="reloj">Tiempo<span class="barra"><i></i></span></div></div></div></li><li class="paso revela"><span class="n">Paso 2</span><h3>Te observan.</h3><p>Mentores y jurados registran cómo trabajás con una rúbrica de cinco capacidades.</p><div class="demo"><div class="demo-caja rubrica-demo" aria-hidden="true"><span class="dim">Comprensión del problema</span><div class="niveles"><span>Todavía no se observa</span><span>Se observa a veces</span><span class="on">Se observa con claridad</span><span>Se destaca</span></div></div></div></li><li class="paso revela"><span class="n">Paso 3</span><h3>Sumá evidencia.</h3><p>Cada desafío agrega a tu perfil. No empezás de cero en cada búsqueda.</p><div class="demo"><div class="demo-caja perfil-demo"><div class="fila"><b>Comprensión</b><span class="chips"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div><div class="fila"><b>Análisis</b><span class="chips"><i class="on"></i><i class="on"></i><i></i><i></i></span></div><div class="fila"><b>Resolución</b><span class="chips"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div><div class="fila"><b>Comunicación</b><span class="chips"><i class="on"></i><i class="on"></i><i class="on"></i><i class="nuevo"></i></span></div><div class="fila"><b>Iniciativa</b><span class="chips"><i class="on"></i><i class="on"></i><i></i><i></i></span></div></div></div></li></ol><div class="rubrica-chips revela"><span>Comprensión del problema</span><span>Análisis y fundamentación</span><span>Resolución</span><span>Comunicación y colaboración</span><span>Iniciativa y adaptación</span><span class="fuente">Rúbrica del piloto, sin puntajes ni ponderaciones.</span></div></div></section><section class="banda" id="que-te-llevas" data-seccion="que_te_llevas"><div class="wrap lleva"><div class="revela"><p class="ojo sec-ojo">Qué te llevás</p><h2 class="sec-h">Lo que hiciste, dicho por otros.</h2><p class="sec-p">No es una autoevaluación. Es lo que vieron personas que te miraron trabajar, ordenado por capacidad.</p><a href="#sumarme" class="btn btn-verde" data-cta="lleva_estudiante">Quiero demostrar lo que sé<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div><div class="revela"><ul class="lleva-lista"><li><span class="ico"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-text" aria-hidden="true"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path><path d="M7 11h10"></path><path d="M7 15h6"></path><path d="M7 7h8"></path></svg></span><div><h3>Devolución por capacidad</h3><p>Qué se observó en vos y en tu equipo, en palabras de quien te vio trabajar.</p></div></li><li><span class="ico"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sprout" aria-hidden="true"><path d="M14 9.536V7a4 4 0 0 1 4-4h1.5a.5.5 0 0 1 .5.5V5a4 4 0 0 1-4 4 4 4 0 0 0-4 4c0 2 1 3 1 5a5 5 0 0 1-1 3"></path><path d="M4 9a5 5 0 0 1 8 4 5 5 0 0 1-8-4"></path><path d="M5 21h14"></path></svg></span><div><h3>Perfil de habilidades blandas</h3><p>Crece con cada desafío y muestra tu evolución.</p></div></li><li><span class="ico"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-qr-code" aria-hidden="true"><rect width="5" height="5" x="3" y="3" rx="1"></rect><rect width="5" height="5" x="16" y="3" rx="1"></rect><rect width="5" height="5" x="3" y="16" rx="1"></rect><path d="M21 16h-3a2 2 0 0 0-2 2v3"></path><path d="M21 21v.01"></path><path d="M12 7v3a2 2 0 0 1-2 2H7"></path><path d="M3 12h.01"></path><path d="M12 3h.01"></path><path d="M12 16v.01"></path><path d="M16 12h1"></path><path d="M21 12v.01"></path><path d="M12 21v-1"></path></svg></span><div><h3>Para compartir <span class="pronto">Próximamente</span></h3><p>Un CV con evidencia y un QR que cualquiera puede verificar.</p></div></li></ul><p class="privacidad"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Tus datos son tuyos. Una empresa ve tu perfil sin tu nombre hasta que vos aceptás el contacto.</p></div></div></section><section class="banda empresas" id="empresas" data-seccion="empresas"><div class="wrap empresas-in"><div class="revela"><p class="ojo sec-ojo">Para empresas</p><h2 class="sec-h">Conocé cómo trabaja alguien antes de la entrevista.</h2><p class="sec-p">Nos contás un problema real de tu empresa. Armamos el desafío y la rúbrica. Vos ves cómo lo resolvió cada persona: el proceso, no solo el resultado.</p><div class="pruebas-emp"><div><span class="num">10/15</span><p>PyMEs sin área de selección no consiguieron candidatos adecuados.<span class="fuente">Relevamiento TIM, sep-2026</span></p></div><div><span class="num">14/24</span><p>empresas confiarían más en una evaluación que salga de una necesidad real; 12 de 24, si muestra el proceso.<span class="fuente">Relevamiento TIM, sep-2026 · respuesta múltiple</span></p></div></div><ul class="puntos-emp"><li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Talento que no llega por tu red de contactos.</li><li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Perfiles anónimos hasta que la persona acepta el contacto.</li><li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Un desafío es una evaluación, nunca trabajo gratis.</li></ul></div><div class="revela"><form class="form claro" noValidate="" action="" encType="multipart/form-data" method="POST"><input type="hidden" name="$ACTION_REF_2"/><input type="hidden" name="$ACTION_2:0" value="{&quot;id&quot;:&quot;604c2e3e3f1f14622e61e78c71e550505621c1f961&quot;,&quot;bound&quot;:&quot;$@1&quot;}"/><input type="hidden" name="$ACTION_2:1" value="[{&quot;estado&quot;:&quot;inicial&quot;}]"/><input type="hidden" name="$ACTION_KEY" value="kff142eecc33ccb3a60886c93d3122bd6"/><div><h3>Quiero conocer talento</h3></div><p class="ayuda">Cuatro datos. Te contactamos nosotros.</p><input type="hidden" name="audiencia" value="empresa"/><input type="hidden" name="origen" value="{}"/><input class="hp" type="text" tabindex="-1" autoComplete="off" aria-hidden="true" name="sitio"/><div class="campo"><label for="empresa-email">Mail de trabajo</label><input id="empresa-email" type="email" inputMode="email" autoComplete="email" required="" aria-invalid="false" name="email"/></div><fieldset class="campo"><legend>Personas en tu empresa</legend><div class="opciones"><label><input type="radio" name="tamanio" value="1 a 9"/>1 a 9</label><label><input type="radio" name="tamanio" value="10 a 49"/>10 a 49</label><label><input type="radio" name="tamanio" value="50 o más"/>50 o más</label></div></fieldset><div class="campo"><label for="empresa-rubro">Rubro</label><input id="empresa-rubro" type="text" placeholder="Ej.: logística, software, gastronomía" aria-invalid="false" name="rubro"/></div><fieldset class="campo"><legend>¿Propondrías un desafío?</legend><div class="opciones"><label><input type="radio" name="propondria" value="Sí"/>Sí</label><label><input type="radio" name="propondria" value="Tal vez"/>Tal vez</label><label><input type="radio" name="propondria" value="Todavía no"/>Todavía no</label></div></fieldset><button type="submit" class="btn btn-violeta">Quiero conocer talento<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button><p class="legal">Usamos tu mail solo para avisarte de TIM. Podés pedir que lo borremos cuando quieras.</p></form></div></div></section><section class="banda" id="hackaton" data-seccion="hackaton"><div class="wrap hack-in"><div class="fecha revela" aria-hidden="true"><div class="mes">OCTUBRE</div><div class="dia">31</div><div class="sem">Sábado</div></div><div class="revela"><p class="ojo sec-ojo">La primera hackatón</p><h2 class="sec-h">Primera hackatón TIM: sábado 31/10.</h2><p class="sec-p">Equipos de estudiantes, un desafío real y un mentor por equipo. Cada participante se lleva su devolución.</p><a class="btn btn-verde" data-cta="hackaton_ingresar" href="#ingresar">Entrá con tu cuenta<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a><p class="hack-datos">TIM nace de un relevamiento a 214 personas y 25 empresas, en septiembre de 2026.</p></div></div></section><section class="banda faq" id="preguntas" data-seccion="preguntas"><div class="wrap faq-in"><div class="revela"><p class="ojo sec-ojo">Preguntas frecuentes</p><h2 class="sec-h">Lo que nos preguntan.</h2></div><div class="revela"><details><summary>¿Cuesta algo?<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></summary><p>No. Para estudiantes, TIM es gratis.</p></details><details><summary>¿Quién ve mis datos?<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></summary><p>Vos, y el equipo TIM para organizar los desafíos. Las empresas ven tu perfil sin nombre. Tu nombre y tu contacto solo se comparten si vos aceptás.</p></details><details><summary>¿Qué es un desafío?<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></summary><p>Un problema concreto para resolver en un tiempo acotado, solo o en equipo. Puede durar unos minutos o una jornada.</p></details><details><summary>¿Me garantiza un trabajo?<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></summary><p>No. TIM te da evidencia de lo que sabés hacer, para que una empresa lo pueda ver.</p></details><details><summary>Soy empresa: ¿el desafío es trabajo gratis?<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></summary><p>No. Un desafío es una instancia de evaluación y nunca se usa para obtener trabajo productivo.</p></details><details><summary>¿Qué mide TIM?<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></summary><p>Habilidades blandas observadas en un desafío. Son señales de cómo trabajaste, no una nota ni un test.</p></details></div></div></section><section class="banda final" id="sumarme" data-seccion="sumarme"><div class="wrap final-in"><div class="revela"><p class="ojo sec-ojo">Sumate</p><h2 class="sec-h">Empezá a sumar evidencia hoy.</h2><p class="sec-p">Dejanos tu mail y te avisamos cuando abra el próximo desafío. Toma menos de un minuto.</p><p class="alt">¿Sos empresa? <a href="#empresas" data-cta="final_empresa">Busco talento junior</a></p></div><div class="revela"><form class="form claro" noValidate="" action="" encType="multipart/form-data" method="POST"><input type="hidden" name="$ACTION_REF_3"/><input type="hidden" name="$ACTION_3:0" value="{&quot;id&quot;:&quot;604c2e3e3f1f14622e61e78c71e550505621c1f961&quot;,&quot;bound&quot;:&quot;$@1&quot;}"/><input type="hidden" name="$ACTION_3:1" value="[{&quot;estado&quot;:&quot;inicial&quot;}]"/><input type="hidden" name="$ACTION_KEY" value="kdce65460af176b21ed8b1d1f7fd372fc"/><div><h3>Quiero sumarme</h3></div><p class="ayuda">Cuatro datos y listo.</p><input type="hidden" name="audiencia" value="estudiante"/><input type="hidden" name="origen" value="{}"/><input class="hp" type="text" tabindex="-1" autoComplete="off" aria-hidden="true" name="sitio"/><div class="campo"><label for="estudiante-email">Tu mail</label><input id="estudiante-email" type="email" inputMode="email" autoComplete="email" required="" aria-invalid="false" name="email"/></div><div class="campo"><label for="estudiante-carrera">Qué estudiás</label><input id="estudiante-carrera" type="text" autoComplete="off" placeholder="Ej.: Economía, Diseño, Sistemas" aria-invalid="false" name="carrera"/></div><fieldset class="campo"><legend>En qué año estás</legend><div class="opciones"><label><input type="radio" name="anio" value="1.º"/>1.º</label><label><input type="radio" name="anio" value="2.º"/>2.º</label><label><input type="radio" name="anio" value="3.º"/>3.º</label><label><input type="radio" name="anio" value="4.º"/>4.º</label><label><input type="radio" name="anio" value="5.º o más"/>5.º o más</label><label><input type="radio" name="anio" value="Recién recibido/a"/>Recién recibido/a</label></div></fieldset><fieldset class="campo"><legend>¿Qué te frena hoy?</legend><div class="opciones columna"><label><input type="radio" name="freno" value="no_sabe_que_quiere"/>Todavía no sé qué quiero hacer</label><label><input type="radio" name="freno" value="no_identifica_fortalezas"/>Sé qué quiero, pero no sé qué puedo ofrecer</label><label><input type="radio" name="freno" value="no_sabe_demostrar"/>Sé qué ofrezco, pero no cómo demostrarlo</label><label><input type="radio" name="freno" value="hace_todo_bien"/>Hago todo bien y no consigo</label></div></fieldset><button type="submit" class="btn btn-violeta">Quiero sumarme<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button><p class="legal">Usamos tu mail solo para avisarte de TIM. Podés pedir que lo borremos cuando quieras.</p></form></div></div></section></main><footer><div class="wrap pie"><svg viewBox="0 0 236 100" class="logo" role="img" aria-label="TIM" fill="currentColor"><path d="M0 0H84V26H56V100H28V26H0Z"></path><circle cx="110" cy="13" r="13" fill="#AA8CFA"></circle><rect x="97" y="32" width="26" height="24" rx="4" fill="#8061EB"></rect><rect x="97" y="62" width="26" height="38" rx="4"></rect><path d="M134 100V0H164L185 52L206 0H236V100H210V46L194 86H176L160 46V100Z"></path></svg><p>Tu capacidad, en evidencia.</p><nav aria-label="Pie"><a href="#privacidad">Privacidad</a><a href="#ingresar">Entrar</a></nav></div></footer>
+<div class="revision" role="group" aria-label="Variante del título">
+  <span>Título</span>
+  <button type="button" aria-pressed="true" data-v="a">A</button>
+  <button type="button" aria-pressed="false" data-v="b">B</button>
+</div>
+<script>
+const H = { a: "<h1>Tu capacidad, <em>en evidencia.</em></h1>", b: "<h1>Mostrá <em>cómo pensás</em>, no solo tu CV.</h1>" };
+document.querySelectorAll(".revision button").forEach((b) => b.addEventListener("click", () => {
+  document.querySelector(".tl h1").outerHTML = H[b.dataset.v];
+  document.querySelectorAll(".revision button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+}));
+document.querySelectorAll("form").forEach((f) => f.addEventListener("submit", (e) => e.preventDefault()));
+addEventListener("scroll", () => document.querySelector(".tl .nav").classList.toggle("solida", scrollY > 24), { passive: true });
+</script>
