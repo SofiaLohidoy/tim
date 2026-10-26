@@ -13,6 +13,7 @@ const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SU
 test("el mentor evalúa sin señal y se sincroniza al volver la conexión", async ({ page, context }) => {
   await entrar(page, "mentor-2");
   await page.getByRole("link", { name: /Estudiante2 Prueba/ }).click();
+  await expect(page).toHaveURL(/\/mentor\/[^/]+\/[^/]+$/);
   const persona = (await page.getByRole("heading", { level: 1 }).textContent())!.trim();
   await expect(page.getByRole("radiogroup").first()).toBeVisible();
 

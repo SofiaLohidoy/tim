@@ -2,6 +2,7 @@
 //   node scripts/prueba.mjs crear     → cuentas de staff y estudiantes, equipos y asignaciones
 //   node scripts/prueba.mjs limpiar   → borra todo lo `prueba-` (cuentas, eventos, equipos, landing)
 // Lee .env.local (o las variables del entorno). La clave de las cuentas es PRUEBA_CLAVE.
+import { pathToFileURL } from "node:url";
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
 
@@ -96,7 +97,7 @@ export async function limpiar() {
   return borrados;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const accion = process.argv[2];
   if (accion === "crear") {
     const arg = (n, def) => Number(process.argv[process.argv.indexOf(`--${n}`) + 1]) || def;

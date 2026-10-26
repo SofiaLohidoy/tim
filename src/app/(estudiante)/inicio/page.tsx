@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { ArrowRight, CalendarDays, CheckCircle2, MapPin, QrCode, Users } from "lucide-react";
-import { Isotipo } from "@/components/marca";
+import { Logo } from "@/components/marca";
 import { clienteServidor } from "@/lib/supabase/servidor";
 import { exigirUsuario } from "@/lib/sesion";
 import { eventoActual, fechaLarga, nombreDe } from "@/lib/eventos";
@@ -62,7 +62,7 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
           <p className="text-sm text-muted-foreground">Hola,</p>
           <h1 className="text-[1.7rem] leading-tight font-extrabold">{u.nombre ?? nombreDe({ ...u })}</h1>
         </div>
-        <Isotipo className="h-12 w-auto" base="#17483F" />
+        <Link href="/inicio" aria-label="TIM, inicio" className="shrink-0 text-primary"><Logo className="h-8 w-auto sm:h-10" /></Link>
       </header>
 
       {avisoAsistencia === "ok" && (

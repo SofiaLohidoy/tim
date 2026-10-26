@@ -26,10 +26,12 @@ export default function Pagina({ searchParams }: PageProps<"/ingresar">) {
 
 async function Contenido({ searchParams }: { searchParams: PageProps<"/ingresar">["searchParams"] }) {
   const [u, params] = await Promise.all([usuarioActual(), searchParams]);
-  const siguiente = typeof params.siguiente === "string" ? params.siguiente : "";
+  const siguiente = typeof params.siguiente === "string" ? params.siguiente : params.tipo === "empresa" ? "/empresa" : "";
   if (u && params.aviso !== "otro_mail") redirect(siguiente ? `/continuar?siguiente=${encodeURIComponent(siguiente)}` : "/continuar");
   return (
     <FormIngreso
+      empresa={params.tipo === "empresa" || siguiente === "/empresa"}
+      modoInicial={params.modo === "entrar" ? "entrar" : "crear"}
       siguiente={siguiente}
       email={typeof params.email === "string" ? params.email : ""}
       invitacion={params.invitacion === "1"}

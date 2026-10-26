@@ -35,7 +35,8 @@ function escribirEnv(archivo, valores, encabezado) {
 }
 
 function claves(ref) {
-  const lista = json(["projects", "api-keys", "--project-ref", ref]);
+  // El CLI actual oculta las claves secretas salvo con --reveal (projects api-keys --help).
+  const lista = json(["projects", "api-keys", "--project-ref", ref, "--reveal"]);
   const valor = (tipo) => lista.find((k) => k.type === tipo)?.api_key;
   const publica = valor("publishable");
   const secreta = valor("secret");

@@ -63,6 +63,7 @@ export function destinoPara(u: Usuario): string {
   if (u.roles.includes("organizador")) return "/organizador";
   if (u.roles.includes("mentor")) return "/mentor";
   if (u.roles.includes("jurado")) return "/jurado";
+  if (u.roles.includes("empresa")) return "/empresa";
   if (!u.onboardingCompleto) return "/bienvenida";
   return "/inicio";
 }
@@ -76,6 +77,7 @@ export function nombreVisible(u: { nombre: string | null; apellido: string | nul
 export function destinoTrasIngreso(u: Usuario, siguiente: string | null): string {
   const s = destinoSeguro(siguiente);
   const esStaff = u.roles.some((r) => r === "organizador" || r === "mentor" || r === "jurado");
+  if (s === "/empresa") return "/empresa";
   if (s && (esStaff || u.onboardingCompleto || s.startsWith("/a/") || s.startsWith("/invitacion/"))) return s;
   return destinoPara(u);
 }

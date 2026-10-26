@@ -24,3 +24,8 @@ Orden: primero lo que la hackatón necesita, después los juegos, después perfi
 - Sofía confirma consigna, equipos, mentores y jurados con sus mails antes del miércoles 28/10.
 - Sofía confirma título del hero y promesa a empresas el martes 27/10.
 - Sofía confirma los textos de los 4 niveles de la rúbrica (hoy son una propuesta).
+
+### Avance local 26/10/2026
+Landing principal breve, páginas por público y registro directo implementados para revisión. De fase D se adelanta solo registro, perfil básico y bienvenida de empresa. Catálogo, contactos y propuestas siguen pendientes. No publicado ni migrado a producción.
+
+Disponibilidad local de actividades: todas quedan visibles como propuestas con títulos tentativos y Próximamente, sin descripciones, duraciones, filtros ni acceso al juego. Ninguna admite nuevas partidas. Se conserva el historial y la lógica de prototipos sin presentarlos como actividades disponibles.
