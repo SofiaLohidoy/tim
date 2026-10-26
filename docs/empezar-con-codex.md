@@ -1,39 +1,6 @@
-# Empezar a trabajar en TIM con Codex
+# Arranque de TIM en una compu nueva (instrucciones para el agente)
 
-Para Sofía. Vos no tenés que saber nada técnico: Codex hace todo. Lo único tuyo son unos clics.
-
-## Una sola vez
-1. Creá una carpeta vacía, por ejemplo `Documentos/TIM`, y abrila en Codex.
-2. Pegale este mensaje:
-
-```text
-Quiero trabajar en TIM, la plataforma de mi tesis. No soy técnica: hacé vos todo y pedime solo los clics en el navegador.
-Cloná el repo en esta misma carpeta con: gh repo clone programon-arg/tim .
-(si falta gh, instalalo con Homebrew y corré gh auth login --web).
-Después leé AGENTS.md entero y seguí, paso a paso, la sección "Para el agente" de docs/empezar-con-codex.md.
-Al final contame en tres líneas qué quedó andando y abrime la app en el navegador.
-```
-
-3. Mientras trabaja, Codex te va a pedir algunas cosas. Decí que sí a todo:
-   - Que confíes en la carpeta o le des permiso para seguir.
-   - Un clic en el navegador para GitHub y otro para Supabase. Entrá con tu cuenta de siempre.
-   - Si tu Mac no tiene Homebrew, la contraseña de tu compu, una sola vez.
-
-Tarda unos 10 minutos. Cuando termina, te abre TIM funcionando en tu compu.
-
-## Todos los días
-Abrí la carpeta `TIM` en Codex y pedile las cosas como se las pedirías a alguien del equipo:
-- "Cambiá el título de la landing por …"
-- "Armá el evento de la hackatón del sábado"
-- "Sumá a Juan como mentor del equipo 3"
-- "¿Cuántos se anotaron en la landing esta semana?"
-- "Publicalo"
-
-Codex prueba los cambios en una base de práctica (`tim-dev`) y los publica en https://tim-alpha-eight.vercel.app cuando le decís. Si algo no sale, pedile "fijate qué pasó y arreglalo".
-
----
-
-## Para el agente
+Este archivo es para Codex, no para una persona. La persona (Sofía) no es técnica: no le pidas que corra comandos. Pedile solo los clics de autorización en el navegador y, si hace falta instalar Homebrew, la contraseña de su Mac.
 Seguí estos pasos en orden, sin pedirle a Sofía que corra nada. Cada paso se puede repetir.
 
 ### 1. Herramientas
@@ -74,3 +41,6 @@ Si algo falla, skill `verificar`, y arreglalo antes de seguir.
 - **Cambiar la base**: `pnpm migrar dev`, probar, `pnpm migrar prod` (skill `migracion`).
 - **Permisos de Codex**: `.codex/config.toml` hace que Codex no pida aprobar cada comando, una vez que Sofía confía en la carpeta.
 - **Producción**: proyecto `TIM` de Supabase (ref `xvzkijllizurvmmhmxvl`) y https://tim-alpha-eight.vercel.app.
+
+### Cómo le pide cosas Sofía después
+En castellano, como a alguien del equipo: "cambiá el título de la landing", "armá el evento", "¿cuántos se anotaron?", "publicalo". `AGENTS.md` tiene el mapa de qué leer para cada pedido.
