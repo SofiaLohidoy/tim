@@ -1,5 +1,8 @@
 # Trabajar en local
 
+> **Camino normal: `pnpm preparar`** (base de práctica `tim-dev` en la nube, sin Docker). Ver `docs/empezar-con-codex.md`. Lo de abajo es la alternativa con Supabase local en Docker, para quien lo prefiera.
+
+
 **No hace falta acceso a Vercel ni a Supabase de producción para desarrollar.** Es como corresponde: un entorno de desarrollo no tiene por qué tener las claves que leen los datos reales de los estudiantes.
 
 Todo lo que hace falta está en el repo: las migraciones y la configuración que levanta Supabase con el CLI. Necesitás Docker andando.

@@ -53,10 +53,10 @@ El equipo de TIM no es técnico. **La persona no corre comandos: el agente (Code
 
 ## Entornos
 - **Producción**: https://tim-alpha-eight.vercel.app · Supabase `TIM` (ref `xvzkijllizurvmmhmxvl`, cuenta de Sofía). Se publica con push a `main` (skill `deploy`).
-- **Desarrollo**: Supabase `tim-dev` en la cuenta de Sofía, o Supabase local con Docker (`docs/trabajar-en-local.md`). Nunca se prueba contra producción, salvo la verificación final con datos `prueba-` que se borran.
+- **Desarrollo**: Supabase `tim-dev` en la cuenta de Sofía. `pnpm preparar` lo crea si hace falta y escribe `.env.local`. Nunca se prueba contra producción, salvo la verificación final con datos `prueba-` que se borran. (Supabase local con Docker es opcional: `docs/trabajar-en-local.md`.)
 
 ## Comandos
-`pnpm dev` (puerto 3001) · `pnpm verificar` (tipos + lint + tests + build, con el dev server parado) · `pnpm test:rls` · `pnpm e2e` · `pnpm capturas` (pantallas a 375 y 1280 px en `capturas/`) · `pnpm datos:prueba` / `pnpm datos:limpiar`.
+`pnpm preparar` (entorno completo) · `pnpm dev` (puerto 3001) · `pnpm migrar dev|prod` · `pnpm esperar-publicacion` · `pnpm verificar` (tipos + lint + tests + build, con el dev server parado) · `pnpm test:rls` · `pnpm e2e` · `pnpm capturas` (pantallas a 375 y 1280 px en `capturas/`) · `pnpm datos:prueba` / `pnpm datos:limpiar`.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

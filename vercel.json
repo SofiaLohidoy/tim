@@ -1,4 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "crons": [{ "path": "/api/cron/salud", "schedule": "0 12 * * *" }]
+  "crons": [
+    {
+      "path": "/api/cron/salud",
+      "schedule": "0 12 * * *"
+    }
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  }
 }

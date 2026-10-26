@@ -1,0 +1,18 @@
+# Publica TIM en Vercel con cada push a main, sin importar quién hizo el commit.
+# Por qué: el proyecto de Vercel está en el equipo de Programon y Vercel no publica commits de
+# personas que no son miembros del equipo. Un Deploy Hook del proyecto sí: solo puede redeployar
+# TIM, nada más. La URL del hook es el secreto VERCEL_DEPLOY_HOOK del repo.
+name: Publicar
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+concurrency:
+  group: publicar
+  cancel-in-progress: true
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pedirle a Vercel que publique main
+        run: curl --fail --silent --show-error -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"

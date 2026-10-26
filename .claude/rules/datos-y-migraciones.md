@@ -45,8 +45,8 @@ COMMIT;
 - Ningún valor numérico en niveles de rúbrica (ver `docs/decisiones/004-niveles-sin-puntaje.md`).
 
 ## Después de cada migración
-1. `supabase db reset` en local, sin errores.
-2. Regenerar tipos: `supabase gen types typescript --local > src/lib/supabase/tipos.ts`.
+1. `pnpm migrar dev`, sin errores (o `supabase db reset` si trabajás con Supabase local).
+2. Regenerar tipos: `pnpm db:tipos`.
 3. Test de RLS del caso nuevo en `pnpm test:rls`.
 4. Actualizar `docs/modelo-de-datos.md`.
 
