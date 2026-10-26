@@ -16,7 +16,7 @@ async function todas<T>(pagina: (desde: number, hasta: number) => PromiseLike<{ 
   }
 }
 
-const TABLAS = ["interesados", "eventos_landing", "estudiantes", "evaluaciones", "devoluciones"] as const;
+const TABLAS = ["interesados", "eventos_landing", "estudiantes", "evaluaciones", "devoluciones", "actividades"] as const;
 type Tabla = (typeof TABLAS)[number];
 
 export async function GET(_req: Request, ctx: RouteContext<"/organizador/exportar/[tabla]">) {
@@ -109,6 +109,32 @@ export async function GET(_req: Request, ctx: RouteContext<"/organizador/exporta
         const r = (enc.data ?? []).find((x) => x.usuario_id === d.estudiante_id && x.evento_id === d.evento_id);
         const v = (r?.respuestas ?? {}) as Record<string, string>;
         return [mail.get(d.estudiante_id), d.publicada_en, d.abierta_en, v.sirvio, v.seguir, v.compartir, r?.creado_en];
+      }),
+    );
+  }
+
+  if (tabla === "actividades") {
+    const [part, sen, enc, per] = await Promise.all([
+      todas((a, b) => db.from("partidas").select("id, usuario_id, actividad, version, numero, resultado, eventos, iniciada_en, terminada_en").order("iniciada_en").range(a, b)),
+      todas((a, b) => db.from("senales").select("partida_id, clave, valor, regla").order("id").range(a, b)),
+      todas((a, b) => db.from("respuestas_encuesta").select("partida_id, respuestas").eq("encuesta", "post_partida").order("id").range(a, b)),
+      todas((a, b) => db.from("perfiles").select("id, email").order("id").range(a, b)),
+    ]);
+    const mail = new Map(per.map((x) => [x.id, x.email]));
+    // Una fila por partida, con sus señales en columnas. Las señales son hipótesis (docs/senales.md).
+    csv = aCsv(
+      ["email", "actividad", "version", "partida_n", "resultado", "segundos", "jugadas", "pistas", "persistencia", "uso_de_informacion", "autocorreccion", "regla", "muestra_como_pienso", "iniciada_en"],
+      part.map((p) => {
+        const ev = (p.eventos ?? []) as { tipo: string }[];
+        const s = sen.filter((x) => x.partida_id === p.id);
+        const valor = (c: string) => s.find((x) => x.clave === c)?.valor ?? "";
+        const r = enc.find((x) => x.partida_id === p.id)?.respuestas as { muestra_como_pienso?: string } | undefined;
+        const seg = p.terminada_en ? Math.round((new Date(p.terminada_en).getTime() - new Date(p.iniciada_en).getTime()) / 1000) : "";
+        return [
+          mail.get(p.usuario_id), p.actividad, p.version, p.numero, p.resultado, seg,
+          ev.filter((e) => e.tipo === "intento" || e.tipo === "comprobar").length, ev.filter((e) => e.tipo === "pista").length,
+          valor("persistencia"), valor("uso_de_informacion"), valor("autocorreccion"), s[0]?.regla ?? "", r?.muestra_como_pienso ?? "", p.iniciada_en,
+        ];
       }),
     );
   }

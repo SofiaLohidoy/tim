@@ -714,6 +714,56 @@ export type Database = {
           },
         ]
       }
+      partidas: {
+        Row: {
+          actividad: string
+          eventos: Json
+          id: string
+          iniciada_en: string
+          numero: number
+          objetivo: Json | null
+          resultado: string
+          terminada_en: string | null
+          tipo: string
+          usuario_id: string
+          version: number
+        }
+        Insert: {
+          actividad: string
+          eventos?: Json
+          id?: string
+          iniciada_en?: string
+          numero?: number
+          objetivo?: Json | null
+          resultado?: string
+          terminada_en?: string | null
+          tipo: string
+          usuario_id: string
+          version: number
+        }
+        Update: {
+          actividad?: string
+          eventos?: Json
+          id?: string
+          iniciada_en?: string
+          numero?: number
+          objetivo?: Json | null
+          resultado?: string
+          terminada_en?: string | null
+          tipo?: string
+          usuario_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partidas_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       perfiles: {
         Row: {
           actualizado_en: string
@@ -747,6 +797,7 @@ export type Database = {
           encuesta: string
           evento_id: string | null
           id: string
+          partida_id: string | null
           respuestas: Json
           usuario_id: string
         }
@@ -755,6 +806,7 @@ export type Database = {
           encuesta: string
           evento_id?: string | null
           id?: string
+          partida_id?: string | null
           respuestas: Json
           usuario_id?: string
         }
@@ -763,6 +815,7 @@ export type Database = {
           encuesta?: string
           evento_id?: string | null
           id?: string
+          partida_id?: string | null
           respuestas?: Json
           usuario_id?: string
         }
@@ -772,6 +825,13 @@ export type Database = {
             columns: ["evento_id"]
             isOneToOne: false
             referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respuestas_encuesta_partida_id_fkey"
+            columns: ["partida_id"]
+            isOneToOne: false
+            referencedRelation: "partidas"
             referencedColumns: ["id"]
           },
           {
@@ -853,6 +913,54 @@ export type Database = {
             columns: ["evento_id"]
             isOneToOne: false
             referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      senales: {
+        Row: {
+          clave: string
+          creado_en: string
+          detalle: Json
+          id: string
+          partida_id: string
+          regla: string
+          usuario_id: string
+          valor: number
+        }
+        Insert: {
+          clave: string
+          creado_en?: string
+          detalle?: Json
+          id?: string
+          partida_id: string
+          regla: string
+          usuario_id: string
+          valor: number
+        }
+        Update: {
+          clave?: string
+          creado_en?: string
+          detalle?: Json
+          id?: string
+          partida_id?: string
+          regla?: string
+          usuario_id?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "senales_partida_id_fkey"
+            columns: ["partida_id"]
+            isOneToOne: false
+            referencedRelation: "partidas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "senales_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
             referencedColumns: ["id"]
           },
         ]

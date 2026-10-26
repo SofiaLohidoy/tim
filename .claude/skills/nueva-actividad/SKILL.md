@@ -5,7 +5,14 @@ description: Para agregar un juego o actividad virtual a TIM con sus señales (f
 
 # Nueva actividad
 
-Fase B. Las tablas `actividades`, `partidas` y `senales` todavía no existen: la primera actividad las crea (skill `migracion`). Revisá `docs/roadmap.md` antes: si la hackatón no pasó, esto espera.
+Fase B. Ya existen `partidas` y `senales` (migración 010) y tres tipos de juego: `palabra`, `crucigrama` y `einstein`. La pantalla de Actividades se muestra con `NEXT_PUBLIC_ACTIVIDADES=1`.
+
+Dónde está cada cosa:
+- `src/lib/actividades/catalogo.ts`: el contenido público (título, minutos, grilla, pistas). Agregar un crucigrama o un acertijo nuevo del mismo tipo es sumar una entrada acá.
+- `src/lib/actividades/soluciones.ts`: las respuestas, solo servidor, con clave `slug@version`.
+- `src/lib/__tests__/actividades.test.ts`: comprueba que cada crucigrama cierre con palabras de la lista y que cada acertijo tenga **una sola** solución. Si falla, el contenido está mal, no el test.
+- `src/app/(estudiante)/actividades/`: acciones (cada jugada se corrige en el servidor) y la UI de cada tipo.
+- Un tipo de juego nuevo sí necesita: tipo en `tipos.ts`, corrección pura, acciones, UI, señales y ampliar el `CHECK` de `partidas.tipo`.
 
 Juegos previstos: **adivinar la palabra** (tipo Wordle, lista de palabras en español con licencia libre), **crucigrama** (grillas propias) y **acertijo de Einstein** (lógica con pistas, en grilla). Contenido propio, nunca copiado.
 

@@ -65,5 +65,14 @@ Funciones `security definer` con `search_path = ''`. Las usan las policies para 
 
 La IP no se guarda: solo un hash con sal (`LANDING_SAL`) para el rate limit.
 
+### Actividades virtuales (010)
+El contenido de los juegos no está en la base: vive versionado en `src/lib/actividades/` (`catalogo.ts` lo público, `soluciones.ts` las respuestas, solo servidor). Los tests comprueban que cada crucigrama cierre y cada acertijo tenga una sola solución.
+
+| Tabla | Qué guarda | Lee | Escribe |
+|---|---|---|---|
+| `partidas` | Persona, actividad (slug) y versión jugada, número de partida, resultado (`en_curso` / `resuelta` / `no_resuelta` / `abandonada`), `eventos` (cada intento, comprobación, pista, abandono, con su momento), `objetivo` (ej. qué palabra tocó). | La persona y Org. **`objetivo` no se puede leer desde el navegador** (revocado por columna). | Solo el servidor (clave secreta), que corrige cada jugada. |
+| `senales` | Partida, clave (`persistencia`, `uso_de_informacion`, `autocorreccion`), valor 0–1, detalle y versión de la regla. | La persona y Org. | Solo el servidor, al terminar la partida. Reglas en `docs/senales.md`. |
+| `respuestas_encuesta` (ampliada) | Suma `post_partida` (una pregunta al terminar cada partida) con `partida_id`. | La persona y Org. | La persona / el servidor. |
+
 ## Lo que todavía no existe
-Según el plan: `actividades`, `partidas`, `senales` (fase B); credenciales (fase C); `empresas`, `intereses`, `contactos`, `propuestas_desafio` (fase D); `habilidades_duras` (fase E). Cuando se creen, se suman acá en la misma migración que los crea.
+Según el plan: credenciales (fase C); `empresas`, `intereses`, `contactos`, `propuestas_desafio` (fase D); `habilidades_duras` (fase E). Cuando se creen, se suman acá en la misma migración que los crea.

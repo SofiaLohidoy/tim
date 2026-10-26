@@ -117,3 +117,12 @@
     text-wrap: balance;
   }
 }
+/* Intento incompleto en "Adivinar la palabra": un sacudón corto, solo transform. */
+@keyframes tim-sacudir {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [class*="tim-sacudir"] { animation: none !important; }
+}

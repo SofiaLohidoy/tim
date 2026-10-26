@@ -10,6 +10,7 @@ const EXPORTES = [
   { tabla: "estudiantes", titulo: "Estudiantes", texto: "Onboarding, arquetipo, CV sí/no, asistencia y equipo." },
   { tabla: "evaluaciones", titulo: "Evaluaciones", texto: "Una fila por evaluación y dimensión: nivel y observación." },
   { tabla: "devoluciones", titulo: "Devoluciones y encuesta", texto: "Publicada, abierta y las tres respuestas de interés." },
+  { tabla: "actividades", titulo: "Actividades y señales", texto: "Una fila por partida: resultado, tiempo, jugadas, pistas, señales y la respuesta de la encuesta." },
 ];
 
 export default function Pagina() {

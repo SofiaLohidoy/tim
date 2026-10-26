@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { Logo } from "@/components/marca";
 import { NavOrganizador } from "./nav";
 
@@ -15,7 +16,9 @@ export default function Layout({ children }: LayoutProps<"/organizador">) {
             Mi perfil
           </Link>
         </div>
-        <NavOrganizador />
+        <Suspense fallback={<div className="h-10" />}>
+          <NavOrganizador />
+        </Suspense>
       </header>
       <main className="mx-auto w-full max-w-6xl px-5 py-6 pb-16 print:max-w-none print:p-0">{children}</main>
     </div>
