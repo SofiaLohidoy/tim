@@ -8,6 +8,20 @@ Hay dos entornos remotos:
 
 Los dos viven en la cuenta de Supabase de Sofía (plan Free: 2 proyectos activos por owner, justo los dos). Ver `docs/infraestructura.md`.
 
+## Camino corto: `scripts/conectar-prod.mjs`
+Hace los pasos 2, 3, 5 y 7 de una vez, y se puede volver a correr sin romper nada:
+
+```bash
+SUPABASE_ACCESS_TOKEN=sbp_... SUPABASE_DB_PASSWORD=... node scripts/conectar-prod.mjs <project-ref> --organizadores mail@de.sofia
+```
+
+- Aplica las migraciones, apaga la confirmación de mail, pone las URLs del sitio y **sube los límites de tasa de Auth**. Ese último punto no es opcional: el registro corre en el servidor (todas las personas comparten la IP de Vercel) y en la hackatón todos salen por el mismo wifi. Con los 30 registros cada 5 minutos que trae Supabase de fábrica, 40 personas se traban en la puerta.
+- Carga las claves en Vercel, redeploya y espera `READY`.
+- Imprime el link de invitación de cada organizadora.
+- Después, probar la carga en prod: `ENV_ARCHIVO=.env.prod node scripts/carga-registro.mjs 45` (45 altas e ingresos simultáneos) y borrar con `ENV_ARCHIVO=.env.prod pnpm datos:limpiar`.
+
+Los pasos de abajo explican lo mismo a mano.
+
 ## 1. Crear los proyectos en Supabase
 1. En el dashboard de Supabase de Sofía, crear `tim-dev` y `tim-prod`. Región: São Paulo (`sa-east-1`), la más cercana.
 2. Guardar la contraseña de la base de cada uno en el gestor de contraseñas del equipo. No va al repo.
