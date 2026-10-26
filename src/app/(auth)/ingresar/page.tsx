@@ -15,7 +15,7 @@ export default function Pagina({ searchParams }: PageProps<"/ingresar">) {
         <a href="/" aria-label="TIM, inicio" className="self-start">
           <Logo className="h-7 w-auto" />
         </a>
-        <p className="mt-2 text-xs font-semibold tracking-[0.14em] text-lila uppercase">Tu capacidad, en evidencia.</p>
+        <p className="mt-2 text-xs font-semibold tracking-[0.14em] text-lila-texto uppercase">Tu capacidad, en evidencia.</p>
         <Suspense fallback={<div className="mt-10 h-96 animate-pulse rounded-3xl bg-white/5" />}>
           <Contenido searchParams={searchParams} />
         </Suspense>

@@ -13,6 +13,7 @@
   --color-violeta-texto: var(--violeta-texto);
   --color-lila: var(--lila);
   --color-lila-claro: var(--lila-claro);
+  --color-lila-texto: var(--lila-texto);
   --color-verde-oscuro: var(--verde-oscuro);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -78,6 +79,7 @@
   --violeta-texto: #6a4ad9;
   --lila: #aa8cfa;
   --lila-claro: #e8dfff;
+  --lila-texto: #c4b0fc;
   --verde-oscuro: #102e28;
   --chart-1: #17483f;
   --chart-2: #8061eb;

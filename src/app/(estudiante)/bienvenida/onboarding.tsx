@@ -200,7 +200,7 @@ export function Onboarding({ inicial, siguiente }: { inicial: Pick<Datos, "nombr
               ))}
             {"arquetipo" in arbol && (
               <div className="mt-2 rounded-2xl bg-primary p-5 text-primary-foreground animate-in fade-in slide-in-from-bottom-2 duration-300">
-                <p className="text-xs font-semibold tracking-[0.14em] text-lila uppercase">Tu punto de partida</p>
+                <p className="text-xs font-semibold tracking-[0.14em] text-lila-texto uppercase">Tu punto de partida</p>
                 <p className="mt-2 font-heading text-xl font-extrabold">{PUNTO_DE_PARTIDA[arbol.arquetipo].titulo}</p>
                 <p className="mt-1.5 text-primary-foreground/80">{PUNTO_DE_PARTIDA[arbol.arquetipo].texto}</p>
               </div>

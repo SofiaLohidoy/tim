@@ -53,7 +53,7 @@ test("el mentor evalúa a una persona con la rúbrica y la envía", async ({ pag
   await salir(page);
   await entrar(page, "mentor-1");
   await expect(page).toHaveURL(/\/mentor/);
-  await page.getByRole("link", { name: /prueba-Equipo 1/ }).click();
+  await expect(page.getByRole("heading", { name: "prueba-Equipo 1" })).toBeVisible();
   await page.getByRole("link", { name: /Estudiante1 Prueba/ }).click();
   await expect(page.getByRole("heading", { name: "Estudiante1 Prueba" })).toBeVisible();
 

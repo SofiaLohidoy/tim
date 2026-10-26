@@ -56,7 +56,7 @@ async function Contenido() {
 
       {partida && (
         <section className="rounded-3xl bg-primary p-5 text-primary-foreground">
-          <p className="text-xs font-semibold tracking-[0.14em] text-lila uppercase">Tu punto de partida</p>
+          <p className="text-xs font-semibold tracking-[0.14em] text-lila-texto uppercase">Tu punto de partida</p>
           <p className="mt-1.5 font-heading text-xl font-extrabold">{partida.titulo}</p>
           <p className="mt-1 text-primary-foreground/80">{partida.texto}</p>
         </section>

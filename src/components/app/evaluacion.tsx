@@ -274,6 +274,7 @@ function EstadoSync({ sync, estado }: { sync: Sync; estado: "borrador" | "enviad
     );
   if (sync === "guardando") return <span>Guardando…</span>;
   if (sync === "error") return <span className="text-destructive">No se pudo guardar</span>;
+  if (!estado) return <span>Sin empezar</span>;
   return (
     <span className="inline-flex items-center gap-1">
       <Check className="size-3.5" /> {estado === "enviada" ? "Enviada" : "Borrador guardado"}

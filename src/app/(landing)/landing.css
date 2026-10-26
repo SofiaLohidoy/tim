@@ -12,15 +12,17 @@
   --violeta-texto: #6a4ad9;
   --lila: #aa8cfa;
   --lila-cl: #e8dfff;
+  /* Lila para texto chico sobre verde: el lila de marca no llega a 4.5:1. */
+  --lila-texto: #c4b0fc;
   --crema: #faf8f4;
   --crema-2: #f2eee6;
   --tinta: #102e28;
   --tinta-2: rgb(16 46 40 / 0.74);
-  --tinta-3: rgb(16 46 40 / 0.58);
+  --tinta-3: rgb(16 46 40 / 0.7);
   --linea: rgb(16 46 40 / 0.12);
   --sobre-verde: #faf8f4;
   --sobre-verde-2: rgb(250 248 244 / 0.78);
-  --sobre-verde-3: rgb(250 248 244 / 0.6);
+  --sobre-verde-3: rgb(250 248 244 / 0.68);
   --linea-verde: rgb(250 248 244 / 0.14);
   --f-titulo: var(--font-manrope), "Manrope", ui-sans-serif, system-ui, sans-serif;
   --f-texto: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -112,7 +114,7 @@
 }
 .tl .hero-in { position: relative; display: grid; gap: 48px; grid-template-columns: minmax(0, 1fr); align-items: center; padding-bottom: 56px; }
 @media (min-width: 980px) { .tl .hero-in { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); gap: 56px; padding-bottom: 88px; } }
-.tl .hero .ojo { color: var(--lila); display: inline-flex; gap: 10px; flex-wrap: wrap; }
+.tl .hero .ojo { color: var(--lila-texto); display: inline-flex; gap: 10px; flex-wrap: wrap; }
 .tl .hero .ojo i { font-style: normal; opacity: 0.5; }
 .tl .hero h1 { margin-top: 20px; font-size: clamp(44px, 9.6vw, 84px); }
 .tl .hero h1 em { font-style: normal; color: var(--lila); }
@@ -182,7 +184,7 @@
 .tl .hoja.cv i.c { width: 62%; } .tl .hoja.cv i.m { width: 84%; } .tl .hoja.cv i.l { width: 96%; }
 .tl .hoja.cv .sep { height: 8px; }
 .tl .hoja.ev { background: var(--verde); color: var(--sobre-verde); }
-.tl .hoja.ev .ojo { color: var(--lila); }
+.tl .hoja.ev .ojo { color: var(--lila-texto); }
 .tl .hoja.ev .fila { display: flex; flex-direction: column; gap: 6px; padding-block: 7px; border-top: 1px solid var(--linea-verde); }
 .tl .hoja.ev .fila b { font-family: var(--f-titulo); font-weight: 700; font-size: 13.5px; letter-spacing: -0.01em; }
 .tl .hoja.ev .puntos i { background: rgb(250 248 244 / 0.16); }
@@ -242,7 +244,7 @@
 
 /* empresas */
 .tl .empresas { background: var(--verde-osc); color: var(--sobre-verde); }
-.tl .empresas .sec-ojo { color: var(--lila); }
+.tl .empresas .sec-ojo { color: var(--lila-texto); }
 .tl .empresas .sec-p { color: var(--sobre-verde-2); }
 .tl .empresas-in { display: grid; gap: 48px; grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 960px) { .tl .empresas-in { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 72px; align-items: start; } }
@@ -295,7 +297,7 @@
 .tl .hack-in { display: grid; gap: 36px; grid-template-columns: minmax(0, 1fr); align-items: center; }
 @media (min-width: 900px) { .tl .hack-in { grid-template-columns: auto minmax(0, 1fr); gap: 64px; } }
 .tl .fecha { width: 200px; border-radius: 24px; overflow: hidden; background: var(--crema); box-shadow: 0 0 0 1px var(--linea), 0 24px 48px -28px rgb(16 46 40 / 0.4); text-align: center; }
-.tl .fecha .mes { background: var(--violeta); color: #fff; padding: 10px; font-family: var(--f-titulo); font-weight: 800; letter-spacing: 0.16em; font-size: 14px; }
+.tl .fecha .mes { background: var(--violeta-texto); color: #fff; padding: 10px; font-family: var(--f-titulo); font-weight: 800; letter-spacing: 0.16em; font-size: 14px; }
 .tl .fecha .dia { font-family: var(--f-titulo); font-weight: 800; font-size: 96px; letter-spacing: -0.06em; line-height: 1; padding: 18px 0 4px; color: var(--verde); }
 .tl .fecha .sem { padding-bottom: 18px; font-weight: 600; color: var(--tinta-3); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
 .tl .hack-in .btn { margin-top: 28px; }
@@ -318,7 +320,7 @@
 
 /* cta final */
 .tl .final { background: var(--verde); color: var(--sobre-verde); }
-.tl .final .sec-ojo { color: var(--lila); }
+.tl .final .sec-ojo { color: var(--lila-texto); }
 .tl .final-in { display: grid; gap: 48px; grid-template-columns: minmax(0, 1fr); align-items: center; }
 @media (min-width: 960px) { .tl .final-in { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: 72px; } }
 .tl .final .sec-p { color: var(--sobre-verde-2); }

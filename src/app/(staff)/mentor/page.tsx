@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { clienteServidor } from "@/lib/supabase/servidor";
 import { exigirRol } from "@/lib/sesion";
@@ -20,6 +21,8 @@ async function Contenido() {
   const u = await exigirRol("mentor", "/mentor");
   const db = await clienteServidor();
   const equipos = await equiposAsignados(db, u.id, "mentor");
+  // Casi siempre es un equipo por mentor: se ahorra un toque.
+  if (equipos.length === 1) redirect(`/mentor/${equipos[0].id}`);
   const evals = await misEvaluaciones(db, u.id, equipos.map((e) => e.id));
 
   return (

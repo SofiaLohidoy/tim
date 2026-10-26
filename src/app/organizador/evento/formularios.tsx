@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Campo, Mensaje, claseInput } from "@/components/org/campos";
+import { cn } from "@/lib/utils";
 import { guardarDesafio, guardarEvento, type Resultado } from "../acciones";
 
 type Evento = { id: string; nombre: string; fecha: string; lugar: string | null; estado: string } | null;
@@ -47,7 +48,7 @@ export function FormDesafio({ eventoId, desafio }: { eventoId: string; desafio: 
         <input id="titulo" name="titulo" defaultValue={desafio?.titulo ?? ""} className={claseInput} />
       </Campo>
       <Campo etiqueta="Consigna" htmlFor="consigna" ayuda="Recordá: un desafío es una evaluación, nunca trabajo productivo gratis.">
-        <textarea id="consigna" name="consigna" rows={8} defaultValue={desafio?.consigna ?? ""} className={`${claseInput} h-auto py-3`} />
+        <textarea id="consigna" name="consigna" rows={8} defaultValue={desafio?.consigna ?? ""} className={cn(claseInput, "h-auto py-3")} />
       </Campo>
       <Mensaje r={r} />
       <div className="flex flex-wrap gap-2">

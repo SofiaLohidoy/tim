@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 // Tipografías del manual de marca: Manrope en títulos y datos destacados, Inter en texto.
-const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"], weight: ["600", "700", "800"] });
+const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"], weight: ["700", "800"] });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 
 const SITIO = process.env.NEXT_PUBLIC_SITIO_URL ?? "http://localhost:3000";

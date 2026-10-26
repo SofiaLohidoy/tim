@@ -84,7 +84,7 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
         <>
           <section className="overflow-hidden rounded-3xl bg-primary text-primary-foreground">
             <div className="p-5">
-              <p className="text-xs font-semibold tracking-[0.14em] text-lila uppercase">
+              <p className="text-xs font-semibold tracking-[0.14em] text-lila-texto uppercase">
                 {evento.estado === "cerrado" ? "Terminó" : evento.estado === "en_curso" ? "En curso" : "Próximo"}
               </p>
               <h2 className="mt-1.5 text-2xl font-extrabold">{evento.nombre}</h2>

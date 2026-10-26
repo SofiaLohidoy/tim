@@ -5,6 +5,7 @@ import { Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { claseInput } from "@/components/org/campos";
+import { cn } from "@/lib/utils";
 import { asignarEvaluador, borrarEquipo, crearEquipos, moverMiembro, quitarAsignacion, renombrarEquipo, type Resultado } from "../acciones";
 
 type Persona = { id: string; nombre: string; email: string };
@@ -31,7 +32,7 @@ export function TableroEquipos({ d }: { d: DatosEquipos }) {
     <div className="grid gap-4" aria-busy={ocupado}>
       <div className="flex flex-wrap items-center gap-2 rounded-3xl bg-card p-4 ring-1 ring-border">
         <label htmlFor="cantidad" className="text-sm font-semibold">Crear</label>
-        <input id="cantidad" type="number" min={1} max={40} value={cantidad} onChange={(e) => setCantidad(Number(e.target.value))} className={`${claseInput} w-20`} />
+        <input id="cantidad" type="number" min={1} max={40} value={cantidad} onChange={(e) => setCantidad(Number(e.target.value))} className={cn(claseInput, "w-20")} />
         <span className="text-sm text-muted-foreground">equipos</span>
         <Button disabled={ocupado} onClick={() => correr(() => crearEquipos(d.eventoId, cantidad), "Equipos creados.")} className="h-11 rounded-xl">
           <Plus className="size-4" /> Crear
