@@ -40,6 +40,7 @@ async function Contenido() {
             return {
               id: q.id,
               nombre: q.nombre,
+              entregaUrl: q.entrega_url,
               miembros: e.miembros.filter((m) => m.equipo_id === q.id).map((m) => p(m.usuario_id)),
               mentor: mentor ? { asignacion: mentor.id, persona: p(mentor.evaluador_id) } : null,
               jurados: e.asignaciones.filter((a) => a.equipo_id === q.id && a.rol === "jurado").map((a) => ({ asignacion: a.id, persona: p(a.evaluador_id) })),

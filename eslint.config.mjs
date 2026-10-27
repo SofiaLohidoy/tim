@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Scripts y artefactos temporales de verificación, ignorados también por git.
+    "work/**",
   ]),
 ]);
 

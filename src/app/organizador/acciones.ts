@@ -238,6 +238,58 @@ export async function restablecerClave(usuarioId: string): Promise<{ clave?: str
   return { clave };
 }
 
+/** Auth Admin y Storage exigen secreto; la sesión y la RPC autorizan y respaldan primero.
+ * Fuente: https://supabase.com/docs/guides/auth/managing-user-data (26/10/2026).
+ * Storage se borra por API antes de Auth; si falla Auth, se restaura el CV desde memoria.
+ */
+export async function eliminarEstudiante(usuarioId: string, email: string): Promise<Resultado> {
+  const u = await exigirRol("organizador");
+  const v = z.object({ id: z.uuid(), email: z.email().max(254) }).safeParse({ id: usuarioId, email: email.trim() });
+  if (!v.success) return { error: "Escribí el mail completo de la persona para confirmar." };
+  if (usuarioId === u.id) return { error: "No podés eliminar tu propia cuenta." };
+  const db = await clienteServidor();
+  const { data: persona, error: consulta } = await db.from("perfiles").select("email, estudiantes(cv_path), roles_usuario(rol)").eq("id", usuarioId).maybeSingle();
+  if (consulta || !persona) return { error: "No encontramos a esa persona. Recargá la lista." };
+  if (persona.email.toLowerCase() !== v.data.email.toLowerCase()) return { error: "El mail no coincide con la persona elegida." };
+  if (!persona.estudiantes || persona.roles_usuario.some((r) => r.rol !== "estudiante")) return { error: "Esta cuenta tiene otro rol y no se puede eliminar desde Estudiantes." };
+  const servicio = clienteServicio();
+  const ruta = `${usuarioId}/cv.pdf`;
+  // También se comprueba un CV huérfano cuyo upload terminó antes de guardar cv_path.
+  const archivos = await servicio.storage.from("cvs").list(usuarioId, { search: "cv.pdf" });
+  if (archivos.error) return { error: "No pudimos comprobar el CV. No se eliminó la cuenta." };
+  const hayCv = archivos.data.some((a) => a.name === "cv.pdf");
+  let cv: Blob | null = null;
+  if (hayCv) {
+    const descarga = await servicio.storage.from("cvs").download(ruta);
+    if (descarga.error) return { error: "No pudimos respaldar el CV. No se eliminó la cuenta." };
+    cv = descarga.data;
+  }
+  const { error: respaldo } = await db.rpc("respaldar_estudiante", {
+    p_usuario: usuarioId, p_email: v.data.email,
+    p_cv_base64: cv ? Buffer.from(await cv.arrayBuffer()).toString("base64") : undefined,
+  });
+  if (respaldo) {
+    if (respaldo.message.includes("cuenta_protegida")) return { error: "Esta cuenta tiene otro rol y no se puede eliminar desde Estudiantes." };
+    return { error: "No pudimos guardar el respaldo. No se eliminó la cuenta." };
+  }
+  if (cv) {
+    const quitar = await servicio.storage.from("cvs").remove([ruta]);
+    if (quitar.error) return { error: "No pudimos quitar el CV. No se eliminó la cuenta." };
+  }
+  const borrado = await servicio.auth.admin.deleteUser(usuarioId);
+  if (borrado.error) {
+    if (cv) {
+      const restaurar = await servicio.storage.from("cvs").upload(ruta, cv, { contentType: "application/pdf", upsert: true });
+      if (restaurar.error) return { error: "La cuenta sigue activa. El CV quedó respaldado y requiere recuperación por el equipo TIM." };
+    }
+    return { error: "No pudimos eliminar la cuenta. Sus datos siguen guardados." };
+  }
+  const invitaciones = await servicio.from("invitaciones").delete().eq("email", persona.email).eq("rol", "estudiante");
+  refrescar();
+  if (invitaciones.error) return { ok: true, mensaje: "Cuenta eliminada. Quedó una invitación pendiente para revisar en Personas." };
+  return { ok: true, mensaje: "Cuenta y datos eliminados. Se guardó un respaldo privado." };
+}
+
 /** Arma (o rearma) la foto de cada devolución con las evaluaciones enviadas. No publica nada. */
 export async function prepararDevoluciones(eventoId: string): Promise<Resultado> {
   await exigirRol("organizador");

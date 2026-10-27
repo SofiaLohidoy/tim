@@ -1,0 +1,10 @@
+@font-face{font-family:MontserratGuia;src:url('/fonts/Montserrat-Regular.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:MontserratGuia;src:url('/fonts/Montserrat-Bold.ttf') format('truetype');font-weight:700;font-display:swap}
+.tim-guia{--guia-verde:#17483F;--guia-oscuro:#102E28;--guia-violeta:#8061EB;--guia-lila:#AABCFA;--guia-claro:#E8DFFF;--guia-fondo:#FAF8F4;font-family:MontserratGuia,sans-serif;color:var(--guia-oscuro);background:var(--guia-fondo)}
+.tim-guia h1,.tim-guia h2{font-family:inherit}
+.tim-guia-cabecera{background:var(--guia-verde);color:var(--guia-fondo);border-radius:1.5rem;padding:1.5rem}
+.tim-guia-cabecera p{color:var(--guia-fondo)}
+.tim-guia-bloque{border:1px solid var(--guia-lila);border-radius:1.5rem;padding:1.25rem}
+.tim-guia-pendiente{background:var(--guia-claro);border-color:var(--guia-claro)}
+.tim-guia-recorrido{background:var(--guia-claro);border-left:4px solid var(--guia-violeta);border-radius:1rem;padding:1rem}
+.tim-guia-accion{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:44px;padding:.75rem 1rem;border-radius:.75rem;background:var(--guia-verde);color:var(--guia-fondo);font-weight:700;text-align:center}

@@ -13,6 +13,7 @@ const GRUPOS = [
     { href: "/organizador", texto: "Tablero", icono: LayoutDashboard },
     { href: "/organizador/evento", texto: "Evento", icono: CalendarDays },
     { href: "/organizador/equipos", texto: "Equipos", icono: UsersRound },
+    { href: "/organizador/entregas", texto: "Entregas", icono: ClipboardList },
     { href: "/organizador/personas", texto: "Personas", icono: Users },
     { href: "/organizador/devoluciones", texto: "Devoluciones", icono: MessageSquareText },
   ] },

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ExternalLink } from "lucide-react";
 import { clienteServidor } from "@/lib/supabase/servidor";
 import { exigirRol } from "@/lib/sesion";
 import { equiposAsignados, misEvaluaciones } from "@/lib/staff";
@@ -47,6 +47,9 @@ async function Contenido() {
                 <EstadoChip estado={evals.get(`${e.id}:equipo`)?.estado as "borrador" | "enviada" | undefined} />
                 <ChevronRight className="size-4 text-muted-foreground" />
               </Link>
+              {e.archivoNombre && <a href={`/entregas/${e.id}`} target="_blank" rel="noreferrer" className="mx-5 mb-3 inline-flex min-h-11 items-center gap-2 font-semibold text-violeta-texto"><ExternalLink className="size-4" aria-hidden="true" />Ver archivo<span className="sr-only"> de {e.nombre}</span></a>}
+              {e.entregaUrl && <a href={e.entregaUrl} target="_blank" rel="noreferrer" className="mx-5 mb-3 inline-flex min-h-11 items-center gap-2 font-semibold text-violeta-texto"><ExternalLink className="size-4" aria-hidden="true" />Ver entrega<span className="sr-only"> de {e.nombre}</span></a>}
+              {!e.entregaUrl && !e.archivoNombre && <p className="px-5 pb-3 text-sm text-muted-foreground">Sin entrega</p>}
             </li>
           ))}
         </ul>

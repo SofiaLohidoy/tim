@@ -46,6 +46,7 @@ async function Contenido({ params }: { params: PageProps<"/jurado/[equipo]">["pa
             Ver la entrega <ExternalLink className="size-4" />
           </a>
         )}
+        {equipo.archivoNombre && <a href={`/entregas/${equipo.id}`} target="_blank" rel="noreferrer" className="mt-2 inline-flex min-h-11 items-center gap-2 font-semibold text-violeta-texto"><ExternalLink className="size-4"/>Ver archivo: {equipo.archivoNombre}</a>}
       </header>
       <Evaluacion
         key={equipo.id}

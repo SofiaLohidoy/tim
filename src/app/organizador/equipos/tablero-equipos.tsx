@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Plus, Trash2, X } from "lucide-react";
+import { ExternalLink, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { claseInput } from "@/components/org/campos";
@@ -11,7 +11,7 @@ import { asignarEvaluador, borrarEquipo, crearEquipos, moverMiembro, quitarAsign
 type Persona = { id: string; nombre: string; email: string };
 export type DatosEquipos = {
   eventoId: string;
-  equipos: { id: string; nombre: string; miembros: Persona[]; mentor: { asignacion: string; persona: Persona } | null; jurados: { asignacion: string; persona: Persona }[] }[];
+  equipos: { id: string; nombre: string; entregaUrl: string | null; miembros: Persona[]; mentor: { asignacion: string; persona: Persona } | null; jurados: { asignacion: string; persona: Persona }[] }[];
   sinEquipo: (Persona & { presente: boolean })[];
   mentores: Persona[];
   jurados: Persona[];
@@ -70,6 +70,13 @@ export function TableroEquipos({ d }: { d: DatosEquipos }) {
                 <Trash2 className="size-4" />
               </Button>
             </div>
+
+            {q.entregaUrl ? (
+              <a href={q.entregaUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-2 font-semibold text-violeta-texto">
+                <ExternalLink className="size-4" aria-hidden="true" /> Ver entrega
+                <span className="sr-only"> de {q.nombre}</span>
+              </a>
+            ) : <p className="text-sm text-muted-foreground">Todavía no cargaron la entrega.</p>}
 
             <div className="grid gap-1.5">
               <span className="text-xs font-semibold text-muted-foreground">Mentor</span>

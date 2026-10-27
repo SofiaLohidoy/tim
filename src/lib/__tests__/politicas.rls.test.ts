@@ -59,6 +59,58 @@ let evento: string;
 let equipo1: string;
 let equipo2: string;
 
+describe("respaldo de eliminación", () => {
+  it("solo el organizador puede respaldar; nadie puede leer respaldos desde el navegador", async () => {
+    const estudiante = await como("estudiante-1");
+    const mentor = await como("mentor-1");
+    const jurado = await como("jurado");
+    const org = await como("organizador");
+    const destino = await idDe("estudiante-1");
+    for (const c of [anonimo(), estudiante, mentor, jurado]) {
+      expect((await c.rpc("respaldar_estudiante", { p_usuario: destino, p_email: "prueba-estudiante-1@tim.test" })).error).not.toBeNull();
+    }
+    for (const c of [anonimo(), estudiante, org]) {
+      expect((await c.from("respaldos_eliminacion").select("*")).error).not.toBeNull();
+    }
+    expect((await org.rpc("respaldar_estudiante", { p_usuario: await idDe("organizador"), p_email: "prueba-organizador@tim.test" })).error?.message).toContain("cuenta_protegida");
+    expect((await org.rpc("respaldar_estudiante", { p_usuario: destino, p_email: "prueba-otro@tim.test" })).error?.message).toContain("mail_no_coincide");
+    const respaldo = await org.rpc("respaldar_estudiante", { p_usuario: destino, p_email: "prueba-estudiante-1@tim.test" });
+    expect(respaldo.error).toBeNull();
+    try {
+      expect((await admin.from("respaldos_eliminacion").select("usuario_id").eq("id", respaldo.data).single()).data?.usuario_id).toBe(destino);
+    } finally {
+      if (respaldo.data) await admin.from("respaldos_eliminacion").delete().eq("id", respaldo.data).eq("usuario_id", destino);
+    }
+  });
+});
+
+describe("archivo de entrega compartida", () => {
+  it("solo integrantes registran archivos y solo equipo, organizador y jurado asignado pueden leerlos", async () => {
+    const estudiante=await como("estudiante-1");const otra=await como("estudiante-2");
+    const jurado=await como("jurado");const mentor=await como("mentor-1");
+    const org=await como("organizador");const empresa=await como("empresa-a");
+    const ruta=`${equipo1}/prueba-${crypto.randomUUID()}.pdf`;
+    const bytes=Buffer.from("%PDF-1.4 prueba-entrega");
+    const subida=await admin.storage.from("entregas").upload(ruta,bytes,{contentType:"application/pdf"});
+    expect(subida.error).toBeNull();
+    const args={p_equipo:equipo1,p_ruta:ruta,p_nombre:"prueba-entrega.pdf",p_tipo:"application/pdf",p_tamano:bytes.length};
+    try {
+      for(const c of [anonimo(),otra,jurado,mentor,empresa])expect((await c.rpc("guardar_archivo_entrega",args)).error).not.toBeNull();
+      expect((await estudiante.rpc("guardar_archivo_entrega",{...args,p_tamano:bytes.length+1})).error?.message).toContain("archivo_invalido");
+      expect((await estudiante.rpc("guardar_archivo_entrega",args)).error).toBeNull();
+      for(const c of [estudiante,jurado,org])expect((await c.from("entregas_equipo").select("archivo_path").eq("equipo_id",equipo1)).data).toEqual([{archivo_path:ruta}]);
+      for(const c of [otra,mentor,empresa,anonimo()]){
+        expect((await c.from("entregas_equipo").select("archivo_path").eq("equipo_id",equipo1)).data??[]).toEqual([]);
+        expect((await c.storage.from("entregas").createSignedUrl(ruta,30)).error).not.toBeNull();
+      }
+      expect((await estudiante.from("entregas_equipo").update({archivo_nombre:"intrusión.pdf"}).eq("equipo_id",equipo1)).error).not.toBeNull();
+    } finally {
+      await admin.storage.from("entregas").remove([ruta]);
+      await admin.from("entregas_equipo").delete().eq("equipo_id",equipo1).eq("archivo_path",ruta);
+    }
+  });
+});
+
 beforeAll(async () => {
   execSync("node scripts/prueba.mjs limpiar && node scripts/prueba.mjs crear --estudiantes 4 --equipos 2", { stdio: "inherit" });
   const { data: eqs } = await admin.from("equipos").select("id, nombre, evento_id").like("nombre", "prueba-Equipo %").order("nombre");

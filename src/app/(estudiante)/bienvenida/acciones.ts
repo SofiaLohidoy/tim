@@ -61,5 +61,5 @@ export async function guardarOnboarding(datos: DatosOnboarding): Promise<{ error
     console.error("[onboarding] estudiante", error);
     return { error: "No pudimos guardar tus datos. Probá de nuevo." };
   }
-  redirect(destinoSeguro(v.data.siguiente) ?? "/inicio");
+  redirect(`/hackaton/bienvenida?siguiente=${encodeURIComponent(destinoSeguro(v.data.siguiente) ?? "/inicio")}`);
 }

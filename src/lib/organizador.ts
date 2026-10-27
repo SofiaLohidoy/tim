@@ -8,7 +8,10 @@ type Db = SupabaseClient<Database>;
 export type Persona = { id: string; email: string; nombre: string };
 
 /** Todo lo que el organizador necesita del evento en una pasada. Volúmenes chicos: se arma en memoria. */
-export async function estadoDelEvento(db: Db, eventoId: string) {
+export async function estadoDelEvento(db: Db, eventoId: string | null, soloUsuarioId?: string) {
+  // Personas y roles son globales: siguen visibles aun sin evento. Las consultas por evento
+  // usan un UUID vacío que no puede corresponder a un evento creado por la app.
+  eventoId ??= "00000000-0000-0000-0000-000000000000";
   const [equipos, miembros, asignaciones, asistencias, evaluaciones, estudiantes, roles, invitaciones, devoluciones, encuestas] =
     await Promise.all([
       db.from("equipos").select("id, nombre, entrega_url").eq("evento_id", eventoId).order("nombre"),
@@ -16,9 +19,9 @@ export async function estadoDelEvento(db: Db, eventoId: string) {
       db.from("asignaciones").select("id, equipo_id, evaluador_id, rol").eq("evento_id", eventoId),
       db.from("asistencias").select("usuario_id, metodo, creado_en").eq("evento_id", eventoId),
       db.from("evaluaciones").select("id, equipo_id, evaluador_id, rol_evaluador, objetivo, estudiante_id, estado, carga, actualizado_en").eq("evento_id", eventoId),
-      db.from("estudiantes").select("usuario_id, universidad, carrera, onboarding_completo_en, cv_path"),
-      db.from("roles_usuario").select("id, usuario_id, rol, evento_id"),
-      db.from("invitaciones").select("id, email, nombre, rol, evento_id, equipo_id, usada_en, creado_en, token").order("creado_en", { ascending: false }),
+      db.from("estudiantes").select("usuario_id, universidad, carrera, onboarding_completo_en, cv_path").match(soloUsuarioId?{usuario_id:soloUsuarioId}:{}),
+      db.from("roles_usuario").select("id, usuario_id, rol, evento_id").match(soloUsuarioId?{usuario_id:soloUsuarioId}:{}),
+      db.from("invitaciones").select("id, email, nombre, rol, evento_id, equipo_id, usada_en, creado_en, token").order("creado_en", { ascending: false }).limit(soloUsuarioId?0:1000),
       db.from("devoluciones").select("estudiante_id, publicada_en, abierta_en").eq("evento_id", eventoId),
       db.from("respuestas_encuesta").select("usuario_id, respuestas").eq("evento_id", eventoId),
     ]);

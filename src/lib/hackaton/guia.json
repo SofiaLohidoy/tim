@@ -1,0 +1,21 @@
+{
+  "titulo": "Hackathon TIM",
+  "bajada": "Problemas reales. Equipos reales. Tu capacidad, en evidencia.",
+  "fecha": "Sábado 31 de octubre de 2026",
+  "horario": "15:00 a 20:00 hs",
+  "lugar": "Universidad Torcuato Di Tella",
+  "recorrido": ["Llegada", "Presentación de desafíos", "Trabajo en equipos", "Mentorías", "Presentación final", "Evaluación"],
+  "secciones": [
+    {"titulo":"¿Qué va a pasar?","textos":["Durante la tarde vas a trabajar en equipo sobre un desafío real propuesto por una empresa.","No necesitás experiencia previa ni conocimientos técnicos específicos. La idea es ver cómo pensás, cómo trabajás con otros y cómo transformás un problema en una propuesta concreta."]},
+    {"titulo":"Empresas participantes","pendiente":true,"textos":["Pendiente: nombres y logos de las empresas confirmadas."]},
+    {"titulo":"Tu desafío","textos":["El desafío específico de tu equipo se va a revelar el día de la hackathon.","Cada grupo va a trabajar sobre un problema real de una de las empresas participantes."]},
+    {"titulo":"Cómo se trabaja","items":["Equipos de aproximadamente 5 personas.","Cada grupo recibe un desafío real.","Habrá mentores circulando para acompañar y ayudar a destrabar ideas.","Representantes de las empresas también van a estar presentes durante la jornada.","Al final, cada equipo presenta su propuesta.","Las propuestas serán evaluadas por representantes de las empresas y un jurado externo."]},
+    {"titulo":"Sobre los mentores","textos":["Los mentores no están para resolver el desafío por ustedes. Su rol es:"],"items":["Hacer preguntas.","Ayudar a ordenar ideas.","Destrabar al equipo.","Acompañar el proceso.","Ayudar a llegar a una propuesta concreta."]},
+    {"titulo":"Qué evaluamos","textos":["TIM observa tanto la propuesta del equipo como la forma en que cada participante trabaja durante el proceso."],"items":["Resolución de problemas.","Comunicación.","Colaboración.","Capacidad de análisis.","Aporte al equipo.","Claridad de la propuesta."]},
+    {"titulo":"Reglas generales","pendiente":true,"textos":["Pendiente: reglas definitivas de TIM."]},
+    {"titulo":"¿Qué necesitás traer?","pendiente":true,"textos":["Pendiente: información definitiva sobre qué traer."]},
+    {"titulo":"Asistencia","textos":["Tu inscripción implica que contamos con tu asistencia durante toda la actividad.","Si finalmente no podés participar, pedimos que avises con anticipación para poder reorganizar los equipos."]}
+  ],
+  "cierre": "No importa tanto qué estudiaste. Queremos ver qué hacés cuando tenés un problema real adelante.",
+  "firma": "TIM · Tu capacidad, en evidencia."
+}

@@ -343,6 +343,51 @@ export type Database = {
           },
         ]
       }
+      entregas_equipo: {
+        Row: {
+          actualizado_en: string
+          archivo_nombre: string
+          archivo_path: string
+          archivo_tamano: number
+          archivo_tipo: string
+          cargado_por: string | null
+          equipo_id: string
+        }
+        Insert: {
+          actualizado_en?: string
+          archivo_nombre: string
+          archivo_path: string
+          archivo_tamano: number
+          archivo_tipo: string
+          cargado_por?: string | null
+          equipo_id: string
+        }
+        Update: {
+          actualizado_en?: string
+          archivo_nombre?: string
+          archivo_path?: string
+          archivo_tamano?: number
+          archivo_tipo?: string
+          cargado_por?: string | null
+          equipo_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entregas_equipo_cargado_por_fkey"
+            columns: ["cargado_por"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entregas_equipo_equipo_id_fkey"
+            columns: ["equipo_id"]
+            isOneToOne: true
+            referencedRelation: "equipos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       equipos: {
         Row: {
           creado_en: string
@@ -863,6 +908,33 @@ export type Database = {
         }
         Relationships: []
       }
+      respaldos_eliminacion: {
+        Row: {
+          creado_en: string
+          cv_base64: string | null
+          datos: Json
+          id: string
+          solicitado_por: string
+          usuario_id: string
+        }
+        Insert: {
+          creado_en?: string
+          cv_base64?: string | null
+          datos: Json
+          id?: string
+          solicitado_por: string
+          usuario_id: string
+        }
+        Update: {
+          creado_en?: string
+          cv_base64?: string | null
+          datos?: Json
+          id?: string
+          solicitado_por?: string
+          usuario_id?: string
+        }
+        Relationships: []
+      }
       respuestas_encuesta: {
         Row: {
           creado_en: string
@@ -1067,6 +1139,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      guardar_archivo_entrega: {
+        Args: {
+          p_equipo: string
+          p_nombre: string
+          p_ruta: string
+          p_tamano: number
+          p_tipo: string
+        }
+        Returns: undefined
+      }
       guardar_empresa: {
         Args: { p_nombre: string; p_rubro: string; p_tamano: string }
         Returns: undefined
@@ -1080,11 +1162,16 @@ export type Database = {
         Returns: undefined
       }
       marcar_preparadas: { Args: { p_evento: string }; Returns: undefined }
+      puede_leer_archivo_entrega: { Args: { p_ruta: string }; Returns: boolean }
       puede_ver_persona: { Args: { p_usuario: string }; Returns: boolean }
       reclamar_invitacion: { Args: { p_token: string }; Returns: string }
       registrar_entrega: {
         Args: { p_equipo: string; p_url: string }
         Returns: undefined
+      }
+      respaldar_estudiante: {
+        Args: { p_cv_base64?: string; p_email: string; p_usuario: string }
+        Returns: string
       }
       resumen_landing: { Args: { p_desde?: string }; Returns: Json }
       tiene_rol: { Args: { p_rol: string }; Returns: boolean }

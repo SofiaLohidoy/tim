@@ -9,7 +9,8 @@ export async function entrar(page: Page, quien: string, siguiente?: string) {
   await page.getByLabel("Mail").fill(mail(quien));
   await page.getByLabel("Contraseña", { exact: true }).fill(CLAVE);
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page).not.toHaveURL(/\/ingresar/);
+  // Auth remoto puede seguir respondiendo después de los 5 s de una aserción estándar.
+  await expect(page).not.toHaveURL(/\/ingresar/, { timeout: 15_000 });
 }
 
 export async function salir(page: Page) {

@@ -5,7 +5,47 @@ import { Copy, FileText, KeyRound, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Campo, Mensaje, claseInput } from "@/components/org/campos";
-import { borrarInvitacion, invitar, marcarAsistenciaManual, quitarRol, restablecerClave, urlCv, type Resultado } from "../acciones";
+import { borrarInvitacion, eliminarEstudiante, invitar, marcarAsistenciaManual, quitarRol, restablecerClave, urlCv, type Resultado } from "../acciones";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+
+export function DeletePersona({ usuarioId, nombre, email, protegido }: { usuarioId: string; nombre: string; email: string; protegido: boolean }) {
+  const [abierto, setAbierto] = useState(false);
+  const [confirmacion, setConfirmacion] = useState("");
+  const [error, setError] = useState("");
+  const [ocupado, empezar] = useTransition();
+  return (
+    <>
+      <Button variant="ghost" className="min-h-11" disabled={protegido} aria-label={`Delete: ${nombre}`} title={protegido ? "Cuenta protegida por su rol" : "Eliminar cuenta"} onClick={() => { setConfirmacion(""); setError(""); setAbierto(true); }}>
+        <Trash2 className="size-4" aria-hidden="true" /><span>Delete</span>
+      </Button>
+      <Sheet open={abierto} onOpenChange={(valor) => { if (!ocupado) setAbierto(valor); }}>
+        <SheetContent side="bottom" className="mx-auto max-h-[90dvh] max-w-lg overflow-y-auto rounded-t-3xl pb-[max(1.5rem,env(safe-area-inset-bottom))]" showCloseButton={!ocupado}>
+          <SheetHeader>
+            <SheetTitle>Eliminar cuenta de {nombre}</SheetTitle>
+            <SheetDescription>Se eliminarán su acceso, perfil, CV, asistencias, pertenencia a equipos, evaluaciones individuales y devoluciones, en todos los eventos. Las entregas compartidas del equipo se conservan. Se guardará un respaldo privado para recuperación técnica.</SheetDescription>
+          </SheetHeader>
+          <form className="grid gap-4 px-4" onSubmit={(e) => {
+            e.preventDefault();
+            if (ocupado) return;
+            empezar(async () => {
+              const r = await eliminarEstudiante(usuarioId, confirmacion);
+              if (r.error) setError(r.error);
+              else { setAbierto(false); toast.success(r.mensaje); }
+            });
+          }}>
+            <label className="grid gap-2 text-sm font-semibold">Escribí su mail para confirmar
+              <span className="break-all font-normal text-muted-foreground">{email}</span>
+              <input aria-label="Mail para confirmar eliminación" type="email" autoComplete="off" required value={confirmacion} onChange={(e) => setConfirmacion(e.target.value)} className={claseInput} disabled={ocupado} />
+            </label>
+            {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+            <Button variant="destructive" type="submit" className="min-h-11" disabled={ocupado || confirmacion.trim().toLowerCase() !== email.toLowerCase()}>{ocupado ? "Eliminando…" : "Eliminar cuenta y datos"}</Button>
+            <Button type="button" variant="outline" className="min-h-11" disabled={ocupado} onClick={() => setAbierto(false)}>Cancelar</Button>
+          </form>
+        </SheetContent>
+      </Sheet>
+    </>
+  );
+}
 
 export function AsistenciaToggle({ eventoId, usuarioId, presente }: { eventoId: string; usuarioId: string; presente: boolean }) {
   const [ocupado, empezar] = useTransition();
