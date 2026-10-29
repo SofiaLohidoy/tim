@@ -27,7 +27,7 @@ Para el equipo organizador. Todo se hace desde `/organizador` en una compu. Si a
 ## Cierre
 1. En el tablero, ver que todos los mentores y jurados estén en 100 %. Si hay evaluaciones en borrador, avisarles que toquen *Enviar*.
 2. *Devoluciones → Preparar devoluciones*. Revisar la vista previa: las marcadas "Vacía" no tienen observaciones.
-3. *Publicar a los estudiantes*. **No tiene vuelta atrás**: cierra las evaluaciones. Si alguien corrigió algo después de preparar, la app pide volver a preparar.
+3. *Publicar a los estudiantes*. Podés preparar y publicar nuevas versiones después: la actual sigue visible hasta confirmar *Publicar actualización*. Si alguien corrigió algo después de preparar, la app pide volver a preparar. Las evaluaciones se cierran al pasar el evento a *Cerrado*.
 4. Los estudiantes ven su devolución y responden 3 preguntas.
 5. Pasar el evento a *Cerrado*.
 

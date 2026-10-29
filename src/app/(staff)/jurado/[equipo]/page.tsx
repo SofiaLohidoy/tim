@@ -57,7 +57,7 @@ async function Contenido({ params }: { params: PageProps<"/jurado/[equipo]">["pa
           estado: (actual?.estado as "borrador" | "enviada" | undefined) ?? null,
           actualizado: actual ? new Date(actual.actualizado_en).getTime() : 0,
         }}
-        cerrada={equipo.publicadas}
+        cerrada={equipo.cerrado}
         despues={siguiente ? `/jurado/${siguiente.id}` : "/jurado"}
         textoDespues={siguiente ? `seguir con ${siguiente.nombre}` : "volver a la lista"}
       />

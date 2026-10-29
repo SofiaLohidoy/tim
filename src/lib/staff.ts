@@ -11,7 +11,7 @@ export type EquipoAsignado = {
   eventoId: string;
   eventoNombre: string;
   rubricaId: string | null;
-  publicadas: boolean;
+  cerrado: boolean;
   entregaUrl: string | null;
   archivoNombre: string | null;
   presentacionNombre: string | null;
@@ -44,7 +44,7 @@ export async function equiposAsignados(db: Db, usuarioId: string, rol: "mentor" 
       eventoId: e.evento_id,
       eventoNombre: e.eventos?.nombre ?? "",
       rubricaId: e.eventos?.rubrica_id ?? null,
-      publicadas: Boolean(e.eventos?.devoluciones_publicadas_en),
+      cerrado: e.eventos?.estado === "cerrado",
       entregaUrl: e.entrega_url,
       empresaElegida: e.empresa_elegida,
       presentacionNombre: presentaciones.data?.find(a=>a.equipo_id===e.id)?.archivo_nombre ?? null,

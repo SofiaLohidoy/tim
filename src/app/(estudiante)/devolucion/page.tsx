@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { z } from "zod";
 import { clienteServidor } from "@/lib/supabase/servidor";
 import { exigirUsuario } from "@/lib/sesion";
 import { eventoActual } from "@/lib/eventos";
@@ -8,20 +9,23 @@ import { Encuesta, MarcarAbierta } from "./encuesta";
 
 export const metadata: Metadata = { title: "Tu devolución" };
 
-export default function Pagina() {
+export default function Pagina({searchParams}:PageProps<"/devolucion">) {
   return (
     <main className="mx-auto w-full max-w-md px-5 pt-[max(1.5rem,env(safe-area-inset-top))] pb-28">
       <Suspense fallback={<div className="h-64 animate-pulse rounded-3xl bg-muted" />}>
-        <Contenido />
+        <Contenido searchParams={searchParams} />
       </Suspense>
     </main>
   );
 }
 
-async function Contenido() {
+async function Contenido({searchParams}:{searchParams:PageProps<"/devolucion">["searchParams"]}) {
   const u = await exigirUsuario("/devolucion");
   const db = await clienteServidor();
-  const evento = await eventoActual(db);
+  const params=await searchParams;
+  const seleccionado=params.evento===undefined?null:z.uuid().safeParse(params.evento);
+  if(seleccionado&&!seleccionado.success)return <p>El enlace del evento no es válido.</p>;
+  const evento = seleccionado?.success?(await db.from("eventos").select("*").eq("id",seleccionado.data).maybeSingle()).data:await eventoActual(db);
   const [dev, encuesta] = await Promise.all([
     evento
       ? db.from("devoluciones").select("id, contenido, publicada_en").eq("evento_id", evento.id).eq("estudiante_id", u.id).maybeSingle()

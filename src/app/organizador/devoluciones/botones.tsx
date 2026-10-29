@@ -15,9 +15,9 @@ export function BotonesDevoluciones(props: {
   const { eventoId, preparadas, publicadas, borradores, desactualizada } = props;
   const [ocupado, empezar] = useTransition();
   const [confirmar, setConfirmar] = useState(false);
-  if (publicadas) return <p className="font-semibold text-primary">Publicadas. Los estudiantes ya las ven.</p>;
   return (
     <div className="grid gap-3">
+      {publicadas&&<p className="font-semibold text-primary">Publicadas. Los estudiantes siguen viendo la versión actual hasta que publiques una actualización.</p>}
       {borradores > 0 && (
         <p className="rounded-2xl bg-destructive/10 px-4 py-2.5 text-sm text-destructive">
           {borradores} {borradores === 1 ? "evaluación sigue" : "evaluaciones siguen"} en borrador: no entran en la devolución. Pediles a esos evaluadores que toquen Enviar.
@@ -41,15 +41,15 @@ export function BotonesDevoluciones(props: {
           })
         }
       >
-        {preparadas ? "Volver a preparar" : "Preparar devoluciones"}
+        {preparadas ? "Volver a preparar" : publicadas ? "Preparar nueva publicación" : "Preparar devoluciones"}
       </Button>
       {preparadas > 0 &&
         (confirmar ? (
           <span className="inline-flex flex-wrap items-center gap-2 rounded-2xl bg-lila-claro px-3 py-2 text-sm text-verde-oscuro">
-            Publicar cierra las evaluaciones: ya no se pueden corregir.
+            {publicadas?`Vas a actualizar ${preparadas} devoluciones visibles.`:`Vas a publicar ${preparadas} devoluciones a los estudiantes.`} Las evaluaciones siguen abiertas hasta cerrar el evento.
             <Button
               disabled={ocupado}
-              className="h-9 rounded-lg"
+              className="min-h-11 rounded-lg"
               onClick={() =>
                 empezar(async () => {
                   const r = await publicarDevoluciones(eventoId);
@@ -61,13 +61,13 @@ export function BotonesDevoluciones(props: {
             >
               Sí, publicar
             </Button>
-            <Button variant="ghost" className="h-9 rounded-lg" onClick={() => setConfirmar(false)}>
+            <Button variant="ghost" className="min-h-11 rounded-lg" onClick={() => setConfirmar(false)}>
               Cancelar
             </Button>
           </span>
         ) : (
           <Button disabled={ocupado || desactualizada} className="h-11 rounded-xl px-5" onClick={() => setConfirmar(true)}>
-            Publicar a los estudiantes
+            {publicadas?"Publicar actualización":"Publicar a los estudiantes"}
           </Button>
         ))}
     </div>

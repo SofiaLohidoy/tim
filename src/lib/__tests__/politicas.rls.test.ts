@@ -162,6 +162,51 @@ afterAll(() => {
   execSync("node scripts/prueba.mjs limpiar", { stdio: "ignore" });
 });
 
+describe("publicaciones repetidas", () => {
+  it("los borradores son privados; republicar es atómico, exige una preparación vigente y conserva la versión anterior", async () => {
+    const org=await como("organizador"),alumno=await como("estudiante-4"),mentor=await como("mentor-2"),jurado=await como("jurado");
+    const estudiante=await idDe("estudiante-4");
+    const ev=(await admin.from("eventos").select("estado,rubrica_id,devoluciones_publicadas_en,revision_evaluaciones").eq("id",evento).single()).data!;
+    const contenido=(texto:string)=>({version:1,equipo:"prueba-Equipo 2",dimensiones:[],comentarios:[{quien:"mentor",texto}]});
+    const filas=[{estudiante_id:estudiante,contenido:contenido("prueba-anterior")}];let evaluacion:string|undefined;
+    try {
+      for(const c of [alumno,mentor,jurado,anonimo()]){
+        expect((await c.rpc("guardar_preparacion_devoluciones",{p_evento:evento,p_revision:ev.revision_evaluaciones,p_filas:filas})).error).not.toBeNull();
+        expect((await c.rpc("publicar_preparacion_devoluciones",{p_evento:evento})).error).not.toBeNull();
+      }
+      expect((await org.rpc("guardar_preparacion_devoluciones",{p_evento:evento,p_revision:ev.revision_evaluaciones,p_filas:filas})).error).toBeNull();
+      expect((await org.rpc("publicar_preparacion_devoluciones",{p_evento:evento})).data).toBe(1);
+      const anterior=(await alumno.from("devoluciones").select("id,contenido").eq("evento_id",evento).single()).data!;
+      expect(anterior.contenido).toEqual(contenido("prueba-anterior"));
+      await alumno.rpc("marcar_devolucion_abierta",{p_devolucion:anterior.id});
+      const abierta=(await admin.from("devoluciones").select("abierta_en").eq("id",anterior.id).single()).data!.abierta_en;
+      const nuevas=[{estudiante_id:estudiante,contenido:contenido("prueba-nueva")}];
+      expect((await org.rpc("guardar_preparacion_devoluciones",{p_evento:evento,p_revision:ev.revision_evaluaciones,p_filas:nuevas})).error).toBeNull();
+      for(const c of [alumno,mentor,jurado,anonimo()])expect((await c.from("devoluciones_borrador").select("contenido").eq("evento_id",evento)).data??[]).toEqual([]);
+      expect((await alumno.from("devoluciones").select("contenido").eq("id",anterior.id).single()).data!.contenido).toEqual(contenido("prueba-anterior"));
+      const nueva=await mentor.from("evaluaciones").insert({evento_id:evento,equipo_id:equipo2,rubrica_id:ev.rubrica_id,evaluador_id:await idDe("mentor-2"),rol_evaluador:"mentor",objetivo:"persona",estudiante_id:estudiante,estado:"enviada",comentario:"prueba-evaluacion-posterior"}).select("id").single();
+      expect(nueva.error).toBeNull();evaluacion=nueva.data!.id;
+      expect((await org.rpc("publicar_preparacion_devoluciones",{p_evento:evento})).error?.message).toContain("evaluaciones_cambiadas");
+      expect((await alumno.from("devoluciones").select("contenido").eq("id",anterior.id).single()).data!.contenido).toEqual(contenido("prueba-anterior"));
+      const revision=(await org.from("eventos").select("revision_evaluaciones").eq("id",evento).single()).data!.revision_evaluaciones;
+      expect((await org.rpc("guardar_preparacion_devoluciones",{p_evento:evento,p_revision:ev.revision_evaluaciones,p_filas:nuevas})).error?.message).toContain("evaluaciones_cambiadas");
+      expect((await org.rpc("guardar_preparacion_devoluciones",{p_evento:evento,p_revision:revision,p_filas:nuevas})).error).toBeNull();
+      expect((await org.rpc("publicar_preparacion_devoluciones",{p_evento:evento})).data).toBe(1);
+      const actual=(await alumno.from("devoluciones").select("id,contenido,abierta_en").eq("evento_id",evento).single()).data!;
+      expect(actual).toEqual({id:anterior.id,contenido:contenido("prueba-nueva"),abierta_en:abierta});
+      expect((await org.rpc("publicar_preparacion_devoluciones",{p_evento:evento})).error?.message).toContain("sin_preparacion");
+      expect((await mentor.from("evaluaciones").update({comentario:"prueba-correccion"}).eq("id",evaluacion).select("id")).data).toHaveLength(1);
+      await admin.from("eventos").update({estado:"cerrado"}).eq("id",evento);
+      expect((await mentor.from("evaluaciones").update({comentario:"prueba-no-permitida"}).eq("id",evaluacion).select("id")).data).toEqual([]);
+    } finally {
+      if(evaluacion)await admin.from("evaluaciones").delete().eq("id",evaluacion);
+      await admin.from("devoluciones_borrador").delete().eq("evento_id",evento);
+      await admin.from("devoluciones").delete().eq("evento_id",evento).eq("estudiante_id",estudiante);
+      await admin.from("eventos").update({estado:ev.estado,devoluciones_publicadas_en:ev.devoluciones_publicadas_en}).eq("id",evento);
+    }
+  });
+});
+
 describe("mentor", () => {
   it("ve a las personas de su equipo y no las de otro", async () => {
     const m = await como("mentor-1");

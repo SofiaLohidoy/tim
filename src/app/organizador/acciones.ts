@@ -7,6 +7,7 @@ import { clienteServicio } from "@/lib/supabase/servicio";
 import { exigirRol } from "@/lib/sesion";
 import { nuevoCodigo } from "@/lib/codigo";
 import { rubricaDelEvento } from "@/lib/rubrica";
+import type { Json } from "@/lib/supabase/tipos";
 import { armarDevolucion, type EvaluacionEnviada } from "@/lib/devoluciones";
 
 // Todas las acciones exigen organizador. La RLS lo vuelve a exigir en la base: si alguien llama
@@ -294,9 +295,9 @@ export async function eliminarEstudiante(usuarioId: string, email: string): Prom
 export async function prepararDevoluciones(eventoId: string): Promise<Resultado> {
   await exigirRol("organizador");
   const db = await clienteServidor();
-  const { data: ev } = await db.from("eventos").select("rubrica_id, devoluciones_publicadas_en").eq("id", eventoId).single();
+  if (!z.uuid().safeParse(eventoId).success) return {error:"El evento no es válido."};
+  const { data: ev } = await db.from("eventos").select("rubrica_id, revision_evaluaciones").eq("id", eventoId).single();
   if (!ev) return { error: "No encontramos el evento." };
-  if (ev.devoluciones_publicadas_en) return { error: "Las devoluciones ya se publicaron: no se pueden rearmar." };
   const rubrica = await rubricaDelEvento(db, ev.rubrica_id);
   if (!rubrica) return { error: "El evento no tiene rúbrica." };
 
@@ -304,10 +305,9 @@ export async function prepararDevoluciones(eventoId: string): Promise<Resultado>
     db.from("miembros_equipo").select("usuario_id, equipo_id, equipos(nombre)").eq("evento_id", eventoId),
     db.from("evaluaciones").select("rol_evaluador, objetivo, estudiante_id, equipo_id, respuestas, comentario").eq("evento_id", eventoId).eq("estado", "enviada"),
   ]);
+  if (miembros.error || evaluaciones.error) return {error:"No pudimos leer todas las evaluaciones. Probá de nuevo."};
   const filas = (miembros.data ?? []).map((m) => ({
-    evento_id: eventoId,
     estudiante_id: m.usuario_id,
-    publicada_en: null,
     contenido: armarDevolucion({
       estudianteId: m.usuario_id,
       equipoId: m.equipo_id,
@@ -318,9 +318,8 @@ export async function prepararDevoluciones(eventoId: string): Promise<Resultado>
     }),
   }));
   if (filas.length === 0) return { error: "No hay estudiantes en equipos todavía." };
-  const { error } = await db.from("devoluciones").upsert(filas, { onConflict: "evento_id,estudiante_id" });
-  if (error) return { error: "No pudimos preparar las devoluciones." };
-  await db.rpc("marcar_preparadas", { p_evento: eventoId });
+  const { error } = await db.rpc("guardar_preparacion_devoluciones", {p_evento:eventoId,p_revision:ev.revision_evaluaciones,p_filas:filas as unknown as Json});
+  if (error) return {error:error.message.includes("evaluaciones_cambiadas")?"Llegaron evaluaciones mientras preparabas. Volvé a preparar.":"No pudimos preparar las devoluciones."};
   refrescar();
   return { ok: true, mensaje: `${filas.length} devoluciones preparadas. Revisalas antes de publicar.` };
 }
@@ -328,23 +327,13 @@ export async function prepararDevoluciones(eventoId: string): Promise<Resultado>
 export async function publicarDevoluciones(eventoId: string): Promise<Resultado> {
   await exigirRol("organizador");
   const db = await clienteServidor();
-  // Publicar cierra las evaluaciones para siempre. Antes: tiene que haber devoluciones preparadas
-  // y ninguna evaluación cambiada después de prepararlas (si no, se publicaría una foto vieja).
-  const [prep, desactualizadas] = await Promise.all([
-    db.from("devoluciones").select("id").eq("evento_id", eventoId).limit(1).maybeSingle(),
-    db.rpc("devoluciones_desactualizadas", { p_evento: eventoId }),
-  ]);
-  if (!prep.data) return { error: "Primero prepará las devoluciones." };
-  if (desactualizadas.data) {
-    return { error: "Hay evaluaciones nuevas o corregidas desde que preparaste. Volvé a preparar y revisá antes de publicar." };
-  }
-  const ahora = new Date().toISOString();
-  const pub = await db.from("devoluciones").update({ publicada_en: ahora }).eq("evento_id", eventoId).is("publicada_en", null).select("id");
-  if (pub.error) return { error: "No pudimos publicar." };
-  const ev = await db.from("eventos").update({ devoluciones_publicadas_en: ahora }).eq("id", eventoId);
-  if (ev.error) return { error: "Se publicaron, pero no pudimos cerrar las evaluaciones del evento. Probá de nuevo." };
+  if (!z.uuid().safeParse(eventoId).success) return {error:"El evento no es válido."};
+  const {data,error}=await db.rpc("publicar_preparacion_devoluciones",{p_evento:eventoId});
+  if(error)return {error:error.message.includes("sin_preparacion")?"Primero prepará las devoluciones.":error.message.includes("evaluaciones_cambiadas")?"Hay evaluaciones nuevas o corregidas. Volvé a preparar y revisá antes de publicar.":"No pudimos publicar. Las devoluciones anteriores siguen visibles."};
   refrescar();
-  return { ok: true, mensaje: `Publicadas: ${pub.data?.length ?? 0}. Ya las ven los estudiantes.` };
+  revalidatePath("/devolucion");revalidatePath("/perfil");
+  revalidatePath("/mentor","layout");revalidatePath("/jurado","layout");
+  return {ok:true,mensaje:`Publicadas: ${data}. Ya las ven los estudiantes.`};
 }
 
 export async function urlCv(usuarioId: string): Promise<{ url?: string; error?: string }> {

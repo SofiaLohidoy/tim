@@ -1,5 +1,7 @@
 # Roadmap
 
+29/10, republicación: preparar y publicar varias veces, conservando visibles las devoluciones actuales hasta confirmar la actualización. Borradores privados del organizador, publicación atómica y control de revisión ante evaluaciones nuevas/corregidas. Las evaluaciones se cierran al cerrar el evento. Migración 019; no modifica publicaciones existentes al instalarse.
+
 29/10: empresa elegida por equipo y entregas separadas: documento principal (PDF/DOCX), presentación opcional (PDF/PPTX o enlace de Canva). Selección y archivos compartidos; organizador y jurado asignado ven ambos en Entregas/evaluación. Se conservan archivos y enlaces anteriores. Migraciones 017–018, con RLS y separación de rutas para evitar reemplazos cruzados.
 
 29/10, orden e inscripción: Inicio muestra primero la tarjeta del evento y luego la guía; se quitan únicamente los bloques El desafío y Tu devolución de Inicio. Las empresas y sus documentos requieren asistencia confirmada al evento actual por QR/código (el perfil completo no alcanza); el staff conserva acceso de trabajo. PDF general público sin empresas y PDF completo privado, con la misma autorización que los documentos de desafíos. No requiere migraciones.

@@ -93,7 +93,7 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/organizad
                 estado: (fila?.data?.estado as "borrador" | "enviada" | undefined) ?? null,
                 actualizado: fila?.data ? new Date(fila.data.actualizado_en).getTime() : 0,
               }}
-              cerrada={Boolean(evento.devoluciones_publicadas_en)}
+              cerrada={evento.estado === "cerrado"}
               despues="/organizador/devoluciones/diferida"
               textoDespues="cargar otra"
               diferidaPara={a.evaluador_id}

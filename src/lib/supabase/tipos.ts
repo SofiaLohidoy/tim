@@ -273,6 +273,45 @@ export type Database = {
           },
         ]
       }
+      devoluciones_borrador: {
+        Row: {
+          contenido: Json
+          estudiante_id: string
+          evento_id: string
+          preparada_en: string
+          revision_evaluaciones: number
+        }
+        Insert: {
+          contenido: Json
+          estudiante_id: string
+          evento_id: string
+          preparada_en?: string
+          revision_evaluaciones: number
+        }
+        Update: {
+          contenido?: Json
+          estudiante_id?: string
+          evento_id?: string
+          preparada_en?: string
+          revision_evaluaciones?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devoluciones_borrador_estudiante_id_fkey"
+            columns: ["estudiante_id"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devoluciones_borrador_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dimensiones: {
         Row: {
           id: string
@@ -602,6 +641,7 @@ export type Database = {
           id: string
           lugar: string | null
           nombre: string
+          revision_evaluaciones: number
           rubrica_id: string | null
         }
         Insert: {
@@ -613,6 +653,7 @@ export type Database = {
           id?: string
           lugar?: string | null
           nombre: string
+          revision_evaluaciones?: number
           rubrica_id?: string | null
         }
         Update: {
@@ -624,6 +665,7 @@ export type Database = {
           id?: string
           lugar?: string | null
           nombre?: string
+          revision_evaluaciones?: number
           rubrica_id?: string | null
         }
         Relationships: [
@@ -1191,6 +1233,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      evaluaciones_abiertas: { Args: { p_evento: string }; Returns: boolean }
       guardar_archivo_entrega: {
         Args: {
           p_equipo: string
@@ -1204,6 +1247,10 @@ export type Database = {
       guardar_empresa: {
         Args: { p_nombre: string; p_rubro: string; p_tamano: string }
         Returns: undefined
+      }
+      guardar_preparacion_devoluciones: {
+        Args: { p_evento: string; p_filas: Json; p_revision: number }
+        Returns: number
       }
       guardar_presentacion_equipo: {
         Args: {
@@ -1224,6 +1271,10 @@ export type Database = {
         Returns: undefined
       }
       marcar_preparadas: { Args: { p_evento: string }; Returns: undefined }
+      publicar_preparacion_devoluciones: {
+        Args: { p_evento: string }
+        Returns: number
+      }
       puede_leer_archivo_entrega: { Args: { p_ruta: string }; Returns: boolean }
       puede_ver_persona: { Args: { p_usuario: string }; Returns: boolean }
       reclamar_invitacion: { Args: { p_token: string }; Returns: string }

@@ -193,7 +193,7 @@ export function Evaluacion(p: PropsEvaluacion) {
     <div className="grid gap-3">
       {p.cerrada && (
         <p className="rounded-2xl bg-muted px-4 py-3 text-sm text-muted-foreground">
-          Las devoluciones ya se publicaron: esta evaluación quedó cerrada.
+          El evento está cerrado: esta evaluación ya no se puede modificar.
         </p>
       )}
       {p.dimensiones.map((d, i) => {

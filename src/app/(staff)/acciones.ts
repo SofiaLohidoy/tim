@@ -73,7 +73,7 @@ export async function guardarEvaluacion(datos: DatosEvaluacion): Promise<Resulta
   consulta = d.estudianteId ? consulta.eq("estudiante_id", d.estudianteId) : consulta.is("estudiante_id", null);
   const existente = await consulta.maybeSingle();
 
-  // Una vez enviada, sigue enviada aunque se corrija (hasta que se publiquen las devoluciones).
+  // Una vez enviada, sigue enviada aunque se corrija mientras el evento siga abierto.
   // El autoguardado nunca toca `estado` en un update: si llegara tarde, no puede bajar a borrador
   // una evaluación que ya se envió.
   const fila = {

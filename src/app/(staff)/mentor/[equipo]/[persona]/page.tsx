@@ -60,7 +60,7 @@ async function Contenido({ params }: { params: PageProps<"/mentor/[equipo]/[pers
           estado: (actual?.estado as "borrador" | "enviada" | undefined) ?? null,
           actualizado: actual ? new Date(actual.actualizado_en).getTime() : 0,
         }}
-        cerrada={equipo.publicadas}
+        cerrada={equipo.cerrado}
         despues={siguiente ? `/mentor/${equipo.id}/${siguiente.id}` : `/mentor/${equipo.id}`}
         textoDespues={siguiente ? `seguir con ${siguiente.nombre.split(" ")[0]}` : "volver al equipo"}
       />
