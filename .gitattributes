@@ -1,0 +1,2 @@
+# Los PDF pueden contener streams ASCII; no normalizar sus saltos de línea.
+*.pdf binary

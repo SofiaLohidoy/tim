@@ -4,6 +4,8 @@ import { Suspense } from "react";
 import { CalendarDays, Clock3, Download, MapPin } from "lucide-react";
 import { Logo } from "@/components/marca";
 import { EmpresasHackaton } from "@/components/app/empresas-hackaton";
+import { PersonasHackaton } from "@/components/app/personas-hackaton";
+import personas from "@/lib/hackaton/personas.json";
 import { exigirUsuario, destinoSeguro } from "@/lib/sesion";
 import guia from "@/lib/hackaton/guia.json";
 import "./guia.css";
@@ -31,6 +33,8 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/hackaton/bienv
       {"textos" in seccion&&seccion.textos?.map(texto=><p key={texto} className="mt-3 text-sm leading-relaxed">{texto}</p>)}
       {i===0&&<ol aria-label="Recorrido de la jornada" className={`${s.recorrido} mt-4 grid gap-2`}>{guia.recorrido.map((paso,n)=><li key={paso} className="text-sm"><span className="font-bold">{n+1}.</span> {paso}</li>)}</ol>}
       {"items" in seccion&&<ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed">{seccion.items?.map(item=><li key={item}>{item}</li>)}</ul>}
+      {seccion.titulo==="Sobre los mentores"&&<PersonasHackaton personas={personas.mentores}/>}
+      {seccion.titulo==="Sobre el jurado"&&<PersonasHackaton personas={personas.jurados}/>}
     </section>)}
     <footer className={s.cabecera}><p className="text-lg font-bold leading-relaxed">{guia.cierre}</p><p className="mt-5 text-sm">{guia.firma}</p></footer>
     <Link href={siguiente==="/hackaton/bienvenida"?"/inicio":siguiente} className={s.accion}>Continuar a TIM</Link>

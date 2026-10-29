@@ -1,0 +1,13 @@
+{
+  "mentores": [
+    {"nombre":"Juan Manuel Arce","linkedin":"https://www.linkedin.com/in/juan-manuel-arce/","foto":null},
+    {"nombre":"Joaquín Berardi","linkedin":"https://www.linkedin.com/in/joaquin-berardi/","foto":null}
+  ],
+  "jurados": [
+    {"nombre":"María Sol Vivanco","linkedin":"https://www.linkedin.com/in/mariasolvivanco/","foto":null},
+    {"nombre":"Dolores Angio","linkedin":"https://www.linkedin.com/in/dolores-angio-089282193/","foto":null},
+    {"nombre":"Rocío Mazas","linkedin":"https://www.linkedin.com/in/roc%C3%ADo-mazas-0343b2134/","foto":null},
+    {"nombre":"Milton Kienigiel","linkedin":"https://www.linkedin.com/in/miltonkienigiel/","foto":null},
+    {"nombre":"Valentin Virasoro Amuchastegui","linkedin":"https://www.linkedin.com/in/vvirasoroamu/","foto":null}
+  ]
+}

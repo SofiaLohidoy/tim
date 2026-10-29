@@ -1,5 +1,7 @@
 # Roadmap
 
+29/10, revisión de bienvenida y PDF: inicio a partir de las 14:00 hs sin horario final; Cronograma del evento; nueva invitación a elegir desafío; se eliminan Cómo se trabaja, Reglas generales, Qué traer y Asistencia del documento, conservando el registro por QR/código. Dos mentores y cinco jurados con LinkedIn; Valentin Virasoro Amuchastegui confirmado por Sofía. LinkedIn impide obtener fotos: avatares con iniciales hasta recibir imágenes confirmadas. PDF incorpora logos de cinco empresas y enlaces de perfiles y V-go.
+
 29/10: tarjetas de Kankay, V-go, Programon, Fardo y Lisa en bienvenida e Inicio de participantes. Logos entregados por Sofía. V-go abre el PDF original recibido; las otras cuatro quedan como Documento próximamente. Acceso al archivo solo con inscripción completada o rol de staff. La guía deja de anunciar que todos los documentos se revelan el día del evento.
 
 Detalle completo, con DoR y DoD de cada fase: `docs/plan-maestro.md`. Acá va el estado. Actualizalo cuando una fase cambia de estado.

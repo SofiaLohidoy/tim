@@ -67,7 +67,7 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
         <Link href="/inicio" aria-label="TIM, inicio" className="shrink-0 text-primary"><Logo className="h-8 w-auto sm:h-10" /></Link>
       </header>
 
-      <Link href="/hackaton/bienvenida" className="flex min-h-16 items-center justify-between gap-3 rounded-3xl bg-lila-claro p-5 font-semibold text-verde-oscuro"><span>Tu guía de la hackatón<span className="mt-1 block text-sm font-normal">Información, dinámica y reglas pendientes.</span></span><ArrowRight className="size-5 shrink-0" aria-hidden="true"/></Link>
+      <Link href="/hackaton/bienvenida" className="flex min-h-16 items-center justify-between gap-3 rounded-3xl bg-lila-claro p-5 font-semibold text-verde-oscuro"><span>Tu guía de la hackatón<span className="mt-1 block text-sm font-normal">Cronograma, empresas, mentores y jurado.</span></span><ArrowRight className="size-5 shrink-0" aria-hidden="true"/></Link>
       {avisoAsistencia === "ok" && (
         <Aviso tono="ok">Listo, quedó marcada tu asistencia. ¡Que lo disfrutes!</Aviso>
       )}
