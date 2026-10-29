@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { CalendarDays, Clock3, Download, MapPin } from "lucide-react";
 import { Logo } from "@/components/marca";
+import { EmpresasHackaton } from "@/components/app/empresas-hackaton";
 import { exigirUsuario, destinoSeguro } from "@/lib/sesion";
 import guia from "@/lib/hackaton/guia.json";
 import "./guia.css";
@@ -25,7 +26,7 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/hackaton/bienv
       </dl>
     </header>
     <a href="/documentos/bienvenida-hackathon-tim.pdf" download className={s.accion}><Download className="size-4"/>Descargar guía (PDF)</a>
-    {guia.secciones.map((seccion,i)=><section key={seccion.titulo} className={`${s.bloque} ${"pendiente" in seccion?s.pendiente:""}`}>
+    {guia.secciones.map((seccion,i)=>seccion.titulo==="Empresas participantes"?<EmpresasHackaton key={seccion.titulo}/>:<section key={seccion.titulo} className={`${s.bloque} ${"pendiente" in seccion?s.pendiente:""}`}>
       <h2 className="text-xl font-bold">{seccion.titulo}</h2>
       {"textos" in seccion&&seccion.textos?.map(texto=><p key={texto} className="mt-3 text-sm leading-relaxed">{texto}</p>)}
       {i===0&&<ol aria-label="Recorrido de la jornada" className={`${s.recorrido} mt-4 grid gap-2`}>{guia.recorrido.map((paso,n)=><li key={paso} className="text-sm"><span className="font-bold">{n+1}.</span> {paso}</li>)}</ol>}

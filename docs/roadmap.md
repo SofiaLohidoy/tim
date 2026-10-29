@@ -1,5 +1,7 @@
 # Roadmap
 
+29/10: tarjetas de Kankay, V-go, Programon, Fardo y Lisa en bienvenida e Inicio de participantes. Logos entregados por Sofía. V-go abre el PDF original recibido; las otras cuatro quedan como Documento próximamente. Acceso al archivo solo con inscripción completada o rol de staff. La guía deja de anunciar que todos los documentos se revelan el día del evento.
+
 Detalle completo, con DoR y DoD de cada fase: `docs/plan-maestro.md`. Acá va el estado. Actualizalo cuando una fase cambia de estado.
 
 Orden: primero lo que la hackatón necesita, después los juegos, después perfil y outputs, después el lado empresa.

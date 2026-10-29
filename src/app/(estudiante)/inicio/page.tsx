@@ -9,6 +9,7 @@ import { exigirUsuario } from "@/lib/sesion";
 import { eventoActual, fechaLarga, nombreDe } from "@/lib/eventos";
 import { FormCodigo, FormEntrega, SubirCv } from "./piezas";
 import { SubirEntrega } from "@/components/app/subir-entrega";
+import { EmpresasHackaton } from "@/components/app/empresas-hackaton";
 
 export const metadata: Metadata = { title: "Inicio" };
 
@@ -77,6 +78,7 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
         <Aviso tono="error">No pudimos marcar tu asistencia. Probá de nuevo o avisale al equipo TIM.</Aviso>
       )}
 
+      <EmpresasHackaton compacto />
       {!evento ? (
         <Tarjeta>
           <p className="font-heading text-lg font-bold">Todavía no hay un desafío abierto.</p>
