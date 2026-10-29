@@ -391,6 +391,7 @@ export type Database = {
       equipos: {
         Row: {
           creado_en: string
+          empresa_elegida: string | null
           entrega_en: string | null
           entrega_url: string | null
           evento_id: string
@@ -399,6 +400,7 @@ export type Database = {
         }
         Insert: {
           creado_en?: string
+          empresa_elegida?: string | null
           entrega_en?: string | null
           entrega_url?: string | null
           evento_id: string
@@ -407,6 +409,7 @@ export type Database = {
         }
         Update: {
           creado_en?: string
+          empresa_elegida?: string | null
           entrega_en?: string | null
           entrega_url?: string | null
           evento_id?: string
@@ -908,6 +911,51 @@ export type Database = {
         }
         Relationships: []
       }
+      presentaciones_equipo: {
+        Row: {
+          actualizado_en: string
+          archivo_nombre: string
+          archivo_path: string
+          archivo_tamano: number
+          archivo_tipo: string
+          cargado_por: string | null
+          equipo_id: string
+        }
+        Insert: {
+          actualizado_en?: string
+          archivo_nombre: string
+          archivo_path: string
+          archivo_tamano: number
+          archivo_tipo: string
+          cargado_por?: string | null
+          equipo_id: string
+        }
+        Update: {
+          actualizado_en?: string
+          archivo_nombre?: string
+          archivo_path?: string
+          archivo_tamano?: number
+          archivo_tipo?: string
+          cargado_por?: string | null
+          equipo_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "presentaciones_equipo_cargado_por_fkey"
+            columns: ["cargado_por"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "presentaciones_equipo_equipo_id_fkey"
+            columns: ["equipo_id"]
+            isOneToOne: true
+            referencedRelation: "equipos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       respaldos_eliminacion: {
         Row: {
           creado_en: string
@@ -1124,6 +1172,10 @@ export type Database = {
         Returns: boolean
       }
       devoluciones_publicadas: { Args: { p_evento: string }; Returns: boolean }
+      elegir_empresa_equipo: {
+        Args: { p_empresa: string; p_equipo: string }
+        Returns: undefined
+      }
       es_miembro: { Args: { p_equipo: string }; Returns: boolean }
       es_organizador: { Args: never; Returns: boolean }
       evalua_equipo: {
@@ -1151,6 +1203,16 @@ export type Database = {
       }
       guardar_empresa: {
         Args: { p_nombre: string; p_rubro: string; p_tamano: string }
+        Returns: undefined
+      }
+      guardar_presentacion_equipo: {
+        Args: {
+          p_equipo: string
+          p_nombre: string
+          p_ruta: string
+          p_tamano: number
+          p_tipo: string
+        }
         Returns: undefined
       }
       iniciar_registro_empresa: { Args: never; Returns: undefined }

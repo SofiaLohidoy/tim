@@ -26,6 +26,17 @@ export async function marcarConCodigo(_p: EstadoSimple, form: FormData): Promise
 
 const url = z.url({ protocol: /^https?$/, error: "Pegá un link que empiece con https://" }).max(500);
 
+export async function elegirEmpresa(_p: EstadoSimple, form: FormData): Promise<EstadoSimple> {
+  await exigirUsuario();
+  const v=z.object({equipo:z.uuid(),empresa:z.enum(["Kankay","V-go","Programon","Fardo","Lisa"])}).safeParse({equipo:form.get("equipo"),empresa:form.get("empresa")});
+  if(!v.success)return {error:"Elegí una empresa de la lista."};
+  const db=await clienteServidor();
+  const {error}=await db.rpc("elegir_empresa_equipo",{p_equipo:v.data.equipo,p_empresa:v.data.empresa});
+  if(error)return {error:error.message.includes("evento_cerrado")?"El evento ya cerró sus entregas.":"No pudimos guardar la empresa. Probá de nuevo."};
+  revalidatePath("/inicio");revalidatePath("/organizador","layout");revalidatePath("/jurado","layout");
+  return {ok:true};
+}
+
 export async function registrarEntrega(_p: EstadoSimple, form: FormData): Promise<EstadoSimple> {
   await exigirUsuario();
   const equipo = String(form.get("equipo") ?? "");

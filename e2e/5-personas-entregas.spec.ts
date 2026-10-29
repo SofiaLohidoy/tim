@@ -17,14 +17,14 @@ test("organizador y jurado asignado ven la entrega; sin asignación el jurado no
     await expect(page.getByRole("link", { name: "Ver entrega de prueba-Equipo 1", exact: true })).toHaveAttribute("href", link);
     await salir(page);
     await entrar(page, "jurado");
-    await expect(page.getByRole("link", { name: "Ver entrega de prueba-Equipo 1", exact: true })).toHaveAttribute("href", link);
+    await expect(page.getByRole("link", { name: "Ver link de presentación de prueba-Equipo 1", exact: true })).toHaveAttribute("href", link);
     await page.goto(`/jurado/${equipo.id}`);
-    await expect(page.getByRole("link", { name: "Ver la entrega", exact: true })).toHaveAttribute("href", link);
+    await expect(page.getByRole("link", { name: "Ver link de presentación de prueba-Equipo 1", exact: true })).toHaveAttribute("href", link);
     await admin.from("asignaciones").delete().eq("id", asignacion.id);
     await page.goto(`/jurado/${equipo.id}`);
-    await expect(page.getByRole("link", { name: "Ver la entrega", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Ver link de presentación de prueba-Equipo 1", exact: true })).toHaveCount(0);
     await page.goto("/jurado");
-    await expect(page.getByRole("link", { name: "Ver entrega de prueba-Equipo 1", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Ver link de presentación de prueba-Equipo 1", exact: true })).toHaveCount(0);
     const jurado = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, { auth: { persistSession: false } });
     await jurado.auth.signInWithPassword({ email: "prueba-jurado@tim.test", password: CLAVE });
     expect((await jurado.from("equipos").select("entrega_url").eq("id", equipo.id)).data).toEqual([]);
@@ -79,7 +79,7 @@ test("la carga de archivo llega a Entregas y al jurado y no queda accesible para
   try {
     await entrar(page,"estudiante-1");
     await page.goto("/inicio");
-    await page.getByLabel("Archivo de la entrega del equipo",{exact:true}).setInputFiles({name:"prueba-presentacion.pdf",mimeType:"application/pdf",buffer:Buffer.from("%PDF-1.4 prueba-presentacion")});
+    await page.getByLabel("Documento principal",{exact:true}).setInputFiles({name:"prueba-presentacion.pdf",mimeType:"application/pdf",buffer:Buffer.from("%PDF-1.4 prueba-presentacion")});
     await expect(page.getByText("Entrega guardada. La ven el organizador y tu jurado.",{exact:true})).toBeVisible();
     ruta=(await admin.from("entregas_equipo").select("archivo_path").eq("equipo_id",eq.id).single()).data!.archivo_path;
     await salir(page);await entrar(page,"organizador");await page.goto(`/organizador/entregas?evento=${eq.evento_id}`);
@@ -88,7 +88,7 @@ test("la carga de archivo llega a Entregas y al jurado y no queda accesible para
     expect(respuesta.status()).toBe(200);expect((await respuesta.body()).toString()).toContain("prueba-presentacion");
     for(const width of [375,1280]){await page.setViewportSize({width,height:812});await page.screenshot({path:`capturas/entregas-archivo-${width}.png`,fullPage:true});}
     await salir(page);await entrar(page,"jurado");
-    await expect(page.getByRole("link",{name:"Ver archivo de prueba-Equipo 1",exact:true})).toBeVisible();
+    await expect(page.getByRole("link",{name:"Ver documento de prueba-Equipo 1",exact:true})).toBeVisible();
     expect((await page.request.get(`/entregas/${eq.id}`)).status()).toBe(200);
     for(const width of [375,1280]){await page.setViewportSize({width,height:812});await page.screenshot({path:`capturas/jurado-archivo-${width}.png`,fullPage:true});}
     await salir(page);await entrar(page,"estudiante-2");

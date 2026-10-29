@@ -7,9 +7,10 @@ import { Logo } from "@/components/marca";
 import { clienteServidor } from "@/lib/supabase/servidor";
 import { exigirUsuario } from "@/lib/sesion";
 import { eventoActual, fechaLarga, nombreDe } from "@/lib/eventos";
-import { FormCodigo, FormEntrega, SubirCv } from "./piezas";
+import { FormCodigo, FormEntrega, FormEmpresa, SubirCv } from "./piezas";
 import { SubirEntrega } from "@/components/app/subir-entrega";
 import { EmpresasHackaton } from "@/components/app/empresas-hackaton";
+import { VerEntregas } from "@/components/app/ver-entregas";
 
 export const metadata: Metadata = { title: "Inicio" };
 
@@ -37,7 +38,7 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
     evento
       ? db
           .from("miembros_equipo")
-          .select("equipo_id, equipos(nombre, entrega_url)")
+          .select("equipo_id, equipos(nombre, entrega_url, empresa_elegida, entregas_equipo(archivo_nombre), presentaciones_equipo(archivo_nombre))")
           .eq("evento_id", evento.id)
           .eq("usuario_id", u.id)
           .maybeSingle()
@@ -144,11 +145,14 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
                   ))}
                 </ul>
                 {evento.estado !== "cerrado" && (
-                  <div className="mt-5 border-t border-border pt-4">
+                  <div className="mt-5 grid gap-4">
+                    <FormEmpresa equipo={equipoId} actual={equipo.empresa_elegida}/>
+                    <SubirEntrega equipo={equipoId} actual={equipo.entregas_equipo?.archivo_nombre} />
+                    <SubirEntrega equipo={equipoId} tipo="presentacion" actual={equipo.presentaciones_equipo?.archivo_nombre}/>
                     <FormEntrega equipo={equipoId} actual={equipo.entrega_url} />
-                    <SubirEntrega equipo={equipoId} />
                   </div>
                 )}
+                {evento.estado === "cerrado"&&<div className="mt-4"><VerEntregas equipo={equipoId} nombre={equipo.nombre} empresa={equipo.empresa_elegida} documento={equipo.entregas_equipo?.archivo_nombre??null} presentacion={equipo.presentaciones_equipo?.archivo_nombre??null} enlace={equipo.entrega_url}/></div>}
               </>
             ) : (
               <p className="mt-2 text-muted-foreground">

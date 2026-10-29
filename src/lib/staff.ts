@@ -14,6 +14,8 @@ export type EquipoAsignado = {
   publicadas: boolean;
   entregaUrl: string | null;
   archivoNombre: string | null;
+  presentacionNombre: string | null;
+  empresaElegida: string | null;
   miembros: { id: string; nombre: string }[];
 };
 
@@ -21,12 +23,14 @@ export type EquipoAsignado = {
 export async function equiposAsignados(db: Db, usuarioId: string, rol: "mentor" | "jurado"): Promise<EquipoAsignado[]> {
   const { data } = await db
     .from("asignaciones")
-    .select("equipo_id, equipos(id, nombre, entrega_url, evento_id, eventos(nombre, rubrica_id, devoluciones_publicadas_en, estado))")
+    .select("equipo_id, equipos(id, nombre, entrega_url, empresa_elegida, evento_id, eventos(nombre, rubrica_id, devoluciones_publicadas_en, estado))")
     .eq("evaluador_id", usuarioId)
     .eq("rol", rol);
   const equipos = (data ?? []).map((a) => a.equipos).filter((e) => e !== null);
   if (equipos.length === 0) return [];
   const archivos = await db.from("entregas_equipo").select("equipo_id,archivo_nombre").in("equipo_id",equipos.map(e=>e.id));
+
+  const presentaciones = await db.from("presentaciones_equipo").select("equipo_id,archivo_nombre").in("equipo_id",equipos.map(e=>e.id));
 
   const { data: miembros } = await db
     .from("miembros_equipo")
@@ -42,6 +46,8 @@ export async function equiposAsignados(db: Db, usuarioId: string, rol: "mentor" 
       rubricaId: e.eventos?.rubrica_id ?? null,
       publicadas: Boolean(e.eventos?.devoluciones_publicadas_en),
       entregaUrl: e.entrega_url,
+      empresaElegida: e.empresa_elegida,
+      presentacionNombre: presentaciones.data?.find(a=>a.equipo_id===e.id)?.archivo_nombre ?? null,
       archivoNombre: archivos.data?.find(a=>a.equipo_id===e.id)?.archivo_nombre ?? null,
       miembros: (miembros ?? [])
         .filter((m) => m.equipo_id === e.id)

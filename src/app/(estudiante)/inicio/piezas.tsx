@@ -5,7 +5,8 @@ import { CheckCircle2, FileUp, Link2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { clienteNavegador } from "@/lib/supabase/navegador";
-import { guardarCv, marcarConCodigo, registrarEntrega } from "../acciones";
+import { guardarCv, marcarConCodigo, registrarEntrega, elegirEmpresa } from "../acciones";
+import { EMPRESAS_HACKATON } from "@/lib/hackaton/empresas";
 
 const input =
   "h-12 w-full min-w-0 rounded-xl border-0 bg-muted px-3.5 text-base ring-1 ring-border outline-none ring-inset focus:ring-2 focus:ring-ring";
@@ -49,10 +50,10 @@ export function FormEntrega({ equipo, actual }: { equipo: string; actual: string
     <form action={accion} className="grid gap-2">
       <input type="hidden" name="equipo" value={equipo} />
       <label htmlFor="url" className="text-sm font-semibold">
-        Link de la entrega del equipo
+        Enlace de presentación (opcional)
       </label>
       <div className="flex gap-2">
-        <input id="url" name="url" type="url" inputMode="url" defaultValue={actual ?? ""} placeholder="https://" className={input} />
+        <input id="url" name="url" type="url" inputMode="url" defaultValue={actual ?? ""} placeholder="https://www.canva.com/…" className={input} />
         <Button type="submit" variant="secondary" disabled={enviando} className="h-12 rounded-xl px-4">
           <Link2 className="size-4" />
           {actual ? "Cambiar" : "Guardar"}
@@ -62,6 +63,22 @@ export function FormEntrega({ equipo, actual }: { equipo: string; actual: string
       {estado.ok && <p className="text-sm text-primary">Guardado. Lo ve el jurado.</p>}
     </form>
   );
+}
+
+export function FormEmpresa({equipo,actual}:{equipo:string;actual:string|null}) {
+  const [estado,accion,enviando]=useActionState(elegirEmpresa,{});
+  const [seleccion,setSeleccion]=useState(actual??"");
+  return <form action={accion} className="grid gap-3 border-t border-border pt-4">
+    <input type="hidden" name="equipo" value={equipo}/>
+    <label htmlFor="empresa-equipo" className="text-sm font-semibold">Empresa elegida</label>
+    <select id="empresa-equipo" name="empresa" value={seleccion} onChange={e=>setSeleccion(e.target.value)} required className={input} disabled={enviando}>
+      <option value="" disabled>Elegí una empresa</option>
+      {EMPRESAS_HACKATON.map(e=><option key={e.nombre} value={e.nombre}>{e.nombre}</option>)}
+    </select>
+    <Button type="submit" variant="secondary" className="min-h-11" disabled={enviando}>{enviando?"Guardando…":"Guardar empresa"}</Button>
+    {estado.error&&<p role="alert" className="text-sm text-destructive">{estado.error}</p>}
+    {estado.ok&&seleccion===actual&&<p role="status" className="text-sm text-primary">Empresa guardada para todo el equipo.</p>}
+  </form>;
 }
 
 export function SubirCv({ usuarioId, tieneCv }: { usuarioId: string; tieneCv: boolean }) {

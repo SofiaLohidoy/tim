@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { clienteServidor } from "@/lib/supabase/servidor";
 import { exigirRol } from "@/lib/sesion";
 import { equiposAsignados, misEvaluaciones } from "@/lib/staff";
 import { rubricaDelEvento } from "@/lib/rubrica";
 import { dimensionesPara } from "@/lib/devoluciones";
+import { VerEntregas } from "@/components/app/ver-entregas";
 import { Evaluacion } from "@/components/app/evaluacion";
 
 export const metadata: Metadata = { title: "Evaluar equipo" };
@@ -41,12 +42,7 @@ async function Contenido({ params }: { params: PageProps<"/jurado/[equipo]">["pa
       <header>
         <h1 className="text-[1.7rem] leading-tight font-extrabold">{equipo.nombre}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{equipo.miembros.map((m) => m.nombre).join(" · ")}</p>
-        {equipo.entregaUrl && (
-          <a href={equipo.entregaUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 font-semibold text-violeta-texto">
-            Ver la entrega <ExternalLink className="size-4" />
-          </a>
-        )}
-        {equipo.archivoNombre && <a href={`/entregas/${equipo.id}`} target="_blank" rel="noreferrer" className="mt-2 inline-flex min-h-11 items-center gap-2 font-semibold text-violeta-texto"><ExternalLink className="size-4"/>Ver archivo: {equipo.archivoNombre}</a>}
+        <VerEntregas equipo={equipo.id} nombre={equipo.nombre} empresa={equipo.empresaElegida} documento={equipo.archivoNombre} presentacion={equipo.presentacionNombre} enlace={equipo.entregaUrl}/>
       </header>
       <Evaluacion
         key={equipo.id}

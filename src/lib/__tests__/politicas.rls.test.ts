@@ -84,6 +84,45 @@ describe("respaldo de eliminación", () => {
   });
 });
 
+describe("empresa elegida y presentación independiente", () => {
+  it("solo un integrante elige una empresa válida para su equipo", async () => {
+    const e=await como("estudiante-1"),otra=await como("estudiante-2"),j=await como("jurado");
+    for(const c of [otra,j,anonimo()])expect((await c.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"V-go"})).error).not.toBeNull();
+    expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"inventada"})).error?.message).toContain("empresa_invalida");
+    expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"V-go"})).error).toBeNull();
+    expect((await j.from("equipos").select("empresa_elegida").eq("id",equipo1).single()).data?.empresa_elegida).toBe("V-go");
+  });
+  it("las dos entregas son independientes y la presentación respeta asignación y cierre", async () => {
+    const e=await como("estudiante-1"),otra=await como("estudiante-2"),j=await como("jurado"),mentor=await como("mentor-1"),org=await como("organizador");
+    const rutas=[`${equipo1}/prueba-doc-${crypto.randomUUID()}.pdf`,`${equipo1}/presentacion/prueba-presentacion-${crypto.randomUUID()}.pdf`];
+    const bytes=Buffer.from("%PDF-1.4 prueba-dos-entregas");
+    try {
+      for(const ruta of rutas)expect((await admin.storage.from("entregas").upload(ruta,bytes,{contentType:"application/pdf"})).error).toBeNull();
+      const args={p_equipo:equipo1,p_ruta:rutas[1],p_nombre:"prueba-presentacion.pdf",p_tipo:"application/pdf",p_tamano:bytes.length};
+      for(const c of [otra,j,mentor,anonimo()])expect((await c.rpc("guardar_presentacion_equipo",args)).error).not.toBeNull();
+      expect((await e.rpc("guardar_archivo_entrega",{...args,p_ruta:rutas[0],p_nombre:"prueba-doc.pdf"})).error).toBeNull();
+      expect((await e.rpc("guardar_presentacion_equipo",args)).error).toBeNull();
+      expect((await e.rpc("guardar_presentacion_equipo",{...args,p_ruta:rutas[0]})).error?.message).toContain("archivo_invalido");
+      expect((await e.rpc("guardar_archivo_entrega",args)).error?.message).toContain("archivo_invalido");
+      expect((await e.from("entregas_equipo").select("archivo_path").eq("equipo_id",equipo1).single()).data?.archivo_path).toBe(rutas[0]);
+      for(const c of [e,j,org])expect((await c.storage.from("entregas").createSignedUrl(rutas[1],30)).error).toBeNull();
+      for(const c of [otra,mentor,anonimo()]){
+        expect((await c.from("presentaciones_equipo").select("archivo_path").eq("equipo_id",equipo1)).data??[]).toEqual([]);
+        expect((await c.storage.from("entregas").createSignedUrl(rutas[1],30)).error).not.toBeNull();
+      }
+      expect((await e.from("presentaciones_equipo").update({archivo_nombre:"prueba-intrusion"}).eq("equipo_id",equipo1)).error).not.toBeNull();
+      await admin.from("eventos").update({estado:"cerrado"}).eq("id",evento);
+      expect((await e.rpc("guardar_presentacion_equipo",args)).error?.message).toContain("evento_cerrado");
+      expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"Fardo"})).error?.message).toContain("evento_cerrado");
+    } finally {
+      await admin.from("eventos").update({estado:"en_curso"}).eq("id",evento);
+      await admin.storage.from("entregas").remove(rutas);
+      await admin.from("entregas_equipo").delete().eq("equipo_id",equipo1);
+      await admin.from("presentaciones_equipo").delete().eq("equipo_id",equipo1);
+    }
+  });
+});
+
 describe("archivo de entrega compartida", () => {
   it("solo integrantes registran archivos y solo equipo, organizador y jurado asignado pueden leerlos", async () => {
     const estudiante=await como("estudiante-1");const otra=await como("estudiante-2");

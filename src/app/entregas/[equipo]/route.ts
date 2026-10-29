@@ -8,7 +8,9 @@ export async function GET(req: Request, ctx: RouteContext<"/entregas/[equipo]">)
   const {equipo} = await ctx.params;
   if (!z.uuid().safeParse(equipo).success) return new Response("No encontramos la entrega.",{status:404});
   const db = await clienteServidor();
-  const {data} = await db.from("entregas_equipo").select("archivo_path").eq("equipo_id",equipo).maybeSingle();
+  const tipo=z.enum(["documento","presentacion"]).safeParse(new URL(req.url).searchParams.get("tipo")??"documento");
+  if(!tipo.success)return new Response("No encontramos la entrega.",{status:404});
+  const {data} = await db.from(tipo.data==="documento"?"entregas_equipo":"presentaciones_equipo").select("archivo_path").eq("equipo_id",equipo).maybeSingle();
   if (!data) return new Response("No encontramos una entrega disponible para tu cuenta.",{status:404});
   const firmado = await db.storage.from("entregas").createSignedUrl(data.archivo_path,120,{download:true});
   if (firmado.error || !firmado.data) return new Response("No pudimos abrir la entrega. Probá de nuevo.",{status:404});
