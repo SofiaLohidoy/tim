@@ -50,8 +50,8 @@ test("registro desde el QR de la puerta: cuenta, onboarding en 3 pasos y asisten
   await expect(page.getByRole("list", { name: "Documentos de las empresas", exact: true }).getByRole("listitem")).toHaveCount(5);
   await expect(page.getByRole("main").locator("header")).toHaveCSS("background-color","rgb(23, 72, 63)");
   await expect(page.getByRole("main")).toHaveCSS("font-family",/MontserratGuia/);
-  await expect(page.getByRole("link", { name: "Descargar guía (PDF)", exact: true })).toHaveAttribute("href", "/documentos/bienvenida-hackathon-tim.pdf");
-  const pdf=await page.request.get("/documentos/bienvenida-hackathon-tim.pdf");
+  await expect(page.getByRole("link", { name: "Descargar guía (PDF)", exact: true })).toHaveAttribute("href", "/hackaton/guia/documento");
+  const pdf=await page.request.get("/hackaton/guia/documento");
   expect(pdf.status()).toBe(200);
   expect((await pdf.body()).subarray(0,4).toString()).toBe("%PDF");
   await page.getByRole("link", { name: "Continuar a TIM", exact: true }).click();

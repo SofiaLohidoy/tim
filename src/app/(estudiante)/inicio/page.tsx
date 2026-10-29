@@ -30,7 +30,7 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
   const db = await clienteServidor();
   const evento = await eventoActual(db);
 
-  const [asistencia, miembro, desafio, devolucion, estudiante] = await Promise.all([
+  const [asistencia, miembro, estudiante] = await Promise.all([
     evento
       ? db.from("asistencias").select("creado_en").eq("evento_id", evento.id).eq("usuario_id", u.id).maybeSingle()
       : null,
@@ -42,10 +42,6 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
           .eq("usuario_id", u.id)
           .maybeSingle()
       : null,
-    evento
-      ? db.from("desafios").select("titulo, consigna").eq("evento_id", evento.id).neq("estado", "borrador").maybeSingle()
-      : null,
-    evento ? db.from("devoluciones").select("id").eq("evento_id", evento.id).maybeSingle() : null,
     db.from("estudiantes").select("cv_path").eq("usuario_id", u.id).maybeSingle(),
   ]);
 
@@ -67,7 +63,6 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
         <Link href="/inicio" aria-label="TIM, inicio" className="shrink-0 text-primary"><Logo className="h-8 w-auto sm:h-10" /></Link>
       </header>
 
-      <Link href="/hackaton/bienvenida" className="flex min-h-16 items-center justify-between gap-3 rounded-3xl bg-lila-claro p-5 font-semibold text-verde-oscuro"><span>Tu guía de la hackatón<span className="mt-1 block text-sm font-normal">Cronograma, empresas, mentores y jurado.</span></span><ArrowRight className="size-5 shrink-0" aria-hidden="true"/></Link>
       {avisoAsistencia === "ok" && (
         <Aviso tono="ok">Listo, quedó marcada tu asistencia. ¡Que lo disfrutes!</Aviso>
       )}
@@ -78,12 +73,14 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
         <Aviso tono="error">No pudimos marcar tu asistencia. Probá de nuevo o avisale al equipo TIM.</Aviso>
       )}
 
-      <EmpresasHackaton compacto />
       {!evento ? (
-        <Tarjeta>
-          <p className="font-heading text-lg font-bold">Todavía no hay un desafío abierto.</p>
-          <p className="mt-1 text-muted-foreground">Te avisamos cuando abra el próximo.</p>
-        </Tarjeta>
+        <>
+          <GuiaLink />
+          <Tarjeta>
+            <p className="font-heading text-lg font-bold">Todavía no hay un desafío abierto.</p>
+            <p className="mt-1 text-muted-foreground">Te avisamos cuando abra el próximo.</p>
+          </Tarjeta>
+        </>
       ) : (
         <>
           <section className="overflow-hidden rounded-3xl bg-primary text-primary-foreground">
@@ -123,15 +120,8 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
             </div>
           </section>
 
-          {desafio?.data && (
-            <Tarjeta>
-              <p className="text-xs font-semibold tracking-[0.14em] text-violeta-texto uppercase">El desafío</p>
-              <h2 className="mt-1.5 text-xl font-extrabold">{desafio.data.titulo}</h2>
-              <p className="mt-2 whitespace-pre-line text-[15px] leading-relaxed text-foreground/80">
-                {desafio.data.consigna}
-              </p>
-            </Tarjeta>
-          )}
+          <GuiaLink />
+          {estuvo && <EmpresasHackaton compacto />}
 
           <Tarjeta>
             <p className="flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-violeta-texto uppercase">
@@ -166,21 +156,6 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
               </p>
             )}
           </Tarjeta>
-
-          <Tarjeta>
-            <p className="text-xs font-semibold tracking-[0.14em] text-violeta-texto uppercase">Tu devolución</p>
-            {devolucion?.data ? (
-              <Link href="/devolucion" className="mt-2 flex items-center justify-between gap-3">
-                <span className="font-heading text-lg font-bold">Ya está lista. Miralo.</span>
-                <ArrowRight className="size-5 text-violeta-texto" />
-              </Link>
-            ) : (
-              <p className="mt-2 text-muted-foreground">
-                Mentores y jurados te observan durante el desafío. Tu devolución llega cuando el equipo TIM la
-                publique.
-              </p>
-            )}
-          </Tarjeta>
         </>
       )}
 
@@ -194,6 +169,15 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/inicio">[
         </Tarjeta>
       )}
     </div>
+  );
+}
+
+function GuiaLink() {
+  return (
+    <Link href="/hackaton/bienvenida" className="flex min-h-16 items-center justify-between gap-3 rounded-3xl bg-lila-claro p-5 font-semibold text-verde-oscuro">
+      <span>Tu guía de la hackatón<span className="mt-1 block text-sm font-normal">Cronograma, mentores y jurado.</span></span>
+      <ArrowRight className="size-5 shrink-0" aria-hidden="true" />
+    </Link>
   );
 }
 

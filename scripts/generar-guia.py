@@ -2,6 +2,7 @@
 Montserrat: https://github.com/JulietaUla/Montserrat (licencia OFL junto a los TTF).
 """
 import json
+import sys
 from pathlib import Path
 from xml.sax.saxutils import escape
 from reportlab.lib import colors
@@ -72,7 +73,9 @@ story.extend([info,Spacer(1,8)])
 for sec in G['secciones']:
     titulo=sec['titulo']
     if titulo=='Sobre los mentores':story.extend([PageBreak(),p('Hackathon TIM · Tu guía',H)])
-    if titulo=='Empresas participantes':story.extend([p(titulo,H),empresas()]);continue
+    if titulo=='Empresas participantes':
+        if '--completa' in sys.argv: story.extend([p(titulo,H),empresas()])
+        continue
     story.extend(bloque(sec))
     if titulo=='Cronograma del evento':
         cells=[p(f'{n+1}. {text}',SMALL) for n,text in enumerate(G['recorrido'])]
@@ -82,6 +85,6 @@ for sec in G['secciones']:
     if titulo=='Sobre los mentores':story.append(tarjetas_personas(PERSONAS['mentores']))
     if titulo=='Sobre el jurado':story.append(tarjetas_personas(PERSONAS['jurados']))
 story.extend([Spacer(1,6),p(G['cierre'],H),p(G['firma'])])
-out=ROOT/'public/documentos/bienvenida-hackathon-tim.pdf'
+out=ROOT/('src/contenidos/hackaton/bienvenida-completa.pdf' if '--completa' in sys.argv else 'public/documentos/bienvenida-hackathon-tim.pdf')
 SimpleDocTemplate(str(out),pagesize=A4,rightMargin=40,leftMargin=40,topMargin=28,bottomMargin=45,title=G['titulo'],author='TIM').build(story,onFirstPage=pie,onLaterPages=pie)
 print(out)

@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { NextResponse } from "next/server";
 import { usuarioActual } from "@/lib/sesion";
+import { puedeVerEmpresas } from "@/lib/hackaton/acceso";
 
 export async function GET(req: Request, ctx: RouteContext<"/hackaton/empresas/[empresa]/documento">) {
   const { empresa } = await ctx.params;
@@ -9,8 +10,8 @@ export async function GET(req: Request, ctx: RouteContext<"/hackaton/empresas/[e
   if (empresa !== "v-go") return new Response("El documento todavía no está disponible.", { status: 404 });
   const u = await usuarioActual();
   if (!u) return NextResponse.redirect(new URL("/ingresar?siguiente=%2Fhackaton%2Fbienvenida", req.url));
-  if (!u.onboardingCompleto && !u.roles.some(rol=>["organizador","mentor","jurado"].includes(rol))) {
-    return new Response("Completá tu inscripción para consultar los documentos de la hackatón.", { status: 403 });
+  if (!await puedeVerEmpresas(u)) {
+    return new Response("Confirmá tu inscripción con el QR o código para consultar los documentos de la hackatón.", { status: 403 });
   }
   try {
     const pdf=await readFile(join(process.cwd(),"src/contenidos/hackaton/v-go.pdf"));

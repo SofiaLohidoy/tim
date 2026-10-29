@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   // Fuente: node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/output.md
   outputFileTracingIncludes: {
     "/hackaton/empresas/*/documento": ["./src/contenidos/hackaton/*.pdf"],
+    "/hackaton/guia/documento": ["./src/contenidos/hackaton/bienvenida-completa.pdf"],
   },
   turbopack: {
     rules: {
