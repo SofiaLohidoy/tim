@@ -1276,6 +1276,7 @@ export type Database = {
         Returns: number
       }
       puede_leer_archivo_entrega: { Args: { p_ruta: string }; Returns: boolean }
+      puede_leer_desafios: { Args: never; Returns: boolean }
       puede_ver_persona: { Args: { p_usuario: string }; Returns: boolean }
       reclamar_invitacion: { Args: { p_token: string }; Returns: string }
       registrar_entrega: {

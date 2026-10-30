@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { readFile } from "node:fs/promises";
+import documentos from "../src/lib/hackaton/documentos.json";
 import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
@@ -7,7 +7,7 @@ import { entrar, salir } from "./ayuda";
 config({path:".env.local",quiet:true});
 const admin=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_SECRET_KEY!,{auth:{persistSession:false}});
 const sha=(data:Buffer)=>createHash("sha256").update(data).digest("hex");
-test("la bienvenida y el regreso por código muestran cuatro empresas y el PDF original de V-go",async({page})=>{
+test("la inscripción habilita cuatro documentos originales y BIOTEC queda próximamente",async({page})=>{
   test.setTimeout(60_000);
   await entrar(page,"estudiante-2");
   const uid=(await admin.from("perfiles").select("id").eq("email","prueba-estudiante-2@tim.test").single()).data!.id;
@@ -17,7 +17,7 @@ test("la bienvenida y el regreso por código muestran cuatro empresas y el PDF o
     await page.goto(ruta);
     await expect(page.getByRole("list",{name:"Documentos de las empresas",exact:true})).toHaveCount(0);
   }
-  for(const ruta of ["/hackaton/empresas/v-go/documento","/hackaton/guia/documento"]){
+  for(const ruta of ["/hackaton/empresas/v-go/documento","/hackaton/empresas/kankay/documento","/hackaton/empresas/fardo/documento","/hackaton/empresas/lisa/documento","/hackaton/guia/documento"]){
     expect((await page.request.get(ruta)).status()).toBe(403);
   }
   await expect(page.getByRole("link",{name:"Descargar guía (PDF)",exact:true})).toHaveAttribute("href","/documentos/bienvenida-hackathon-tim.pdf");
@@ -33,18 +33,19 @@ test("la bienvenida y el regreso por código muestran cuatro empresas y el PDF o
   for(const ruta of ["/hackaton/bienvenida","/inicio"]){
     await page.goto(ruta);
     const lista=page.getByRole("list",{name:"Documentos de las empresas",exact:true});
-    await expect(lista.getByRole("listitem")).toHaveCount(4);
-    for(const nombre of ["Kankay","V-go","Fardo","Lisa"])await expect(lista.getByRole("heading",{name:nombre,exact:true})).toBeVisible();
-    await expect(lista.getByText("Documento próximamente",{exact:true})).toHaveCount(3);
-    await expect(lista.getByRole("link")).toHaveCount(1);
+    await expect(lista.getByRole("listitem")).toHaveCount(5);
+    for(const nombre of ["Kankay","V-go","Fardo","Lisa","BIOTEC"])await expect(lista.getByRole("heading",{name:nombre,exact:true})).toBeVisible();
+    await expect(lista.getByText("Documento próximamente",{exact:true})).toHaveCount(1);
+    await expect(lista.getByRole("link")).toHaveCount(4);
     for(const img of await lista.locator("img").all()){await img.scrollIntoViewIfNeeded();await expect.poll(()=>img.evaluate(e=>(e as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);}
   }
-  const ruta="/hackaton/empresas/v-go/documento";
-  const pdf=await page.request.get(ruta);
-  expect(pdf.status()).toBe(200);expect(pdf.headers()["content-type"]).toBe("application/pdf");
-  expect(sha(await pdf.body())).toBe(sha(await readFile("src/contenidos/hackaton/v-go.pdf")));
-  expect((await page.request.get("/hackaton/empresas/kankay/documento")).status()).toBe(404);
+  for(const empresa of ["v-go","kankay","fardo","lisa"] as const){
+    const pdf=await page.request.get(`/hackaton/empresas/${empresa}/documento`);
+    expect(pdf.status()).toBe(200);expect(pdf.headers()["content-type"]).toBe("application/pdf");
+    expect(sha(await pdf.body())).toBe(documentos[empresa].sha256);
+  }
+  expect((await page.request.get("/hackaton/empresas/biotec/documento")).status()).toBe(404);
   expect((await page.request.get("/hackaton/guia/documento")).status()).toBe(200);
   await salir(page);
-  const sinSesion=await page.request.get(ruta,{maxRedirects:0});expect(sinSesion.status()).toBe(307);
+  for(const empresa of ["v-go","kankay","fardo","lisa"]){const sinSesion=await page.request.get(`/hackaton/empresas/${empresa}/documento`,{maxRedirects:0});expect(sinSesion.status()).toBe(307);}
 });

@@ -2,6 +2,7 @@
 Montserrat: https://github.com/JulietaUla/Montserrat (licencia OFL junto a los TTF).
 """
 import json
+import hashlib
 import sys
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -32,18 +33,18 @@ def imagen(path,size=36):
     return Image(str(path),width=w*scale,height=h*scale)
 class Iniciales(Flowable):
     def __init__(self,nombre):
-        Flowable.__init__(self);self.width=30;self.height=30;self.text=''.join(t[0] for t in nombre.split()[:2])
+        Flowable.__init__(self);self.width=28;self.height=28;self.text=''.join(t[0] for t in nombre.split()[:2])
     def draw(self):
-        self.canv.saveState();self.canv.scale(30/36,30/36)
+        self.canv.saveState();self.canv.scale(28/36,28/36)
         self.canv.setFillColor(VERDE);self.canv.circle(18,18,17,fill=1,stroke=0)
         self.canv.setFillColor(CREMA);self.canv.setFont('MontserratBold',10);self.canv.drawCentredString(18,14,self.text);self.canv.restoreState()
 def tarjetas_personas(personas):
     rows=[]
     for persona in personas:
-        avatar=imagen(persona['foto'],30) if persona.get('foto') else Iniciales(persona['nombre'])
+        avatar=imagen(persona['foto'],28) if persona.get('foto') else Iniciales(persona['nombre'])
         rows.append([avatar,[enlace(persona['nombre'],persona['linkedin'],NAME),enlace('Ver perfil en LinkedIn',persona['linkedin'],SMALL)]])
     tabla=Table(rows,colWidths=[46,469])
-    tabla.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),CLARO),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('LEFTPADDING',(0,0),(-1,-1),6),('TOPPADDING',(0,0),(-1,-1),3),('BOTTOMPADDING',(0,0),(-1,-1),3),('LINEBELOW',(0,0),(-1,-2),2,CREMA)]))
+    tabla.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),CLARO),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('LEFTPADDING',(0,0),(-1,-1),6),('TOPPADDING',(0,0),(-1,-1),2),('BOTTOMPADDING',(0,0),(-1,-1),2),('LINEBELOW',(0,0),(-1,-2),2,CREMA)]))
     return tabla
 def empresas():
     celdas=[]
@@ -51,7 +52,7 @@ def empresas():
         url='https://tim-alpha-eight.vercel.app'+empresa['documento'] if empresa.get('documento') else None
         nombre=enlace(empresa['nombre'],url,NAME) if url else p(empresa['nombre'],NAME)
         estado=enlace('Ver documento (PDF)',url,SMALL) if url else p('Documento próximamente',SMALL)
-        card=Table([[imagen(empresa['logo']),[nombre,estado]]],colWidths=[45,207.5])
+        card=Table([[imagen(empresa['logo']) if empresa.get('logo') else Iniciales(empresa['nombre']),[nombre,estado]]],colWidths=[45,207.5])
         card.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),CLARO),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('TOPPADDING',(0,0),(-1,-1),8),('BOTTOMPADDING',(0,0),(-1,-1),8),('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),3)]))
         celdas.append(card)
     if len(celdas)%2:celdas.append('')
@@ -87,5 +88,8 @@ for sec in G['secciones']:
     if titulo=='Sobre el jurado':story.append(tarjetas_personas(PERSONAS['jurados']))
 story.extend([Spacer(1,6),p(G['cierre'],H),p(G['firma'])])
 out=ROOT/('src/contenidos/hackaton/bienvenida-completa.pdf' if '--completa' in sys.argv else 'public/documentos/bienvenida-hackathon-tim.pdf')
+out.parent.mkdir(parents=True,exist_ok=True)
 SimpleDocTemplate(str(out),pagesize=A4,rightMargin=40,leftMargin=40,topMargin=28,bottomMargin=45,title=G['titulo'],author='TIM').build(story,onFirstPage=pie,onLaterPages=pie)
+if '--completa' in sys.argv:
+    (ROOT/'src/lib/hackaton/guia-pdf.json').write_text(json.dumps({'archivo':'bienvenida-completa.pdf','sha256':hashlib.sha256(out.read_bytes()).hexdigest()},indent=2)+'\n',encoding='utf-8')
 print(out)

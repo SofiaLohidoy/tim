@@ -14,6 +14,11 @@ test("el equipo comparte empresa, documento y presentación sin reemplazar una e
     await entrar(page,"estudiante-1");await page.goto("/inicio");
     await expect(page.getByLabel("Empresa elegida",{exact:true})).toHaveValue("");
     await expect(page.getByRole("option",{name:"Programon",exact:true})).toHaveCount(0);
+    await page.getByLabel("Empresa elegida",{exact:true}).selectOption("BIOTEC");
+    await page.getByRole("button",{name:"Guardar empresa",exact:true}).click();
+    await expect(page.getByText("Empresa guardada para todo el equipo.",{exact:true})).toBeVisible();
+    await page.reload();
+    await expect(page.getByLabel("Empresa elegida",{exact:true})).toHaveValue("BIOTEC");
     await page.getByLabel("Empresa elegida",{exact:true}).selectOption("V-go");
     await page.getByRole("button",{name:"Guardar empresa",exact:true}).click();
     await expect(page.getByText("Empresa guardada para todo el equipo.",{exact:true})).toBeVisible();

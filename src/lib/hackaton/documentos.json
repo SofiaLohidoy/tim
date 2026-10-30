@@ -1,0 +1,22 @@
+{
+  "kankay": {
+    "archivo": "kankay.pdf",
+    "nombre": "KANKAY_A4.pdf",
+    "sha256": "87e0c59696e111d24c16ea8af9f8d9550472fa703732dfc9580329817eb62e7c"
+  },
+  "v-go": {
+    "archivo": "v-go.pdf",
+    "nombre": "Desafio V-Go - TIM x V-Go UTDT.pdf",
+    "sha256": "81688a304ce802422017cfaa4540e18467cb1540b35a980b91cfe1556cb86ae8"
+  },
+  "fardo": {
+    "archivo": "fardo.pdf",
+    "nombre": "Fardo_A4.pdf",
+    "sha256": "6db54fffd5544fa06f2877fb60d3a493a4a753efc7ac34b0747fae3fae0c5206"
+  },
+  "lisa": {
+    "archivo": "lisa.pdf",
+    "nombre": "LISA_AI_A4.pdf",
+    "sha256": "77fa2cc777fc680a45cf2492e33da0ccecf811287d0635ed261f329d76d2f29b"
+  }
+}

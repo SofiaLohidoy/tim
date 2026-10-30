@@ -28,7 +28,7 @@ const url = z.url({ protocol: /^https?$/, error: "Pegá un link que empiece con 
 
 export async function elegirEmpresa(_p: EstadoSimple, form: FormData): Promise<EstadoSimple> {
   await exigirUsuario();
-  const v=z.object({equipo:z.uuid(),empresa:z.enum(["Kankay","V-go","Fardo","Lisa"])}).safeParse({equipo:form.get("equipo"),empresa:form.get("empresa")});
+  const v=z.object({equipo:z.uuid(),empresa:z.enum(["Kankay","V-go","Fardo","Lisa","BIOTEC"])}).safeParse({equipo:form.get("equipo"),empresa:form.get("empresa")});
   if(!v.success)return {error:"Elegí una empresa de la lista."};
   const db=await clienteServidor();
   const {error}=await db.rpc("elegir_empresa_equipo",{p_equipo:v.data.equipo,p_empresa:v.data.empresa});

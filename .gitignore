@@ -45,3 +45,5 @@ next-env.d.ts
 /playwright-report/
 capturas/
 /work/
+# Los desafíos se publican en Storage privado, nunca en el código público.
+/src/contenidos/hackaton/*.pdf

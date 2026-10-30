@@ -90,6 +90,7 @@ describe("empresa elegida y presentación independiente", () => {
     for(const c of [otra,j,anonimo()])expect((await c.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"V-go"})).error).not.toBeNull();
     expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"inventada"})).error?.message).toContain("empresa_invalida");
     expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"Programon"})).error?.message).toContain("empresa_invalida");
+    expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"BIOTEC"})).error).toBeNull();
     expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"V-go"})).error).toBeNull();
     expect((await j.from("equipos").select("empresa_elegida").eq("id",equipo1).single()).data?.empresa_elegida).toBe("V-go");
   });
@@ -161,6 +162,27 @@ beforeAll(async () => {
 
 afterAll(() => {
   execSync("node scripts/prueba.mjs limpiar", { stdio: "ignore" });
+});
+
+describe("documentos de desafíos privados",()=>{
+  it("exige inscripción incluso al descargar directo de Storage y no permite cargas de participantes",async()=>{
+    const inscripto=await como("estudiante-1"),sinInscripcion=await como("estudiante-2"),mentor=await como("mentor-1");
+    const uid=await idDe("estudiante-1");
+    const intento=`prueba-intrusion-${crypto.randomUUID()}.pdf`;
+    await admin.from("asistencias").upsert({usuario_id:uid,evento_id:evento,metodo:"organizador"},{onConflict:"evento_id,usuario_id"});
+    try {
+      for(const nombre of ["kankay.pdf","v-go.pdf","fardo.pdf","lisa.pdf","bienvenida-completa.pdf"]){
+        for(const c of [sinInscripcion,anonimo()])expect((await c.storage.from("desafios-empresas").download(nombre)).error).not.toBeNull();
+        for(const c of [inscripto,mentor])expect((await c.storage.from("desafios-empresas").download(nombre)).error).toBeNull();
+      }
+      expect((await inscripto.storage.from("desafios-empresas").upload(intento,Buffer.from("%PDF-prueba"),{contentType:"application/pdf"})).error).not.toBeNull();
+      await admin.from("asistencias").delete().eq("usuario_id",uid).eq("evento_id",evento);
+      expect((await inscripto.rpc("puede_leer_desafios")).data).toBe(false);
+      // Consultar origen: una respuesta descargada antes no demuestra permisos vigentes.
+      // https://supabase.com/docs/guides/storage/cdn/smart-cdn#bypassing-cache
+      expect((await inscripto.storage.from("desafios-empresas").download("v-go.pdf",{cacheNonce:crypto.randomUUID()},{cache:"no-store"})).error).not.toBeNull();
+    } finally {await admin.from("asistencias").delete().eq("usuario_id",uid).eq("evento_id",evento);await admin.storage.from("desafios-empresas").remove([intento]);}
+  },60_000);
 });
 
 describe("publicaciones repetidas", () => {

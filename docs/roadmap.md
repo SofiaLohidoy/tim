@@ -1,5 +1,7 @@
 # Roadmap
 
+30/10: documentos originales nuevos de Kankay, V-go, Fardo y Lisa en sus tarjetas, con acceso por inscripción y Storage privado (repositorio público, copias de trabajo ignoradas). V-go reemplaza la propuesta anterior. BIOTEC se suma al catálogo y al selector, con inicial y Documento próximamente hasta recibir material. Gonzalo Silman se suma como sexto jurado con LinkedIn; nueve perfiles en la guía. Guías PDF actualizadas. Migraciones 021–022, sin modificar filas ni entregas existentes.
+
 30/10: Programon se retira del catálogo, selector, guía y PDF; ya no admite nuevas elecciones. Las elecciones históricas se muestran sin elegir hasta que el equipo seleccione otra empresa, conservando sus archivos. Francisco Casiano Casas se suma como tercer mentor con el LinkedIn proporcionado por Sofía; ocho perfiles en total. Cuatro empresas: Kankay, V-go, Fardo y Lisa. Migración 020.
 
 29/10, republicación: preparar y publicar varias veces, conservando visibles las devoluciones actuales hasta confirmar la actualización. Borradores privados del organizador, publicación atómica y control de revisión ante evaluaciones nuevas/corregidas. Las evaluaciones se cierran al cerrar el evento. Migración 019; no modifica publicaciones existentes al instalarse.
