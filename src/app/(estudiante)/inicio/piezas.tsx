@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { clienteNavegador } from "@/lib/supabase/navegador";
 import { guardarCv, marcarConCodigo, registrarEntrega, elegirEmpresa } from "../acciones";
-import { EMPRESAS_HACKATON } from "@/lib/hackaton/empresas";
+import { EMPRESAS_HACKATON, empresaParticipante } from "@/lib/hackaton/empresas";
 
 const input =
   "h-12 w-full min-w-0 rounded-xl border-0 bg-muted px-3.5 text-base ring-1 ring-border outline-none ring-inset focus:ring-2 focus:ring-ring";
@@ -67,7 +67,8 @@ export function FormEntrega({ equipo, actual }: { equipo: string; actual: string
 
 export function FormEmpresa({equipo,actual}:{equipo:string;actual:string|null}) {
   const [estado,accion,enviando]=useActionState(elegirEmpresa,{});
-  const [seleccion,setSeleccion]=useState(actual??"");
+  const elegida=empresaParticipante(actual);
+  const [seleccion,setSeleccion]=useState(elegida??"");
   return <form action={accion} className="grid gap-3 border-t border-border pt-4">
     <input type="hidden" name="equipo" value={equipo}/>
     <label htmlFor="empresa-equipo" className="text-sm font-semibold">Empresa elegida</label>
@@ -77,7 +78,7 @@ export function FormEmpresa({equipo,actual}:{equipo:string;actual:string|null}) 
     </select>
     <Button type="submit" variant="secondary" className="min-h-11" disabled={enviando}>{enviando?"Guardando…":"Guardar empresa"}</Button>
     {estado.error&&<p role="alert" className="text-sm text-destructive">{estado.error}</p>}
-    {estado.ok&&seleccion===actual&&<p role="status" className="text-sm text-primary">Empresa guardada para todo el equipo.</p>}
+    {estado.ok&&seleccion===elegida&&<p role="status" className="text-sm text-primary">Empresa guardada para todo el equipo.</p>}
   </form>;
 }
 

@@ -1,7 +1,8 @@
 {
   "mentores": [
     {"nombre":"Juan Manuel Arce","linkedin":"https://www.linkedin.com/in/juan-manuel-arce/","foto":null},
-    {"nombre":"Joaquín Berardi","linkedin":"https://www.linkedin.com/in/joaquin-berardi/","foto":null}
+    {"nombre":"Joaquín Berardi","linkedin":"https://www.linkedin.com/in/joaquin-berardi/","foto":null},
+    {"nombre":"Francisco Casiano Casas","linkedin":"https://www.linkedin.com/in/francisco-casiano-casas-/","foto":null}
   ],
   "jurados": [
     {"nombre":"María Sol Vivanco","linkedin":"https://www.linkedin.com/in/mariasolvivanco/","foto":null},

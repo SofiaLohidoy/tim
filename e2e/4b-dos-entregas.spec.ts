@@ -10,7 +10,10 @@ test("el equipo comparte empresa, documento y presentación sin reemplazar una e
   const eq=(await admin.from("equipos").select("id,evento_id").eq("nombre","prueba-Equipo 1").single()).data!;
   const principal=Buffer.from("%PDF-1.4 prueba-documento-principal");
   try {
+    await admin.from("equipos").update({empresa_elegida:"Programon"}).eq("id",eq.id);
     await entrar(page,"estudiante-1");await page.goto("/inicio");
+    await expect(page.getByLabel("Empresa elegida",{exact:true})).toHaveValue("");
+    await expect(page.getByRole("option",{name:"Programon",exact:true})).toHaveCount(0);
     await page.getByLabel("Empresa elegida",{exact:true}).selectOption("V-go");
     await page.getByRole("button",{name:"Guardar empresa",exact:true}).click();
     await expect(page.getByText("Empresa guardada para todo el equipo.",{exact:true})).toBeVisible();

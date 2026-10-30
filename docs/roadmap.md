@@ -1,5 +1,7 @@
 # Roadmap
 
+30/10: Programon se retira del catálogo, selector, guía y PDF; ya no admite nuevas elecciones. Las elecciones históricas se muestran sin elegir hasta que el equipo seleccione otra empresa, conservando sus archivos. Francisco Casiano Casas se suma como tercer mentor con el LinkedIn proporcionado por Sofía; ocho perfiles en total. Cuatro empresas: Kankay, V-go, Fardo y Lisa. Migración 020.
+
 29/10, republicación: preparar y publicar varias veces, conservando visibles las devoluciones actuales hasta confirmar la actualización. Borradores privados del organizador, publicación atómica y control de revisión ante evaluaciones nuevas/corregidas. Las evaluaciones se cierran al cerrar el evento. Migración 019; no modifica publicaciones existentes al instalarse.
 
 29/10: empresa elegida por equipo y entregas separadas: documento principal (PDF/DOCX), presentación opcional (PDF/PPTX o enlace de Canva). Selección y archivos compartidos; organizador y jurado asignado ven ambos en Entregas/evaluación. Se conservan archivos y enlaces anteriores. Migraciones 017–018, con RLS y separación de rutas para evitar reemplazos cruzados.
