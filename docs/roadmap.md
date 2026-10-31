@@ -1,3 +1,5 @@
+31/10: BIOTEC retirada de tarjetas, selector y guías PDF. La función de elección rechaza nuevas selecciones; las elecciones históricas se muestran sin selección, conservando archivos y equipos. Migración 023.
+
 # Roadmap
 
 30/10: documentos originales nuevos de Kankay, V-go, Fardo y Lisa en sus tarjetas, con acceso por inscripción y Storage privado (repositorio público, copias de trabajo ignoradas). V-go reemplaza la propuesta anterior. BIOTEC se suma al catálogo y al selector, con inicial y Documento próximamente hasta recibir material. Gonzalo Silman se suma como sexto jurado con LinkedIn; nueve perfiles en la guía. Guías PDF actualizadas. Migraciones 021–022, sin modificar filas ni entregas existentes.

@@ -90,7 +90,7 @@ describe("empresa elegida y presentación independiente", () => {
     for(const c of [otra,j,anonimo()])expect((await c.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"V-go"})).error).not.toBeNull();
     expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"inventada"})).error?.message).toContain("empresa_invalida");
     expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"Programon"})).error?.message).toContain("empresa_invalida");
-    expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"BIOTEC"})).error).toBeNull();
+    expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"BIOTEC"})).error?.message).toContain("empresa_invalida");
     expect((await e.rpc("elegir_empresa_equipo",{p_equipo:equipo1,p_empresa:"V-go"})).error).toBeNull();
     expect((await j.from("equipos").select("empresa_elegida").eq("id",equipo1).single()).data?.empresa_elegida).toBe("V-go");
   });

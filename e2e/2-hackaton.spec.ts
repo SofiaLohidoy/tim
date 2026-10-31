@@ -47,7 +47,7 @@ test("registro desde el QR de la puerta: cuenta, onboarding en 3 pasos y asisten
   await expect(page.getByRole("heading",{name:"Sobre el jurado",exact:true})).toBeVisible();
   await expect(page.getByRole("link",{name:/^LinkedIn de /})).toHaveCount(9);
   for(const nombre of ["Cómo se trabaja","Reglas generales","¿Qué necesitás traer?","Asistencia"]){await expect(page.getByRole("heading",{name:nombre,exact:true})).toHaveCount(0);}
-  await expect(page.getByRole("list", { name: "Documentos de las empresas", exact: true }).getByRole("listitem")).toHaveCount(5);
+  await expect(page.getByRole("list", { name: "Documentos de las empresas", exact: true }).getByRole("listitem")).toHaveCount(4);
   await expect(page.getByRole("main").locator("header")).toHaveCSS("background-color","rgb(23, 72, 63)");
   await expect(page.getByRole("main")).toHaveCSS("font-family",/MontserratGuia/);
   await expect(page.getByRole("link", { name: "Descargar guía (PDF)", exact: true })).toHaveAttribute("href", "/hackaton/guia/documento");

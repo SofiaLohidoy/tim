@@ -7,7 +7,7 @@ import { entrar, salir } from "./ayuda";
 config({path:".env.local",quiet:true});
 const admin=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_SECRET_KEY!,{auth:{persistSession:false}});
 const sha=(data:Buffer)=>createHash("sha256").update(data).digest("hex");
-test("la inscripción habilita cuatro documentos originales y BIOTEC queda próximamente",async({page})=>{
+test("la inscripción habilita cuatro documentos originales sin empresas retiradas",async({page})=>{
   test.setTimeout(60_000);
   await entrar(page,"estudiante-2");
   const uid=(await admin.from("perfiles").select("id").eq("email","prueba-estudiante-2@tim.test").single()).data!.id;
@@ -33,9 +33,9 @@ test("la inscripción habilita cuatro documentos originales y BIOTEC queda próx
   for(const ruta of ["/hackaton/bienvenida","/inicio"]){
     await page.goto(ruta);
     const lista=page.getByRole("list",{name:"Documentos de las empresas",exact:true});
-    await expect(lista.getByRole("listitem")).toHaveCount(5);
-    for(const nombre of ["Kankay","V-go","Fardo","Lisa","BIOTEC"])await expect(lista.getByRole("heading",{name:nombre,exact:true})).toBeVisible();
-    await expect(lista.getByText("Documento próximamente",{exact:true})).toHaveCount(1);
+    await expect(lista.getByRole("listitem")).toHaveCount(4);
+    for(const nombre of ["Kankay","V-go","Fardo","Lisa"])await expect(lista.getByRole("heading",{name:nombre,exact:true})).toBeVisible();
+    await expect(lista.getByText("Documento próximamente",{exact:true})).toHaveCount(0);
     await expect(lista.getByRole("link")).toHaveCount(4);
     for(const img of await lista.locator("img").all()){await img.scrollIntoViewIfNeeded();await expect.poll(()=>img.evaluate(e=>(e as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);}
   }

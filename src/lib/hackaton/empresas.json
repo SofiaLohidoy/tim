@@ -2,6 +2,5 @@
   {"nombre":"Kankay","logo":"/empresas/kankay.png","documento":"/hackaton/empresas/kankay/documento"},
   {"nombre":"V-go","logo":"/empresas/v-go.png","documento":"/hackaton/empresas/v-go/documento"},
   {"nombre":"Fardo","logo":"/empresas/fardo.png","documento":"/hackaton/empresas/fardo/documento"},
-  {"nombre":"Lisa","logo":"/empresas/lisa.png","documento":"/hackaton/empresas/lisa/documento"},
-  {"nombre":"BIOTEC","logo":null,"documento":null}
+  {"nombre":"Lisa","logo":"/empresas/lisa.png","documento":"/hackaton/empresas/lisa/documento"}
 ]

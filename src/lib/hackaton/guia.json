@@ -7,7 +7,7 @@
   "recorrido": ["Llegada", "Presentación de desafíos", "Trabajo en equipos", "Mentorías", "Presentación final", "Evaluación"],
   "secciones": [
     {"titulo":"Cronograma del evento","textos":["Durante la tarde vas a trabajar en equipo sobre un desafío real propuesto por una empresa.","No necesitás experiencia previa ni conocimientos técnicos específicos. La idea es ver cómo pensás, cómo trabajás con otros y cómo transformás un problema en una propuesta concreta."]},
-    {"titulo":"Empresas participantes","textos":["Kankay, V-go, Fardo, Lisa y BIOTEC.","Los documentos disponibles se pueden consultar desde las tarjetas de las empresas en la app. Los demás figuran como Documento próximamente."]},
+    {"titulo":"Empresas participantes","textos":["Kankay, V-go, Fardo y Lisa.","Los documentos disponibles se pueden consultar desde las tarjetas de las empresas en la app. Los demás figuran como Documento próximamente."]},
     {"titulo":"Tu desafío","textos":["Elegí una empresa que te guste, descubrí el desafío que te propone y ayudala a resolverlo en las próximas dos horas."]},
     {"titulo":"Sobre los mentores","textos":["Los mentores no están para resolver el desafío por ustedes. Su rol es:"],"items":["Hacer preguntas.","Ayudar a ordenar ideas.","Destrabar al equipo.","Acompañar el proceso.","Ayudar a llegar a una propuesta concreta."]},
     {"titulo":"Sobre el jurado","textos":["El jurado escucha las presentaciones finales, hace preguntas y evalúa las propuestas de los equipos con la rúbrica de TIM."]},
