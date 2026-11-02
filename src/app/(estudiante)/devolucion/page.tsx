@@ -6,6 +6,7 @@ import { exigirUsuario } from "@/lib/sesion";
 import { eventoActual } from "@/lib/eventos";
 import type { ContenidoDevolucion, Observacion } from "@/lib/devoluciones";
 import { Encuesta, MarcarAbierta } from "./encuesta";
+import { TextoDevolucion } from "@/components/app/texto-devolucion";
 
 export const metadata: Metadata = { title: "Tu devolución" };
 
@@ -69,7 +70,7 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/devolucion">["
 
       {c.juradoGeneral&&<section className="rounded-3xl bg-card p-5 ring-1 ring-border">
         <h2 className="text-lg font-extrabold">Devolución general del jurado</h2>
-        <p className="mt-3 whitespace-pre-wrap break-words text-[15px] leading-relaxed">{c.juradoGeneral}</p>
+        <TextoDevolucion texto={c.juradoGeneral}/>
       </section>}
 
       {c.dimensiones.map((d) => (

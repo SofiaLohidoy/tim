@@ -9,6 +9,7 @@ import type { ContenidoDevolucion } from "@/lib/devoluciones";
 import { Panel, Titulo, Vacio } from "@/components/org/ui";
 import { BotonesDevoluciones } from "./botones";
 import { JuradoGeneral } from "./jurado-general";
+import { TextoDevolucion } from "@/components/app/texto-devolucion";
 
 export const metadata: Metadata = { title: "Devoluciones" };
 
@@ -100,7 +101,7 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/organizador/de
                         {obs === 0 && !c2.juradoGeneral && c2.comentarios.length===0 && <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive">Vacía</span>}
                       </summary>
                       <div className="mt-3 grid gap-2 text-sm">
-                        {c2.juradoGeneral&&<section className="rounded-xl bg-background p-3"><h3 className="font-semibold">Devolución general del jurado</h3><p className="mt-2 whitespace-pre-wrap break-words">{c2.juradoGeneral}</p></section>}
+                        {c2.juradoGeneral&&<section className="rounded-xl bg-background p-3"><h3 className="font-semibold">Devolución general del jurado</h3><TextoDevolucion texto={c2.juradoGeneral} nivelTitulo={4}/></section>}
                         {c2.dimensiones.map((x) => (
                           <div key={x.id} className="rounded-xl bg-background p-3">
                             <p className="font-semibold">{x.nombre}</p>
