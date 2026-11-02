@@ -312,6 +312,55 @@ export type Database = {
           },
         ]
       }
+      devoluciones_jurado_general: {
+        Row: {
+          actualizada_en: string
+          cargada_por: string
+          equipo_id: string
+          evento_id: string
+          fuente: string
+          texto: string
+        }
+        Insert: {
+          actualizada_en?: string
+          cargada_por: string
+          equipo_id: string
+          evento_id: string
+          fuente: string
+          texto: string
+        }
+        Update: {
+          actualizada_en?: string
+          cargada_por?: string
+          equipo_id?: string
+          evento_id?: string
+          fuente?: string
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devoluciones_jurado_general_cargada_por_fkey"
+            columns: ["cargada_por"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devoluciones_jurado_general_equipo_id_fkey"
+            columns: ["equipo_id"]
+            isOneToOne: true
+            referencedRelation: "equipos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devoluciones_jurado_general_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dimensiones: {
         Row: {
           id: string
@@ -1242,6 +1291,10 @@ export type Database = {
           p_tamano: number
           p_tipo: string
         }
+        Returns: undefined
+      }
+      guardar_devolucion_jurado_general: {
+        Args: { p_equipo: string; p_fuente: string; p_texto: string }
         Returns: undefined
       }
       guardar_empresa: {

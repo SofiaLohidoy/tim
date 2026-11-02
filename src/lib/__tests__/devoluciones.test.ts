@@ -32,6 +32,15 @@ const jurado: EvaluacionEnviada = {
 const otroEquipo: EvaluacionEnviada = { ...jurado, equipo_id: "e2", respuestas: { d1: { nivel: "n1" } } };
 
 describe("armarDevolucion", () => {
+  it("conserva la síntesis colectiva completa sin inventar niveles ni atribuirla a un evaluador",()=>{
+    const texto="prueba-Síntesis colectiva\n\nFortalezas y próximos pasos del equipo.";
+    const d=armarDevolucion({estudianteId:"ana",equipoId:"e1",equipoNombre:"Equipo 1",dimensiones:dims,niveles,evaluaciones:[mentorAna],juradoGeneral:texto});
+    expect(d.juradoGeneral).toBe(texto);
+    expect(d.comentarios).toEqual([{quien:"mentor",texto:"Muy buena energía."}]);
+    expect(d.dimensiones.flatMap(x=>x.equipo)).toEqual([]);
+    const otra=armarDevolucion({estudianteId:"beto",equipoId:"e2",equipoNombre:"Equipo 2",dimensiones:dims,niveles,evaluaciones:[]});
+    expect(otra.juradoGeneral).toBeUndefined();
+  });
   const d = armarDevolucion({
     estudianteId: "ana",
     equipoId: "e1",

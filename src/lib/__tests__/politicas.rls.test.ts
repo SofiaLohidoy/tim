@@ -59,6 +59,24 @@ let evento: string;
 let equipo1: string;
 let equipo2: string;
 
+describe("síntesis colectiva del jurado",()=>{
+  it("solo organización la carga y lee; un cambio invalida la preparación sin alterar lo publicado",async()=>{
+    const org=await como("organizador"),est=await como("estudiante-1"),jur=await como("jurado");
+    const args={p_equipo:equipo1,p_texto:"prueba-Devolución colectiva para el primer equipo.",p_fuente:"prueba-rubrica.pdf"};
+    for(const c of [est,jur,anonimo()])expect((await c.rpc("guardar_devolucion_jurado_general",args)).error).not.toBeNull();
+    expect((await org.rpc("guardar_devolucion_jurado_general",{...args,p_texto:"x"})).error).not.toBeNull();
+    const antes=(await admin.from("eventos").select("revision_evaluaciones").eq("id",evento).single()).data!.revision_evaluaciones;
+    expect((await org.rpc("guardar_devolucion_jurado_general",args)).error).toBeNull();
+    expect((await org.from("devoluciones_jurado_general").select("texto").eq("equipo_id",equipo1)).data).toEqual([{texto:args.p_texto}]);
+    for(const c of [est,jur])expect((await c.from("devoluciones_jurado_general").select("texto")).data).toEqual([]);
+    expect((await est.from("devoluciones_jurado_general").insert({equipo_id:equipo2,texto:args.p_texto})).error).not.toBeNull();
+    const despues=(await admin.from("eventos").select("revision_evaluaciones").eq("id",evento).single()).data!.revision_evaluaciones;
+    expect(despues).toBe(antes+1);
+    expect((await org.rpc("guardar_devolucion_jurado_general",args)).error).toBeNull();
+    expect((await admin.from("eventos").select("revision_evaluaciones").eq("id",evento).single()).data!.revision_evaluaciones).toBe(despues);
+  });
+});
+
 describe("respaldo de eliminación", () => {
   it("solo el organizador puede respaldar; nadie puede leer respaldos desde el navegador", async () => {
     const estudiante = await como("estudiante-1");

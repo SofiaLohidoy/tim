@@ -301,11 +301,12 @@ export async function prepararDevoluciones(eventoId: string): Promise<Resultado>
   const rubrica = await rubricaDelEvento(db, ev.rubrica_id);
   if (!rubrica) return { error: "El evento no tiene rúbrica." };
 
-  const [miembros, evaluaciones] = await Promise.all([
+  const [miembros, evaluaciones, generales] = await Promise.all([
     db.from("miembros_equipo").select("usuario_id, equipo_id, equipos(nombre)").eq("evento_id", eventoId),
     db.from("evaluaciones").select("rol_evaluador, objetivo, estudiante_id, equipo_id, respuestas, comentario").eq("evento_id", eventoId).eq("estado", "enviada"),
+    db.from("devoluciones_jurado_general").select("equipo_id,texto").eq("evento_id",eventoId),
   ]);
-  if (miembros.error || evaluaciones.error) return {error:"No pudimos leer todas las evaluaciones. Probá de nuevo."};
+  if (miembros.error || evaluaciones.error || generales.error) return {error:"No pudimos leer todas las evaluaciones. Probá de nuevo."};
   const filas = (miembros.data ?? []).map((m) => ({
     estudiante_id: m.usuario_id,
     contenido: armarDevolucion({
@@ -315,6 +316,7 @@ export async function prepararDevoluciones(eventoId: string): Promise<Resultado>
       dimensiones: rubrica.dimensiones,
       niveles: rubrica.niveles,
       evaluaciones: (evaluaciones.data ?? []) as unknown as EvaluacionEnviada[],
+      juradoGeneral: generales.data?.find(g=>g.equipo_id===m.equipo_id)?.texto,
     }),
   }));
   if (filas.length === 0) return { error: "No hay estudiantes en equipos todavía." };
@@ -334,6 +336,17 @@ export async function publicarDevoluciones(eventoId: string): Promise<Resultado>
   revalidatePath("/devolucion");revalidatePath("/perfil");
   revalidatePath("/mentor","layout");revalidatePath("/jurado","layout");
   return {ok:true,mensaje:`Publicadas: ${data}. Ya las ven los estudiantes.`};
+}
+
+export async function guardarJuradoGeneral(_p:Resultado,form:FormData):Promise<Resultado> {
+  await exigirRol("organizador");
+  const v=z.object({equipo:z.uuid(),texto:z.string().trim().min(20).max(30000),fuente:z.string().trim().min(1).max(200)}).safeParse(Object.fromEntries(form));
+  if(!v.success)return {error:"Elegí un equipo y completá el texto y su documento de origen."};
+  const db=await clienteServidor();
+  const {error}=await db.rpc("guardar_devolucion_jurado_general",{p_equipo:v.data.equipo,p_texto:v.data.texto,p_fuente:v.data.fuente});
+  if(error)return {error:"No pudimos guardar la devolución. Probá de nuevo."};
+  refrescar();
+  return {ok:true,mensaje:"Devolución del jurado guardada. Se incluirá al volver a preparar; todavía no se publicó."};
 }
 
 export async function urlCv(usuarioId: string): Promise<{ url?: string; error?: string }> {

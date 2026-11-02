@@ -61,11 +61,16 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/devolucion">["
         </p>
       </header>
 
-      {c.dimensiones.length === 0 && (
+      {c.dimensiones.length === 0 && !c.juradoGeneral && c.comentarios.length===0 && (
         <div className="rounded-3xl bg-card p-5 ring-1 ring-border text-muted-foreground">
           No llegaron observaciones para esta devolución.
         </div>
       )}
+
+      {c.juradoGeneral&&<section className="rounded-3xl bg-card p-5 ring-1 ring-border">
+        <h2 className="text-lg font-extrabold">Devolución general del jurado</h2>
+        <p className="mt-3 whitespace-pre-wrap break-words text-[15px] leading-relaxed">{c.juradoGeneral}</p>
+      </section>}
 
       {c.dimensiones.map((d) => (
         <section key={d.id} className="rounded-3xl bg-card p-5 ring-1 ring-border">

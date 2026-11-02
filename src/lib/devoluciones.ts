@@ -23,6 +23,7 @@ export type ContenidoDevolucion = {
   equipo: string;
   dimensiones: { id: string; nombre: string; individual: Observacion[]; equipo: Observacion[] }[];
   comentarios: { quien: "mentor" | "jurado"; texto: string }[];
+  juradoGeneral?: string;
 };
 
 export function armarDevolucion(args: {
@@ -32,6 +33,7 @@ export function armarDevolucion(args: {
   dimensiones: Dimension[];
   niveles: Nivel[];
   evaluaciones: EvaluacionEnviada[];
+  juradoGeneral?: string | null;
 }): ContenidoDevolucion {
   const nivel = new Map(args.niveles.map((n) => [n.id, n]));
   const individuales = args.evaluaciones.filter(
@@ -48,6 +50,7 @@ export function armarDevolucion(args: {
 
   return {
     version: 1,
+    ...(args.juradoGeneral?.trim() ? {juradoGeneral:args.juradoGeneral.trim()} : {}),
     equipo: args.equipoNombre,
     dimensiones: [...args.dimensiones]
       .sort((a, b) => a.orden - b.orden)

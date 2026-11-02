@@ -8,6 +8,7 @@ import { z } from "zod";
 import type { ContenidoDevolucion } from "@/lib/devoluciones";
 import { Panel, Titulo, Vacio } from "@/components/org/ui";
 import { BotonesDevoluciones } from "./botones";
+import { JuradoGeneral } from "./jurado-general";
 
 export const metadata: Metadata = { title: "Devoluciones" };
 
@@ -27,14 +28,16 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/organizador/de
   if(seleccionado&&!seleccionado.success)return <Vacio>El enlace del evento no es válido.</Vacio>;
   const evento = seleccionado?.success?(await db.from("eventos").select("*").eq("id",seleccionado.data).maybeSingle()).data:await eventoActual(db);
   if (!evento) return <Vacio>Primero creá el evento.</Vacio>;
-  const [miembros,asignaciones,evaluaciones,devs,pendientes] = await Promise.all([
+  const [miembros,asignaciones,evaluaciones,devs,pendientes,equipos,generales] = await Promise.all([
     db.from("miembros_equipo").select("usuario_id,equipo_id,perfiles(nombre,apellido)").eq("evento_id",evento.id),
     db.from("asignaciones").select("equipo_id,rol").eq("evento_id",evento.id),
     db.from("evaluaciones").select("estado").eq("evento_id",evento.id),
     db.from("devoluciones").select("estudiante_id, contenido, publicada_en, abierta_en, preparada_en").eq("evento_id", evento.id),
     db.from("devoluciones_borrador").select("estudiante_id,contenido,preparada_en").eq("evento_id",evento.id),
+    db.from("equipos").select("id,nombre,empresa_elegida").eq("evento_id",evento.id).order("nombre"),
+    db.from("devoluciones_jurado_general").select("equipo_id,texto,fuente").eq("evento_id",evento.id),
   ]);
-  if(miembros.error||asignaciones.error||evaluaciones.error||devs.error||pendientes.error)return <Vacio>No pudimos cargar las devoluciones. Recargá la página.</Vacio>;
+  if(miembros.error||asignaciones.error||evaluaciones.error||devs.error||pendientes.error||equipos.error||generales.error)return <Vacio>No pudimos cargar las devoluciones. Recargá la página.</Vacio>;
   const publicadas=(devs.data??[]).some(d=>Boolean(d.publicada_en));
   const persona=new Map((miembros.data??[]).map(m=>[m.usuario_id,nombreDe(m.perfiles)]));
   const c={enviadas:(evaluaciones.data??[]).filter(e=>e.estado==="enviada").length,esperadas:(asignaciones.data??[]).reduce((n,a)=>n+(a.rol==="mentor"?(miembros.data??[]).filter(m=>m.equipo_id===a.equipo_id).length:1),0)};
@@ -48,9 +51,18 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/organizador/de
     <>
       <Titulo ojo={evento.nombre}>Devoluciones</Titulo>
       <div className="grid gap-4">
+        <Panel titulo="Devolución general del jurado" descripcion="Texto colectivo por equipo. Se incorpora al preparar y solo llega a estudiantes cuando publicás.">
+          <div className="grid gap-2">{equipos.data.map(q=>{
+            const g=generales.data.find(x=>x.equipo_id===q.id);
+            return <details key={q.id} className="rounded-2xl bg-muted px-4 py-3">
+              <summary className="cursor-pointer text-sm font-semibold">{q.nombre}{q.empresa_elegida&&["Kankay","V-go","Fardo","Lisa"].includes(q.empresa_elegida)?` · ${q.empresa_elegida}`:""} · {g?"Texto guardado":"Sin cargar"}</summary>
+              <JuradoGeneral equipo={q} texto={g?.texto??""} fuente={g?.fuente??"TIM_Devoluciones_Jurados.pdf"}/>
+            </details>;
+          })}</div>
+        </Panel>
         <Panel
           titulo="1. Preparar, revisar, publicar"
-          descripcion={`Entran solo las evaluaciones enviadas: ${c.enviadas} de ${c.esperadas}. Nada llega a los estudiantes hasta que publicás.`}
+          descripcion={`Evaluaciones enviadas: ${c.enviadas} de ${c.esperadas}. Se suman los textos del jurado guardados por equipo. Nada llega a los estudiantes hasta que publicás.`}
         >
           <BotonesDevoluciones
             eventoId={evento.id}
@@ -85,9 +97,10 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/organizador/de
                         <span className="flex-1 font-semibold">{persona.get(d.estudiante_id)}</span>
                         <span className="text-muted-foreground">{c2.equipo} · {obs} observaciones</span>
                         {d.abierta_en && <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">Abierta</span>}
-                        {obs === 0 && <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive">Vacía</span>}
+                        {obs === 0 && !c2.juradoGeneral && c2.comentarios.length===0 && <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive">Vacía</span>}
                       </summary>
                       <div className="mt-3 grid gap-2 text-sm">
+                        {c2.juradoGeneral&&<section className="rounded-xl bg-background p-3"><h3 className="font-semibold">Devolución general del jurado</h3><p className="mt-2 whitespace-pre-wrap break-words">{c2.juradoGeneral}</p></section>}
                         {c2.dimensiones.map((x) => (
                           <div key={x.id} className="rounded-xl bg-background p-3">
                             <p className="font-semibold">{x.nombre}</p>
