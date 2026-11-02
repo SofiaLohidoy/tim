@@ -1,3 +1,5 @@
+02/11: reconocimiento de equipo ganador en la devolución de sus integrantes y en la vista previa de organización. Registrado por organización, independiente de rúbricas y publicaciones. Migración 025.
+
 02/11: carga de síntesis narrativa del jurado por equipo, privada para organización hasta preparar/publicar. Texto completo separado de las evaluaciones de mentores, sin niveles inventados. Migración 024 y ADR 018.
 
 31/10: BIOTEC retirada de tarjetas, selector y guías PDF. La función de elección rechaza nuevas selecciones; las elecciones históricas se muestran sin selección, conservando archivos y equipos. Migración 023.

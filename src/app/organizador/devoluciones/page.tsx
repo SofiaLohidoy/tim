@@ -10,6 +10,8 @@ import { Panel, Titulo, Vacio } from "@/components/org/ui";
 import { BotonesDevoluciones } from "./botones";
 import { JuradoGeneral } from "./jurado-general";
 import { TextoDevolucion } from "@/components/app/texto-devolucion";
+import { ReconocimientoGanador } from "@/components/app/reconocimiento-ganador";
+import { EquipoGanador } from "./equipo-ganador";
 
 export const metadata: Metadata = { title: "Devoluciones" };
 
@@ -29,7 +31,7 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/organizador/de
   if(seleccionado&&!seleccionado.success)return <Vacio>El enlace del evento no es válido.</Vacio>;
   const evento = seleccionado?.success?(await db.from("eventos").select("*").eq("id",seleccionado.data).maybeSingle()).data:await eventoActual(db);
   if (!evento) return <Vacio>Primero creá el evento.</Vacio>;
-  const [miembros,asignaciones,evaluaciones,devs,pendientes,equipos,generales] = await Promise.all([
+  const [miembros,asignaciones,evaluaciones,devs,pendientes,equipos,generales,ganador] = await Promise.all([
     db.from("miembros_equipo").select("usuario_id,equipo_id,perfiles(nombre,apellido)").eq("evento_id",evento.id),
     db.from("asignaciones").select("equipo_id,rol").eq("evento_id",evento.id),
     db.from("evaluaciones").select("estado").eq("evento_id",evento.id),
@@ -37,8 +39,10 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/organizador/de
     db.from("devoluciones_borrador").select("estudiante_id,contenido,preparada_en").eq("evento_id",evento.id),
     db.from("equipos").select("id,nombre,empresa_elegida").eq("evento_id",evento.id).order("nombre"),
     db.from("devoluciones_jurado_general").select("equipo_id,texto,fuente").eq("evento_id",evento.id),
+    db.from("ganadores_evento").select("equipo_id").eq("evento_id",evento.id).maybeSingle(),
   ]);
-  if(miembros.error||asignaciones.error||evaluaciones.error||devs.error||pendientes.error||equipos.error||generales.error)return <Vacio>No pudimos cargar las devoluciones. Recargá la página.</Vacio>;
+  if(miembros.error||asignaciones.error||evaluaciones.error||devs.error||pendientes.error||equipos.error||generales.error||ganador.error)return <Vacio>No pudimos cargar las devoluciones. Recargá la página.</Vacio>;
+  const equipoGanadorId=ganador.data?.equipo_id??null;
   const publicadas=(devs.data??[]).some(d=>Boolean(d.publicada_en));
   const persona=new Map((miembros.data??[]).map(m=>[m.usuario_id,nombreDe(m.perfiles)]));
   const c={enviadas:(evaluaciones.data??[]).filter(e=>e.estado==="enviada").length,esperadas:(asignaciones.data??[]).reduce((n,a)=>n+(a.rol==="mentor"?(miembros.data??[]).filter(m=>m.equipo_id===a.equipo_id).length:1),0)};
@@ -52,6 +56,9 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/organizador/de
     <>
       <Titulo ojo={evento.nombre}>Devoluciones</Titulo>
       <div className="grid gap-4">
+        <Panel titulo="Reconocimiento del evento">
+          {equipoGanadorId?<p className="font-semibold">Equipo ganador: {equipos.data.find(q=>q.id===equipoGanadorId)?.nombre}</p>:<EquipoGanador eventoId={evento.id} equipos={equipos.data}/>}
+        </Panel>
         <Panel titulo="Devolución general del jurado" descripcion="Texto colectivo por equipo. Se incorpora al preparar y solo llega a estudiantes cuando publicás.">
           <div className="grid gap-2">{equipos.data.map(q=>{
             const g=generales.data.find(x=>x.equipo_id===q.id);
@@ -101,6 +108,7 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/organizador/de
                         {obs === 0 && !c2.juradoGeneral && c2.comentarios.length===0 && <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive">Vacía</span>}
                       </summary>
                       <div className="mt-3 grid gap-2 text-sm">
+                        {equipoGanadorId&&miembros.data.some(m=>m.usuario_id===d.estudiante_id&&m.equipo_id===equipoGanadorId)&&<ReconocimientoGanador anio={evento.fecha.slice(0,4)} nivelTitulo={4}/>}
                         {c2.juradoGeneral&&<section className="rounded-xl bg-background p-3"><h3 className="font-semibold">Devolución general del jurado</h3><TextoDevolucion texto={c2.juradoGeneral} nivelTitulo={4}/></section>}
                         {c2.dimensiones.map((x) => (
                           <div key={x.id} className="rounded-xl bg-background p-3">

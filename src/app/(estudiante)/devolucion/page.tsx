@@ -7,6 +7,7 @@ import { eventoActual } from "@/lib/eventos";
 import type { ContenidoDevolucion, Observacion } from "@/lib/devoluciones";
 import { Encuesta, MarcarAbierta } from "./encuesta";
 import { TextoDevolucion } from "@/components/app/texto-devolucion";
+import { ReconocimientoGanador } from "@/components/app/reconocimiento-ganador";
 
 export const metadata: Metadata = { title: "Tu devolución" };
 
@@ -27,19 +28,21 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/devolucion">["
   const seleccionado=params.evento===undefined?null:z.uuid().safeParse(params.evento);
   if(seleccionado&&!seleccionado.success)return <p>El enlace del evento no es válido.</p>;
   const evento = seleccionado?.success?(await db.from("eventos").select("*").eq("id",seleccionado.data).maybeSingle()).data:await eventoActual(db);
-  const [dev, encuesta] = await Promise.all([
+  const [dev, encuesta,ganador] = await Promise.all([
     evento
       ? db.from("devoluciones").select("id, contenido, publicada_en").eq("evento_id", evento.id).eq("estudiante_id", u.id).maybeSingle()
       : null,
     evento
       ? db.from("respuestas_encuesta").select("id").eq("evento_id", evento.id).eq("encuesta", "post_devolucion").eq("usuario_id", u.id).maybeSingle()
       : null,
+    evento ? db.rpc("mi_equipo_ganador",{p_evento:evento.id}) : null,
   ]);
 
   if (!evento || !dev?.data) {
     return (
       <div>
         <h1 className="text-[1.7rem] font-extrabold">Tu devolución</h1>
+        {evento&&ganador?.data===true&&<div className="mt-5"><ReconocimientoGanador anio={evento.fecha.slice(0,4)}/></div>}
         <div className="mt-5 rounded-3xl bg-card p-5 ring-1 ring-border">
           <p className="font-heading text-lg font-bold">Todavía no está.</p>
           <p className="mt-1.5 text-muted-foreground">
@@ -61,6 +64,8 @@ async function Contenido({searchParams}:{searchParams:PageProps<"/devolucion">["
           Equipo {c.equipo}. Son señales de cómo trabajaste en este desafío, no una nota.
         </p>
       </header>
+
+      {ganador?.data===true&&<ReconocimientoGanador anio={evento.fecha.slice(0,4)}/>}
 
       {c.dimensiones.length === 0 && !c.juradoGeneral && c.comentarios.length===0 && (
         <div className="rounded-3xl bg-card p-5 ring-1 ring-border text-muted-foreground">

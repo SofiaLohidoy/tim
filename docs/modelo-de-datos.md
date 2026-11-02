@@ -1,5 +1,7 @@
 # Modelo de datos
 
+02/11, migración 025: `ganadores_evento` registra un equipo ganador por evento y quién lo confirmó, sin modificar rúbricas, revisiones ni publicaciones. Solo organización puede registrar y leer el registro; el alta es idempotente y no permite reemplazar un ganador ya confirmado. Los participantes reciben únicamente un booleano de pertenencia propia por `mi_equipo_ganador`, sin identificadores de otros equipos. El recuadro es un reconocimiento del evento separado de la evaluación, visible también si la devolución aún está pendiente.
+
 02/11, migración 024: `devoluciones_jurado_general` guarda texto colectivo por equipo, fuente, fecha y organizador que lo cargó. Solo organización consulta el original y escribe por función con validación; no se inventan evaluaciones individuales ni niveles. Cada cambio incrementa la revisión del evento y obliga a preparar de nuevo. Al preparar, el texto se copia en el contenido de la devolución de cada integrante; la RLS de devoluciones mantiene su visibilidad solo para el destinatario y después de publicar.
 
 Fuente de verdad: `supabase/migrations/*.sql`. Cada migración explica su porqué arriba. Esto es un mapa para leer rápido; si no coincide con las migraciones, mandan las migraciones y se corrige este archivo.

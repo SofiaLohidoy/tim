@@ -77,20 +77,25 @@ export async function crear({ estudiantes = 8, equipos = 2 } = {}) {
 
 export async function limpiar() {
   const db = admin();
+  // Las síntesis y reconocimientos guardan quién los cargó. Quitar primero los
+  // equipos/eventos de prueba libera esas referencias antes de borrar sus cuentas.
+  for(const tabla of ["equipos","eventos"]){
+    const {error}=await db.from(tabla).delete().like("nombre","prueba-%");
+    if(error)throw error;
+  }
   let borrados = 0;
   for (let pagina = 1; ; pagina++) {
     const { data, error } = await db.auth.admin.listUsers({ page: pagina, perPage: 200 });
     if (error) throw error;
     for (const u of data.users) {
       if (u.email?.startsWith("prueba-")) {
-        await db.auth.admin.deleteUser(u.id);
+        const {error}=await db.auth.admin.deleteUser(u.id);
+        if(error)throw error;
         borrados++;
       }
     }
     if (data.users.length < 200) break;
   }
-  await db.from("equipos").delete().like("nombre", "prueba-%");
-  await db.from("eventos").delete().like("nombre", "prueba-%");
   await db.from("invitaciones").delete().like("email", "prueba-%");
   await db.from("interesados").delete().like("email", "prueba-%");
   await db.from("eventos_landing").delete().like("visitante_id", "prueba-%");

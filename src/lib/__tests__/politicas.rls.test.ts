@@ -59,6 +59,26 @@ let evento: string;
 let equipo1: string;
 let equipo2: string;
 
+describe("reconocimiento del equipo ganador",()=>{
+  it("solo organización registra un ganador del evento y cada estudiante consulta únicamente su pertenencia",async()=>{
+    const org=await como("organizador"),a=await como("estudiante-1"),b=await como("estudiante-2"),jur=await como("jurado");
+    const args={p_evento:evento,p_equipo:equipo1};
+    for(const c of [a,b,jur,anonimo()])expect((await c.rpc("registrar_equipo_ganador",args)).error).not.toBeNull();
+    const revision=(await admin.from("eventos").select("revision_evaluaciones,devoluciones_publicadas_en").eq("id",evento).single()).data;
+    expect((await org.rpc("registrar_equipo_ganador",{...args,p_equipo:crypto.randomUUID()})).error).not.toBeNull();
+    expect((await org.rpc("registrar_equipo_ganador",args)).error).toBeNull();
+    expect((await org.rpc("registrar_equipo_ganador",args)).error).toBeNull();
+    expect((await org.rpc("registrar_equipo_ganador",{...args,p_equipo:equipo2})).error?.message).toContain("ganador_ya_registrado");
+    expect((await a.rpc("mi_equipo_ganador",{p_evento:evento})).data).toBe(true);
+    expect((await b.rpc("mi_equipo_ganador",{p_evento:evento})).data).toBe(false);
+    expect((await a.rpc("mi_equipo_ganador",{p_evento:crypto.randomUUID()})).data).toBe(false);
+    expect((await anonimo().rpc("mi_equipo_ganador",{p_evento:evento})).error).not.toBeNull();
+    for(const c of [a,b,jur])expect((await c.from("ganadores_evento").select("*")).data).toEqual([]);
+    expect((await a.from("ganadores_evento").insert({evento_id:evento,equipo_id:equipo2,registrado_por:await idDe("estudiante-1")})).error).not.toBeNull();
+    expect((await admin.from("eventos").select("revision_evaluaciones,devoluciones_publicadas_en").eq("id",evento).single()).data).toEqual(revision);
+  });
+});
+
 describe("síntesis colectiva del jurado",()=>{
   it("solo organización la carga y lee; un cambio invalida la preparación sin alterar lo publicado",async()=>{
     const org=await como("organizador"),est=await como("estudiante-1"),jur=await como("jurado");

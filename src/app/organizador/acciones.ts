@@ -349,6 +349,17 @@ export async function guardarJuradoGeneral(_p:Resultado,form:FormData):Promise<R
   return {ok:true,mensaje:"Devolución del jurado guardada. Se incluirá al volver a preparar; todavía no se publicó."};
 }
 
+export async function registrarGanador(_p:Resultado,form:FormData):Promise<Resultado> {
+  await exigirRol("organizador");
+  const v=z.object({evento:z.uuid(),equipo:z.uuid()}).safeParse(Object.fromEntries(form));
+  if(!v.success)return {error:"Elegí el equipo ganador de este evento."};
+  const db=await clienteServidor();
+  const {error}=await db.rpc("registrar_equipo_ganador",{p_evento:v.data.evento,p_equipo:v.data.equipo});
+  if(error)return {error:error.message.includes("ganador_ya_registrado")?"Este evento ya tiene un equipo ganador registrado.":"No pudimos guardar el reconocimiento. Probá de nuevo."};
+  refrescar();revalidatePath("/devolucion");
+  return {ok:true,mensaje:"Equipo ganador registrado. El reconocimiento ya está disponible para sus integrantes."};
+}
+
 export async function urlCv(usuarioId: string): Promise<{ url?: string; error?: string }> {
   await exigirRol("organizador");
   const db = await clienteServidor();

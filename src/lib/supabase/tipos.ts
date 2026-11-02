@@ -760,6 +760,49 @@ export type Database = {
         }
         Relationships: []
       }
+      ganadores_evento: {
+        Row: {
+          equipo_id: string
+          evento_id: string
+          registrado_en: string
+          registrado_por: string
+        }
+        Insert: {
+          equipo_id: string
+          evento_id: string
+          registrado_en?: string
+          registrado_por: string
+        }
+        Update: {
+          equipo_id?: string
+          evento_id?: string
+          registrado_en?: string
+          registrado_por?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ganadores_evento_equipo_id_fkey"
+            columns: ["equipo_id"]
+            isOneToOne: false
+            referencedRelation: "equipos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ganadores_evento_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: true
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ganadores_evento_registrado_por_fkey"
+            columns: ["registrado_por"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interesados: {
         Row: {
           audiencia: string
@@ -1324,6 +1367,7 @@ export type Database = {
         Returns: undefined
       }
       marcar_preparadas: { Args: { p_evento: string }; Returns: undefined }
+      mi_equipo_ganador: { Args: { p_evento: string }; Returns: boolean }
       publicar_preparacion_devoluciones: {
         Args: { p_evento: string }
         Returns: number
@@ -1334,6 +1378,10 @@ export type Database = {
       reclamar_invitacion: { Args: { p_token: string }; Returns: string }
       registrar_entrega: {
         Args: { p_equipo: string; p_url: string }
+        Returns: undefined
+      }
+      registrar_equipo_ganador: {
+        Args: { p_equipo: string; p_evento: string }
         Returns: undefined
       }
       respaldar_estudiante: {
