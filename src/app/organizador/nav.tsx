@@ -16,6 +16,7 @@ const GRUPOS = [
     { href: "/organizador/entregas", texto: "Entregas", icono: ClipboardList },
     { href: "/organizador/personas", texto: "Personas", icono: Users },
     { href: "/organizador/devoluciones", texto: "Devoluciones", icono: MessageSquareText },
+    { href: "/organizador/desafios", texto: "Desafíos virtuales", icono: ClipboardList },
   ] },
   { nombre: "Materiales", secciones: [
     { href: "/organizador/qr", texto: "QR de asistencia", icono: QrCode },

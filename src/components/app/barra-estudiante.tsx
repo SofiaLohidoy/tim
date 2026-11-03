@@ -24,7 +24,7 @@ export function BarraEstudiante() {
     >
       <ul className="mx-auto grid max-w-md grid-cols-4">
         {ITEMS.map(({ href, etiqueta, Icono }) => {
-          const activo = ruta.startsWith(href);
+          const activo = ruta.startsWith(href) || (href === "/actividades" && ruta.startsWith("/desafios/"));
           return (
             <li key={href}>
               <Link

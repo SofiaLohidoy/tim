@@ -41,6 +41,8 @@ Orden: primero lo que la hackatón necesita, después los juegos, después perfi
 - 26/10: `tim-prod` conectado en el Supabase de Sofía (ref `xvzkijllizurvmmhmxvl`): 12 migraciones, Auth, límites, claves en Vercel. Verificado live: 11 flujos de Playwright, 45 registros en ~30 s y un registro de la landing; todo lo de prueba borrado. Script para conectar Supabase en la nube en un paso (`scripts/conectar-prod.mjs`).
 
 ## Bloqueantes abiertos
+
+3/11/2026: piloto virtual privado Paperclip. Panel de organización para crear consigna, cargar PDF privado y habilitar personas individualmente; reloj desde Comenzar, borrador/envío de evidencia y devolución humana publicada por persona. Independiente de hackatón y juegos Próximamente. El desafío inicial queda en borrador y sin usuarios hasta que organización seleccione participantes.
 - Sofía confirma consigna, equipos, mentores y jurados con sus mails antes del miércoles 28/10.
 - Sofía confirma título del hero y promesa a empresas el martes 27/10.
 - Sofía confirma los textos de los 4 niveles de la rúbrica (hoy son una propuesta).

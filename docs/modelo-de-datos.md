@@ -1,5 +1,15 @@
 # Modelo de datos
 
+## Desafíos virtuales privados (026)
+
+Separados de eventos, juegos y devoluciones de hackatón. `desafios_virtuales` guarda consigna, duración y estado; `accesos_desafios_virtuales` asigna acceso individual y cita de defensa; `participaciones_virtuales` conserva inicio, vencimiento, borrador y envío; `archivos_desafios_virtuales` vincula objetos privados; `revisiones_virtuales` separa borrador de devolución y versión publicada.
+
+Toda tabla tiene RLS. Solo organización crea, configura, habilita/revoca y revisa mediante RPC; un estudiante habilitado ve el desafío disponible/cerrado, su investigación y su devolución publicada. Empresa, mentor, jurado y estudiantes no habilitados no ven contenido. La consigna en borrador solo la ve organización. No hay escrituras directas del cliente.
+
+El reloj se inicia una sola vez al tocar Comenzar. Postgres valida estado, acceso, plazo y envío en cada mutación. Revocar conserva historial; restablecer no reinicia el plazo. Consigna y duración quedan fijas al primer comienzo. Entrega enviada es inmutable. Guardar una nueva revisión privada conserva la devolución publicada hasta volver a publicar.
+
+Bucket privado `desafios-virtuales`, máximo 4 MB. Consigna PDF y investigación PDF/DOCX/Markdown; objetos con UUID, sin nombres personales en rutas. Registro verifica objeto, tamaño, MIME y autorización. Descargas con sesión y RLS, sin enlaces públicos ni firmas compartibles; respuesta sin caché. Archivo registrado no puede borrarse desde el navegador. Documentos originales no se versionan en Git público. No se ejecutan demos ni se almacenan claves de proveedores.
+
 02/11, migración 025: `ganadores_evento` registra un equipo ganador por evento y quién lo confirmó, sin modificar rúbricas, revisiones ni publicaciones. Solo organización puede registrar y leer el registro; el alta es idempotente y no permite reemplazar un ganador ya confirmado. Los participantes reciben únicamente un booleano de pertenencia propia por `mi_equipo_ganador`, sin identificadores de otros equipos. El recuadro es un reconocimiento del evento separado de la evaluación, visible también si la devolución aún está pendiente.
 
 02/11, migración 024: `devoluciones_jurado_general` guarda texto colectivo por equipo, fuente, fecha y organizador que lo cargó. Solo organización consulta el original y escribe por función con validación; no se inventan evaluaciones individuales ni niveles. Cada cambio incrementa la revisión del evento y obliga a preparar de nuevo. Al preparar, el texto se copia en el contenido de la devolución de cada integrante; la RLS de devoluciones mantiene su visibilidad solo para el destinatario y después de publicar.

@@ -39,6 +39,99 @@ export type Database = {
   }
   public: {
     Tables: {
+      accesos_desafios_virtuales: {
+        Row: {
+          actualizado_en: string
+          defensa_en: string | null
+          defensa_url: string | null
+          desafio_id: string
+          habilitado: boolean
+          usuario_id: string
+        }
+        Insert: {
+          actualizado_en?: string
+          defensa_en?: string | null
+          defensa_url?: string | null
+          desafio_id: string
+          habilitado?: boolean
+          usuario_id: string
+        }
+        Update: {
+          actualizado_en?: string
+          defensa_en?: string | null
+          defensa_url?: string | null
+          desafio_id?: string
+          habilitado?: boolean
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accesos_desafios_virtuales_desafio_id_fkey"
+            columns: ["desafio_id"]
+            isOneToOne: false
+            referencedRelation: "desafios_virtuales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accesos_desafios_virtuales_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      archivos_desafios_virtuales: {
+        Row: {
+          creado_en: string
+          desafio_id: string
+          id: string
+          mime: string
+          nombre: string
+          ruta: string
+          tamano: number
+          tipo: string
+          usuario_id: string | null
+        }
+        Insert: {
+          creado_en?: string
+          desafio_id: string
+          id?: string
+          mime: string
+          nombre: string
+          ruta: string
+          tamano: number
+          tipo: string
+          usuario_id?: string | null
+        }
+        Update: {
+          creado_en?: string
+          desafio_id?: string
+          id?: string
+          mime?: string
+          nombre?: string
+          ruta?: string
+          tamano?: number
+          tipo?: string
+          usuario_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "archivos_desafios_virtuales_desafio_id_fkey"
+            columns: ["desafio_id"]
+            isOneToOne: false
+            referencedRelation: "desafios_virtuales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "archivos_desafios_virtuales_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asignaciones: {
         Row: {
           creado_en: string
@@ -221,6 +314,47 @@ export type Database = {
             columns: ["evento_id"]
             isOneToOne: false
             referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      desafios_virtuales: {
+        Row: {
+          actualizado_en: string
+          consigna: string
+          creado_en: string
+          creado_por: string | null
+          duracion_horas: number
+          estado: string
+          id: string
+          titulo: string
+        }
+        Insert: {
+          actualizado_en?: string
+          consigna: string
+          creado_en?: string
+          creado_por?: string | null
+          duracion_horas?: number
+          estado?: string
+          id?: string
+          titulo: string
+        }
+        Update: {
+          actualizado_en?: string
+          consigna?: string
+          creado_en?: string
+          creado_por?: string | null
+          duracion_horas?: number
+          estado?: string
+          id?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "desafios_virtuales_creado_por_fkey"
+            columns: ["creado_por"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
             referencedColumns: ["id"]
           },
         ]
@@ -968,6 +1102,54 @@ export type Database = {
           },
         ]
       }
+      participaciones_virtuales: {
+        Row: {
+          actualizado_en: string
+          borrador: Json
+          desafio_id: string
+          enviada_en: string | null
+          iniciada_en: string
+          investigacion_id: string | null
+          usuario_id: string
+          vence_en: string
+        }
+        Insert: {
+          actualizado_en?: string
+          borrador?: Json
+          desafio_id: string
+          enviada_en?: string | null
+          iniciada_en?: string
+          investigacion_id?: string | null
+          usuario_id: string
+          vence_en: string
+        }
+        Update: {
+          actualizado_en?: string
+          borrador?: Json
+          desafio_id?: string
+          enviada_en?: string | null
+          iniciada_en?: string
+          investigacion_id?: string | null
+          usuario_id?: string
+          vence_en?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participaciones_virtuales_desafio_id_usuario_id_fkey"
+            columns: ["desafio_id", "usuario_id"]
+            isOneToOne: true
+            referencedRelation: "accesos_desafios_virtuales"
+            referencedColumns: ["desafio_id", "usuario_id"]
+          },
+          {
+            foreignKeyName: "participaciones_virtuales_investigacion_id_fkey"
+            columns: ["investigacion_id"]
+            isOneToOne: false
+            referencedRelation: "archivos_desafios_virtuales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partidas: {
         Row: {
           actividad: string
@@ -1169,6 +1351,41 @@ export type Database = {
           },
         ]
       }
+      revisiones_virtuales: {
+        Row: {
+          actualizado_en: string
+          borrador: Json
+          desafio_id: string
+          publicada: Json | null
+          publicada_en: string | null
+          usuario_id: string
+        }
+        Insert: {
+          actualizado_en?: string
+          borrador?: Json
+          desafio_id: string
+          publicada?: Json | null
+          publicada_en?: string | null
+          usuario_id: string
+        }
+        Update: {
+          actualizado_en?: string
+          borrador?: Json
+          desafio_id?: string
+          publicada?: Json | null
+          publicada_en?: string | null
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revisiones_virtuales_desafio_id_usuario_id_fkey"
+            columns: ["desafio_id", "usuario_id"]
+            isOneToOne: true
+            referencedRelation: "participaciones_virtuales"
+            referencedColumns: ["desafio_id", "usuario_id"]
+          },
+        ]
+      }
       roles_usuario: {
         Row: {
           creado_en: string
@@ -1296,11 +1513,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      acceso_desafio_virtual: {
+        Args: { p_desafio: string; p_habilitar: boolean; p_usuario: string }
+        Returns: undefined
+      }
       aplicar_invitaciones: {
         Args: { p_email: string; p_token?: string; p_usuario: string }
         Returns: undefined
       }
+      comenzar_virtual: { Args: { p_desafio: string }; Returns: undefined }
       credencial_publica: { Args: { p_token: string }; Returns: Json }
+      defensa_virtual: {
+        Args: {
+          p_desafio: string
+          p_fecha: string
+          p_url: string
+          p_usuario: string
+        }
+        Returns: undefined
+      }
       devoluciones_desactualizadas: {
         Args: { p_evento: string }
         Returns: boolean
@@ -1312,6 +1543,10 @@ export type Database = {
       }
       es_miembro: { Args: { p_equipo: string }; Returns: boolean }
       es_organizador: { Args: never; Returns: boolean }
+      estado_desafio_virtual: {
+        Args: { p_desafio: string; p_estado: string }
+        Returns: undefined
+      }
       evalua_equipo: {
         Args: { p_equipo: string; p_rol?: string }
         Returns: boolean
@@ -1336,12 +1571,25 @@ export type Database = {
         }
         Returns: undefined
       }
+      guardar_desafio_virtual: {
+        Args: {
+          p_consigna: string
+          p_horas: number
+          p_id: string
+          p_titulo: string
+        }
+        Returns: string
+      }
       guardar_devolucion_jurado_general: {
         Args: { p_equipo: string; p_fuente: string; p_texto: string }
         Returns: undefined
       }
       guardar_empresa: {
         Args: { p_nombre: string; p_rubro: string; p_tamano: string }
+        Returns: undefined
+      }
+      guardar_entrega_virtual: {
+        Args: { p_datos: Json; p_desafio: string; p_enviar: boolean }
         Returns: undefined
       }
       guardar_preparacion_devoluciones: {
@@ -1368,14 +1616,30 @@ export type Database = {
       }
       marcar_preparadas: { Args: { p_evento: string }; Returns: undefined }
       mi_equipo_ganador: { Args: { p_evento: string }; Returns: boolean }
+      mi_revision_virtual: { Args: { p_desafio: string }; Returns: Json }
       publicar_preparacion_devoluciones: {
         Args: { p_evento: string }
         Returns: number
       }
       puede_leer_archivo_entrega: { Args: { p_ruta: string }; Returns: boolean }
+      puede_leer_archivo_virtual: { Args: { p_ruta: string }; Returns: boolean }
       puede_leer_desafios: { Args: never; Returns: boolean }
+      puede_limpiar_virtual: { Args: { p_ruta: string }; Returns: boolean }
+      puede_subir_virtual: { Args: { p_ruta: string }; Returns: boolean }
       puede_ver_persona: { Args: { p_usuario: string }; Returns: boolean }
+      puede_ver_virtual: { Args: { p_desafio: string }; Returns: boolean }
       reclamar_invitacion: { Args: { p_token: string }; Returns: string }
+      registrar_archivo_virtual: {
+        Args: {
+          p_desafio: string
+          p_mime: string
+          p_nombre: string
+          p_ruta: string
+          p_tamano: number
+          p_tipo: string
+        }
+        Returns: string
+      }
       registrar_entrega: {
         Args: { p_equipo: string; p_url: string }
         Returns: undefined
@@ -1389,6 +1653,15 @@ export type Database = {
         Returns: string
       }
       resumen_landing: { Args: { p_desde?: string }; Returns: Json }
+      revisar_entrega_virtual: {
+        Args: {
+          p_datos: Json
+          p_desafio: string
+          p_publicar: boolean
+          p_usuario: string
+        }
+        Returns: undefined
+      }
       tiene_rol: { Args: { p_rol: string }; Returns: boolean }
     }
     Enums: {

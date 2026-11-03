@@ -77,6 +77,14 @@ export async function crear({ estudiantes = 8, equipos = 2 } = {}) {
 
 export async function limpiar() {
   const db = admin();
+  const privados=await db.from("desafios_virtuales").select("id").like("titulo","prueba-%");
+  if(privados.error)throw privados.error;
+  for(const d of privados.data){
+    const archivos=await db.from("archivos_desafios_virtuales").select("ruta").eq("desafio_id",d.id);
+    if(archivos.error)throw archivos.error;
+    if(archivos.data.length){const r=await db.storage.from("desafios-virtuales").remove(archivos.data.map(a=>a.ruta));if(r.error)throw r.error;}
+    const r=await db.from("desafios_virtuales").delete().eq("id",d.id).like("titulo","prueba-%");if(r.error)throw r.error;
+  }
   // Las síntesis y reconocimientos guardan quién los cargó. Quitar primero los
   // equipos/eventos de prueba libera esas referencias antes de borrar sus cuentas.
   for(const tabla of ["equipos","eventos"]){

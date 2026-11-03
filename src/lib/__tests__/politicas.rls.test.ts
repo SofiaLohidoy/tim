@@ -55,6 +55,73 @@ describe("perfil de empresa", () => {
 const idDe = async (quien: string) =>
   (await admin.from("perfiles").select("id").eq("email", `prueba-${quien}@tim.test`).single()).data!.id as string;
 
+describe("desafío virtual privado",()=>{
+ it("limita consigna, archivos, reloj, entrega y revisión a la persona habilitada",async()=>{
+  const org=await como("organizador"),a=await como("estudiante-1"),b=await como("estudiante-2"),jur=await como("jurado"),mentor=await como("mentor-1");
+  const usuario=await idDe("estudiante-1"),otro=await idDe("estudiante-2");
+  const nuevo=await org.rpc("guardar_desafio_virtual",{p_id:null,p_titulo:"prueba-Desafío privado",p_consigna:"prueba-Consigna ficticia de evaluación individual.",p_horas:72});
+  expect(nuevo.error).toBeNull();const id=nuevo.data as string;const rutas:string[]=[];
+  async function subir(c:SupabaseClient,quien:string,tipo:string){
+   const ruta=`${id}/${quien}/${crypto.randomUUID()}.pdf`;rutas.push(ruta);const bytes=new TextEncoder().encode("%PDF-1.4\nprueba-documento\n%%EOF");
+   expect((await c.storage.from("desafios-virtuales").upload(ruta,bytes,{contentType:"application/pdf"})).error).toBeNull();
+   const r=await c.rpc("registrar_archivo_virtual",{p_desafio:id,p_ruta:ruta,p_nombre:"prueba.pdf",p_mime:"application/pdf",p_tamano:bytes.length,p_tipo:tipo});expect(r.error).toBeNull();return ruta;
+  }
+  try{
+   for(const c of [a,b,jur,mentor,anonimo()]){
+    expect((await c.rpc("acceso_desafio_virtual",{p_desafio:id,p_usuario:otro,p_habilitar:true})).error).not.toBeNull();
+    expect((await c.from("desafios_virtuales").select("id").eq("id",id)).data??[]).toEqual([]);
+   }
+   expect((await org.rpc("estado_desafio_virtual",{p_desafio:id,p_estado:"disponible"})).error?.message).toContain("falta_consigna");
+   const pdf=await subir(org,"consigna","consigna");
+   expect((await org.rpc("acceso_desafio_virtual",{p_desafio:id,p_usuario:usuario,p_habilitar:true})).error).toBeNull();
+   expect((await a.from("desafios_virtuales").select("id").eq("id",id)).data).toEqual([]);
+   expect((await org.rpc("estado_desafio_virtual",{p_desafio:id,p_estado:"disponible"})).error).toBeNull();
+   expect((await a.from("desafios_virtuales").select("id").eq("id",id)).data).toEqual([{id}]);
+   expect((await a.storage.from("desafios-virtuales").download(pdf)).error).toBeNull();
+   for(const c of [b,jur,mentor,anonimo()])expect((await c.storage.from("desafios-virtuales").download(pdf)).error).not.toBeNull();
+   expect((await b.rpc("comenzar_virtual",{p_desafio:id})).error).not.toBeNull();
+   expect((await a.rpc("comenzar_virtual",{p_desafio:id})).error).toBeNull();
+   const primera=(await a.from("participaciones_virtuales").select("iniciada_en,vence_en").eq("desafio_id",id).single()).data!;
+   expect(new Date(primera.vence_en).getTime()-new Date(primera.iniciada_en).getTime()).toBe(72*3600000);
+   expect((await a.rpc("comenzar_virtual",{p_desafio:id})).error).toBeNull();
+   expect((await a.from("participaciones_virtuales").select("iniciada_en,vence_en").eq("desafio_id",id).single()).data).toEqual(primera);
+   expect((await org.rpc("guardar_desafio_virtual",{p_id:id,p_titulo:"prueba-Cambio",p_consigna:"prueba-Cambio posterior al inicio no permitido.",p_horas:1})).error?.message).toContain("consigna_en_uso");
+   const investigacion=await subir(a,usuario,"investigacion");
+   expect((await b.storage.from("desafios-virtuales").download(investigacion)).error).not.toBeNull();
+   expect((await a.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:{},p_enviar:true})).error?.message).toContain("entrega_incompleta");
+   const datos={via:"B2",repo_url:"https://example.com/prueba",video_url:"https://example.com/prueba-video",decisiones:"prueba-Se usaron datos ficticios y una simulación explícita."};
+   expect((await a.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:datos,p_enviar:false})).error).toBeNull();
+   expect((await org.rpc("revisar_entrega_virtual",{p_desafio:id,p_usuario:usuario,p_datos:{comentario:"prueba"},p_publicar:true})).error?.message).toContain("sin_entrega");
+   expect((await a.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:datos,p_enviar:true})).error).toBeNull();
+   expect((await a.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:{},p_enviar:false})).error?.message).toContain("entrega_cerrada");
+   expect((await a.rpc("puede_subir_virtual",{p_ruta:`${id}/${usuario}/${crypto.randomUUID()}.pdf`})).data).toBe(false);
+   const revisar=(comentario:string,publicar:boolean)=>org.rpc("revisar_entrega_virtual",{p_desafio:id,p_usuario:usuario,p_datos:{comentario},p_publicar:publicar});
+   expect((await revisar("prueba-borrador secreto",false)).error).toBeNull();
+   expect((await a.from("revisiones_virtuales").select("*").eq("desafio_id",id)).data).toEqual([]);
+   expect(JSON.stringify((await a.rpc("mi_revision_virtual",{p_desafio:id})).data)).not.toContain("secreto");
+   expect((await revisar("prueba-publicada",true)).error).toBeNull();
+   expect((await revisar("prueba-nuevo borrador",false)).error).toBeNull();
+   expect((await a.rpc("mi_revision_virtual",{p_desafio:id})).data).toMatchObject({contenido:{comentario:"prueba-publicada"}});
+   expect((await b.rpc("mi_revision_virtual",{p_desafio:id})).data).toBeNull();
+   expect((await org.rpc("acceso_desafio_virtual",{p_desafio:id,p_usuario:usuario,p_habilitar:false})).error).toBeNull();
+   expect((await a.from("participaciones_virtuales").select("*").eq("desafio_id",id)).data).toEqual([]);
+   expect((await a.storage.from("desafios-virtuales").download(investigacion)).error).not.toBeNull();
+   expect((await org.storage.from("desafios-virtuales").download(investigacion)).error).toBeNull();
+   expect((await org.rpc("acceso_desafio_virtual",{p_desafio:id,p_usuario:usuario,p_habilitar:true})).error).toBeNull();
+   expect((await a.from("participaciones_virtuales").select("iniciada_en,vence_en").eq("desafio_id",id).single()).data).toEqual(primera);
+   // Un segundo usuario con plazo vencido no puede guardar ni adjuntar archivos.
+   expect((await org.rpc("acceso_desafio_virtual",{p_desafio:id,p_usuario:otro,p_habilitar:true})).error).toBeNull();
+   expect((await b.rpc("comenzar_virtual",{p_desafio:id})).error).toBeNull();
+   expect((await admin.from("participaciones_virtuales").update({vence_en:"2020-01-01T00:00:00Z"}).eq("desafio_id",id).eq("usuario_id",otro)).error).toBeNull();
+   expect((await b.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:{},p_enviar:false})).error?.message).toContain("entrega_cerrada");
+   expect((await b.rpc("puede_subir_virtual",{p_ruta:`${id}/${otro}/${crypto.randomUUID()}.pdf`})).data).toBe(false);
+  }finally{
+   await admin.storage.from("desafios-virtuales").remove(rutas);
+   await admin.from("desafios_virtuales").delete().eq("id",id).like("titulo","prueba-%");
+  }
+ },60000);
+});
+
 let evento: string;
 let equipo1: string;
 let equipo2: string;
