@@ -115,9 +115,19 @@ describe("desafío virtual privado",()=>{
    expect((await admin.from("participaciones_virtuales").update({vence_en:"2020-01-01T00:00:00Z"}).eq("desafio_id",id).eq("usuario_id",otro)).error).toBeNull();
    expect((await b.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:{},p_enviar:false})).error?.message).toContain("entrega_cerrada");
    expect((await b.rpc("puede_subir_virtual",{p_ruta:`${id}/${otro}/${crypto.randomUUID()}.pdf`})).data).toBe(false);
+   for(const c of [a,b,jur,mentor,anonimo()])expect((await c.rpc("eliminar_desafio_virtual",{p_desafio:id,p_titulo:"prueba-Desafío privado"})).error).not.toBeNull();
+   expect((await org.rpc("eliminar_desafio_virtual",{p_desafio:id,p_titulo:"prueba-Título incorrecto"})).error?.message).toContain("confirmacion_incorrecta");
+   expect((await org.rpc("eliminar_desafio_virtual",{p_desafio:id,p_titulo:"prueba-Desafío privado"})).error).toBeNull();
+   expect((await org.from("desafios_virtuales").select("id").eq("id",id)).data).toEqual([]);
+   const backup=(await admin.from("respaldos_desafios_virtuales").select("datos").eq("desafio_id",id).single()).data!.datos;
+   expect(backup.participaciones).toHaveLength(2);expect(backup.archivos).toHaveLength(2);expect(backup.revisiones).toHaveLength(1);
+   for(const c of [a,b,org,anonimo()])expect((await c.from("respaldos_desafios_virtuales").select("*").eq("desafio_id",id)).data??[]).toEqual([]);
+   expect((await a.rpc("puede_limpiar_virtual",{p_ruta:investigacion})).data).toBe(false);
+   expect((await org.storage.from("desafios-virtuales").download(pdf)).error).not.toBeNull();
   }finally{
    await admin.storage.from("desafios-virtuales").remove(rutas);
    await admin.from("desafios_virtuales").delete().eq("id",id).like("titulo","prueba-%");
+   await admin.from("respaldos_desafios_virtuales").delete().eq("desafio_id",id).like("titulo","prueba-%");
   }
  },60000);
 });

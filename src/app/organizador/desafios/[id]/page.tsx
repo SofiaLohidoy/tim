@@ -11,7 +11,7 @@ import {Campo,claseInput} from "@/components/org/campos";
 import {FormularioVirtual} from "@/components/app/formulario-virtual";
 import {SubirArchivoVirtual} from "@/components/app/subir-archivo-virtual";
 import {camposTexto,CRITERIOS_VIRTUALES,fechaVirtual,fechaInputArgentina} from "@/lib/desafios-virtuales";
-import {guardarDesafio,cambiarEstado,cambiarAcceso,guardarDefensa,guardarRevision} from "../acciones";
+import {guardarDesafio,cambiarEstado,cambiarAcceso,guardarDefensa,guardarRevision,eliminarDesafio} from "../acciones";
 export const metadata={title:"Administrar desafío virtual"};
 export default function Pagina({params}:PageProps<"/organizador/desafios/[id]">){return <Suspense fallback={<p>Cargando desafío…</p>}><Contenido params={params}/></Suspense>;}
 async function Contenido({params}:{params:PageProps<"/organizador/desafios/[id]">["params"]}){
@@ -52,5 +52,6 @@ async function Contenido({params}:{params:PageProps<"/organizador/desafios/[id]"
     </div></details></li>;
    })}</ul>}
   </Panel>
+  <Panel titulo="Eliminar este desafío" descripcion="Se retiran la consigna, los accesos y las participaciones de esta versión. Las cuentas de las personas se conservan."><details><summary className="min-h-11 cursor-pointer py-3 font-semibold text-destructive">Revisar eliminación</summary><p className="my-3 text-sm">Afecta a {accesos.data.length} personas habilitadas o con historial. Antes de eliminar, TIM guarda un respaldo privado del desafío, sus entregas y sus archivos.</p><FormularioVirtual action={eliminarDesafio} boton="Respaldar y eliminar desafío"><input type="hidden" name="desafio" value={id}/><Campo etiqueta="Título para confirmar *" htmlFor="titulo-eliminar" ayuda={desafio.titulo}><input id="titulo-eliminar" name="titulo" required maxLength={160} autoComplete="off" className={claseInput}/></Campo><label className="flex items-start gap-2 text-sm"><input type="checkbox" name="confirmar" required className="mt-1 size-5 shrink-0"/>Confirmo eliminar esta versión y sus participaciones.</label></FormularioVirtual></details></Panel>
  </div></>;
 }

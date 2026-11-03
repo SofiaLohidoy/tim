@@ -2,6 +2,8 @@
 
 ## Desafíos virtuales privados (026)
 
+027: `eliminar_desafio_virtual` exige sesión de organizador y el título exacto. Bloquea la versión, respalda consigna, accesos, participaciones, revisiones y metadatos en `respaldos_desafios_virtuales` y recién entonces elimina el desafío y sus dependencias en la misma transacción. Las cuentas se conservan. El respaldo tiene RLS y ningún permiso de lectura/escritura desde el navegador; los objetos permanecen privados y protegidos contra limpieza. Los archivos no se publican ni se copian al repositorio.
+
 Separados de eventos, juegos y devoluciones de hackatón. `desafios_virtuales` guarda consigna, duración y estado; `accesos_desafios_virtuales` asigna acceso individual y cita de defensa; `participaciones_virtuales` conserva inicio, vencimiento, borrador y envío; `archivos_desafios_virtuales` vincula objetos privados; `revisiones_virtuales` separa borrador de devolución y versión publicada.
 
 Toda tabla tiene RLS. Solo organización crea, configura, habilita/revoca y revisa mediante RPC; un estudiante habilitado ve el desafío disponible/cerrado, su investigación y su devolución publicada. Empresa, mentor, jurado y estudiantes no habilitados no ven contenido. La consigna en borrador solo la ve organización. No hay escrituras directas del cliente.

@@ -77,6 +77,8 @@ export async function crear({ estudiantes = 8, equipos = 2 } = {}) {
 
 export async function limpiar() {
   const db = admin();
+  const backups=await db.from("respaldos_desafios_virtuales").select("id,datos").like("titulo","prueba-%");if(backups.error)throw backups.error;
+  for(const b of backups.data){const rutas=(b.datos.archivos??[]).map(a=>a.ruta);if(rutas.length){const r=await db.storage.from("desafios-virtuales").remove(rutas);if(r.error)throw r.error;}const r=await db.from("respaldos_desafios_virtuales").delete().eq("id",b.id);if(r.error)throw r.error;}
   const privados=await db.from("desafios_virtuales").select("id").like("titulo","prueba-%");
   if(privados.error)throw privados.error;
   for(const d of privados.data){

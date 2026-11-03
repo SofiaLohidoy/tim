@@ -57,4 +57,18 @@ test("organización administra un desafío privado, la entrega y su devolución 
  await salir(page);await entrar(page,"estudiante-3");await page.goto(`/desafios/${id}`);
  await expect(page.getByRole("heading",{name:"Tu devolución",exact:true})).toBeVisible();
  await expect(page.getByText("prueba-Evidencia revisada manualmente.",{exact:true})).toBeVisible();
+ await salir(page);await entrar(page,"organizador");await page.goto(rutaOrg);
+ await page.getByText("Revisar eliminación",{exact:true}).click();
+ for(const width of [375,1280]){await page.setViewportSize({width,height:812});await expect(page.getByRole("heading",{name:"Eliminar este desafío",exact:true})).toBeVisible();if(!await page.getByLabel("Título para confirmar *",{exact:true}).isVisible())await page.getByText("Revisar eliminación",{exact:true}).click();await page.screenshot({path:`capturas/virtual-eliminar-${width}.png`,fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
+ await page.getByLabel("Título para confirmar *",{exact:true}).fill("prueba-No coincide");
+ await page.getByLabel("Confirmo eliminar esta versión y sus participaciones.",{exact:true}).check();
+ await page.getByRole("button",{name:"Respaldar y eliminar desafío",exact:true}).click();
+ await expect(page.getByText("El título no coincide. Copialo tal como aparece arriba.",{exact:true})).toBeVisible();
+ await page.getByLabel("Título para confirmar *",{exact:true}).fill("prueba-Piloto virtual");
+ await page.getByLabel("Confirmo eliminar esta versión y sus participaciones.",{exact:true}).check();
+ await page.getByRole("button",{name:"Respaldar y eliminar desafío",exact:true}).click();
+ await expect(page).toHaveURL(/\/organizador\/desafios\?eliminado=si$/);
+ await expect(page.getByRole("link",{name:/prueba-Piloto virtual/})).toHaveCount(0);
+ await salir(page);await entrar(page,"estudiante-3");await page.goto(`/desafios/${id}`);
+ await expect(page.getByRole("heading",{name:"Desafío no disponible",exact:true})).toBeVisible();
 });

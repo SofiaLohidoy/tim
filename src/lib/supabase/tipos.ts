@@ -1272,6 +1272,41 @@ export type Database = {
           },
         ]
       }
+      respaldos_desafios_virtuales: {
+        Row: {
+          creado_en: string
+          creado_por: string | null
+          datos: Json
+          desafio_id: string
+          id: string
+          titulo: string
+        }
+        Insert: {
+          creado_en?: string
+          creado_por?: string | null
+          datos: Json
+          desafio_id: string
+          id?: string
+          titulo: string
+        }
+        Update: {
+          creado_en?: string
+          creado_por?: string | null
+          datos?: Json
+          desafio_id?: string
+          id?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "respaldos_desafios_virtuales_creado_por_fkey"
+            columns: ["creado_por"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       respaldos_eliminacion: {
         Row: {
           creado_en: string
@@ -1540,6 +1575,10 @@ export type Database = {
       elegir_empresa_equipo: {
         Args: { p_empresa: string; p_equipo: string }
         Returns: undefined
+      }
+      eliminar_desafio_virtual: {
+        Args: { p_desafio: string; p_titulo: string }
+        Returns: string
       }
       es_miembro: { Args: { p_equipo: string }; Returns: boolean }
       es_organizador: { Args: never; Returns: boolean }
