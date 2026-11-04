@@ -89,10 +89,14 @@ describe("desafío virtual privado",()=>{
    const investigacion=await subir(a,usuario,"investigacion");
    expect((await b.storage.from("desafios-virtuales").download(investigacion)).error).not.toBeNull();
    expect((await a.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:{},p_enviar:true})).error?.message).toContain("entrega_incompleta");
-   const datos={via:"B2",repo_url:"https://example.com/prueba",video_url:"https://example.com/prueba-video",decisiones:"prueba-Se usaron datos ficticios y una simulación explícita."};
+   const historico={via:"B2",decisiones:"prueba-Se usaron datos ficticios y una simulación explícita."};
+   expect((await a.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:historico,p_enviar:false})).error).toBeNull();
+   const datos={repo_url:"https://example.com/prueba",demo_url:"https://prueba.vercel.app",video_url:"https://example.com/prueba-video"};
+   for(const [campo,codigo] of [["repo_url","repositorio"],["demo_url","plataforma"],["video_url","video"]])expect((await a.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:{...datos,[campo]:""},p_enviar:true})).error?.message).toContain(`entrega_incompleta_${codigo}`);
    expect((await a.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:datos,p_enviar:false})).error).toBeNull();
    expect((await org.rpc("revisar_entrega_virtual",{p_desafio:id,p_usuario:usuario,p_datos:{comentario:"prueba"},p_publicar:true})).error?.message).toContain("sin_entrega");
    expect((await a.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:datos,p_enviar:true})).error).toBeNull();
+   expect((await a.from("participaciones_virtuales").select("borrador").eq("desafio_id",id).single()).data?.borrador).toMatchObject(historico);
    expect((await a.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:{},p_enviar:false})).error?.message).toContain("entrega_cerrada");
    expect((await a.rpc("puede_subir_virtual",{p_ruta:`${id}/${usuario}/${crypto.randomUUID()}.pdf`})).data).toBe(false);
    const revisar=(comentario:string,publicar:boolean)=>org.rpc("revisar_entrega_virtual",{p_desafio:id,p_usuario:usuario,p_datos:{comentario},p_publicar:publicar});
@@ -112,6 +116,10 @@ describe("desafío virtual privado",()=>{
    // Un segundo usuario con plazo vencido no puede guardar ni adjuntar archivos.
    expect((await org.rpc("acceso_desafio_virtual",{p_desafio:id,p_usuario:otro,p_habilitar:true})).error).toBeNull();
    expect((await b.rpc("comenzar_virtual",{p_desafio:id})).error).toBeNull();
+   const tercero=await como("estudiante-3"),idTercero=await idDe("estudiante-3");
+   expect((await org.rpc("acceso_desafio_virtual",{p_desafio:id,p_usuario:idTercero,p_habilitar:true})).error).toBeNull();
+   expect((await tercero.rpc("comenzar_virtual",{p_desafio:id})).error).toBeNull();
+   expect((await tercero.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:{...datos,investigacion_url:"https://example.com/prueba-informe"},p_enviar:true})).error).toBeNull();
    expect((await admin.from("participaciones_virtuales").update({vence_en:"2020-01-01T00:00:00Z"}).eq("desafio_id",id).eq("usuario_id",otro)).error).toBeNull();
    expect((await b.rpc("guardar_entrega_virtual",{p_desafio:id,p_datos:{},p_enviar:false})).error?.message).toContain("entrega_cerrada");
    expect((await b.rpc("puede_subir_virtual",{p_ruta:`${id}/${otro}/${crypto.randomUUID()}.pdf`})).data).toBe(false);
@@ -120,7 +128,7 @@ describe("desafío virtual privado",()=>{
    expect((await org.rpc("eliminar_desafio_virtual",{p_desafio:id,p_titulo:"prueba-Desafío privado"})).error).toBeNull();
    expect((await org.from("desafios_virtuales").select("id").eq("id",id)).data).toEqual([]);
    const backup=(await admin.from("respaldos_desafios_virtuales").select("datos").eq("desafio_id",id).single()).data!.datos;
-   expect(backup.participaciones).toHaveLength(2);expect(backup.archivos).toHaveLength(2);expect(backup.revisiones).toHaveLength(1);
+   expect(backup.participaciones).toHaveLength(3);expect(backup.archivos).toHaveLength(2);expect(backup.revisiones).toHaveLength(1);
    for(const c of [a,b,org,anonimo()])expect((await c.from("respaldos_desafios_virtuales").select("*").eq("desafio_id",id)).data??[]).toEqual([]);
    expect((await a.rpc("puede_limpiar_virtual",{p_ruta:investigacion})).data).toBe(false);
    expect((await org.storage.from("desafios-virtuales").download(pdf)).error).not.toBeNull();

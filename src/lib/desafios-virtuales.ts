@@ -22,7 +22,16 @@ La revisión es humana: investigación, construcción, integración, claridad, j
 El PDF adjunto es la referencia original. Para este piloto de TIM rigen el idioma, plazo y entorno de prueba indicados acá. Los accesos a proveedores y sus posibles costos deben acordarse con organización antes de comenzar.`;
 
 const enlace=z.string().trim().max(2000).refine(s=>{if(!s)return true;try{const u=new URL(s);return u.protocol==="https:"&&!u.username&&!u.password;}catch{return false;}},"Usá un enlace https sin usuario ni contraseña.");
-export const entregaVirtual=z.object({via:z.enum(["","B1","B2","B3"]),investigacion_url:enlace,repo_url:enlace,demo_url:enlace,video_url:enlace,decisiones:z.string().trim().max(6000)});
+export const entregaVirtual=z.object({investigacion_url:enlace.default(""),repo_url:enlace.default(""),demo_url:enlace.default(""),video_url:enlace.default("")});
+export type CampoEntregaVirtual=keyof z.infer<typeof entregaVirtual>;
+export type ResultadoEntregaVirtual={error?:string;mensaje?:string;errores?:Partial<Record<CampoEntregaVirtual|string,string>>};
+export const FALTANTES_ENTREGA={investigacion_url:"Subí tu informe o agregá el enlace a tu informe.",repo_url:"Agregá el enlace a tu repositorio de GitHub.",demo_url:"Agregá el enlace a tu plataforma o dashboard.",video_url:"Agregá el enlace a tu video demostrativo en Loom."};
+export function validarEntregaVirtual(datos:unknown,tieneInforme:boolean,enviar:boolean){
+ const v=entregaVirtual.safeParse(datos);const errores:Record<string,string>={};
+ if(!v.success){for(const e of v.error.issues){const k=String(e.path[0]);errores[k]=e.message;}return {datos:null,errores};}
+ if(enviar){for(const k of Object.keys(FALTANTES_ENTREGA) as CampoEntregaVirtual[]){if(!v.data[k]&&!(k==="investigacion_url"&&tieneInforme))errores[k]=FALTANTES_ENTREGA[k];}}
+ return {datos:v.data,errores};
+}
 export const CRITERIOS_VIRTUALES=[{id:"research",titulo:"Investigación"},{id:"build",titulo:"Construcción"},{id:"integracion",titulo:"Integración"},{id:"claridad",titulo:"Claridad y defensa"},{id:"juicio",titulo:"Juicio técnico"},{id:"autonomia",titulo:"Autonomía"},{id:"comentario",titulo:"Devolución general"}] as const;
 export function camposTexto(v:unknown):Record<string,string>{if(!v||typeof v!=="object"||Array.isArray(v))return {};return Object.fromEntries(Object.entries(v).filter((x):x is [string,string]=>typeof x[1]==="string"));}
 export function fechaVirtual(iso:string|null){return iso?new Intl.DateTimeFormat("es-AR",{dateStyle:"medium",timeStyle:"short",timeZone:"America/Argentina/Buenos_Aires"}).format(new Date(iso)):"";}

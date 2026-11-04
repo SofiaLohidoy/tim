@@ -29,16 +29,29 @@ test("organización administra un desafío privado, la entrega y su devolución 
  await expect(page.getByRole("button",{name:"Comenzar desafío",exact:true})).toBeVisible();
  await page.getByRole("button",{name:"Comenzar desafío",exact:true}).click();
  await expect(page.getByRole("heading",{name:"Tu entrega",exact:true})).toBeVisible();
- await page.getByLabel("Archivo de investigación",{exact:true}).setInputFiles({...pdf,name:"prueba-investigacion.pdf"});
- await expect(page.getByText("Archivo guardado.",{exact:true})).toBeVisible({timeout:20000});
- await page.getByLabel("Integración elegida *",{exact:true}).selectOption("B2");
- await page.getByLabel("Repositorio *",{exact:true}).fill("https://example.com/prueba-repo");
- await page.getByLabel("Video de la demo *",{exact:true}).fill("https://example.com/prueba-video");
- await page.getByLabel("Decisiones y dificultades *",{exact:true}).fill("prueba-Usé datos ficticios para una simulación, sin mensajes reales.");
+ await page.getByRole("button",{name:"Confirmar entrega",exact:true}).click();
+ await expect(page.getByText("Subí tu informe o agregá el enlace a tu informe.",{exact:true})).toBeVisible();
+ await expect(page.getByText("Agregá el enlace a tu repositorio de GitHub.",{exact:true})).toBeVisible();
+ await expect(page.getByText("Agregá el enlace a tu plataforma o dashboard.",{exact:true})).toBeVisible();
+ await expect(page.getByText("Agregá el enlace a tu video demostrativo en Loom.",{exact:true})).toBeVisible();
+ await expect(page.getByLabel("Enlace a la plataforma o dashboard",{exact:true})).toHaveAttribute("aria-invalid","true");
+ await expect(page.getByLabel("Integración elegida *",{exact:true})).toHaveCount(0);
+ await expect(page.getByLabel("Decisiones y dificultades *",{exact:true})).toHaveCount(0);
  await page.getByRole("button",{name:"Guardar borrador",exact:true}).click();
  await expect(page.getByText("Borrador guardado.",{exact:true})).toBeVisible();
- await page.reload();await expect(page.getByLabel("Repositorio *",{exact:true})).toHaveValue("https://example.com/prueba-repo");
- for(const width of [375,1280]){await page.setViewportSize({width,height:812});await page.screenshot({path:`capturas/virtual-entrega-${width}.png`,fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
+ await expect(page.getByRole("button",{name:"Guardar borrador",exact:true})).toBeEnabled();
+ await page.reload();
+ await expect(page.getByLabel("Subir informe",{exact:true})).toBeEnabled();
+ await page.getByLabel("Subir informe",{exact:true}).setInputFiles({...pdf,name:"prueba-investigacion.pdf"});
+ await expect(page.getByText("Archivo guardado.",{exact:true})).toBeVisible({timeout:20000});
+ await page.getByLabel("Enlace al repositorio de GitHub",{exact:true}).fill("https://example.com/prueba-repo");
+ await page.getByLabel("Enlace al video demostrativo en Loom",{exact:true}).fill("https://example.com/prueba-video");
+ await page.getByLabel("Enlace a la plataforma o dashboard",{exact:true}).fill("https://prueba.vercel.app");
+ await page.getByRole("button",{name:"Guardar borrador",exact:true}).click();
+ await expect(page.getByText("Borrador guardado.",{exact:true})).toBeVisible();
+ await expect(page.getByRole("button",{name:"Guardar borrador",exact:true})).toBeEnabled();
+ await page.reload();await expect(page.getByLabel("Enlace al repositorio de GitHub",{exact:true})).toHaveValue("https://example.com/prueba-repo");
+ for(const width of [375,1280]){await page.setViewportSize({width,height:812});await expect(page.getByRole("heading",{name:"Tu entrega",exact:true})).toBeVisible();await page.screenshot({path:`capturas/virtual-entrega-${width}.png`,fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
  await page.getByLabel("Revisé mi entrega. Entiendo que después de enviarla no podré modificarla.",{exact:true}).check();
  await page.getByRole("button",{name:"Confirmar entrega",exact:true}).click();
  await expect(page.getByText(/^Enviada:/)).toBeVisible();

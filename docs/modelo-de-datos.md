@@ -2,6 +2,8 @@
 
 ## Desafíos virtuales privados (026)
 
+028: enviar una entrega exige informe adjunto o enlace al informe, repositorio, plataforma/dashboard y video. Se permite guardar borradores incompletos. La función vuelve a validar los cuatro requisitos en Postgres y conserva las claves históricas de integración/decisiones, que ya no se solicitan en el formulario. No cambia plazos, permisos ni entregas enviadas.
+
 027: `eliminar_desafio_virtual` exige sesión de organizador y el título exacto. Bloquea la versión, respalda consigna, accesos, participaciones, revisiones y metadatos en `respaldos_desafios_virtuales` y recién entonces elimina el desafío y sus dependencias en la misma transacción. Las cuentas se conservan. El respaldo tiene RLS y ningún permiso de lectura/escritura desde el navegador; los objetos permanecen privados y protegidos contra limpieza. Los archivos no se publican ni se copian al repositorio.
 
 Separados de eventos, juegos y devoluciones de hackatón. `desafios_virtuales` guarda consigna, duración y estado; `accesos_desafios_virtuales` asigna acceso individual y cita de defensa; `participaciones_virtuales` conserva inicio, vencimiento, borrador y envío; `archivos_desafios_virtuales` vincula objetos privados; `revisiones_virtuales` separa borrador de devolución y versión publicada.
