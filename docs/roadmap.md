@@ -1,3 +1,5 @@
+10/11: informe ejecutivo proporcionado por Sofía para Lisa. Tarjeta «Devolución de la hackatón» en Mi empresa, habilitada automáticamente por el nombre exacto Lisa (sin distinguir mayúsculas ni espacios extremos), según instrucción explícita. HTML interactivo en Storage privado y ruta autenticada aislada; otras empresas no leen tarjeta ni archivo. No amplía acceso a tablas de estudiantes o CV. Migración 029 y ADR 022.
+
 02/11: reconocimiento de equipo ganador en la devolución de sus integrantes y en la vista previa de organización. Registrado por organización, independiente de rúbricas y publicaciones. Migración 025.
 
 02/11: carga de síntesis narrativa del jurado por equipo, privada para organización hasta preparar/publicar. Texto completo separado de las evaluaciones de mentores, sin niveles inventados. Migración 024 y ADR 018.

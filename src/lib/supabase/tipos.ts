@@ -937,6 +937,30 @@ export type Database = {
           },
         ]
       }
+      informes_empresa: {
+        Row: {
+          archivo_ruta: string
+          creado_en: string
+          empresa_clave: string
+          id: string
+          titulo: string
+        }
+        Insert: {
+          archivo_ruta: string
+          creado_en?: string
+          empresa_clave: string
+          id?: string
+          titulo: string
+        }
+        Update: {
+          archivo_ruta?: string
+          creado_en?: string
+          empresa_clave?: string
+          id?: string
+          titulo?: string
+        }
+        Relationships: []
+      }
       interesados: {
         Row: {
           audiencia: string
@@ -1663,6 +1687,7 @@ export type Database = {
       puede_leer_archivo_entrega: { Args: { p_ruta: string }; Returns: boolean }
       puede_leer_archivo_virtual: { Args: { p_ruta: string }; Returns: boolean }
       puede_leer_desafios: { Args: never; Returns: boolean }
+      puede_leer_informe_empresa: { Args: { p_ruta: string }; Returns: boolean }
       puede_limpiar_virtual: { Args: { p_ruta: string }; Returns: boolean }
       puede_subir_virtual: { Args: { p_ruta: string }; Returns: boolean }
       puede_ver_persona: { Args: { p_usuario: string }; Returns: boolean }
